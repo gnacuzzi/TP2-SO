@@ -86,6 +86,7 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 	"TIME                       Show current time\n"
 	"CLEAR                      Clears the screen\n"
 	"REGISTERS                  Prints each register with it's values at the moment of the snapshot\n";
+	"MEMTEST					Test the memory\n";
 	printf(manual);
 }
 
@@ -109,8 +110,19 @@ static void registers(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int ca
 	}
 }
 
-static const char* allCommands[] = {"CLEAR", "DIVIDEBYZERO", "ELIMINATOR", "HELP", "INVALIDOPERATION","LETTERSIZE", "REGISTERS", "TIME"};
-static void (*commandsFunction[])(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) = {clear, dividebyzero, eliminator, help, invalidoperation, lettersize, registers, time}; //funciones a hacer
+static void memtest(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams){
+	if(cantParams != 1){
+		printf("You must insert ONE parameter indicating the memory size you desire\n");
+	}else if (parameters[0][0] > 3 || parameters[0][0] < 1){
+		printf("The memory size must be a number between 1 and 3\n");
+	}else{
+		test_mm(parameters[0][0]);	
+	}
+	return;
+}
+
+static const char* allCommands[] = {"CLEAR", "DIVIDEBYZERO", "ELIMINATOR", "HELP", "INVALIDOPERATION","LETTERSIZE","MEMTEST", "REGISTERS", "TIME"}; 
+static void (*commandsFunction[])(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) = {clear, dividebyzero, eliminator, help, invalidoperation, lettersize, memtest, registers, time}; //funciones a hacer
 
 int scanCommand(char* command, char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], char* buffer){
 	// buffer = "command arg1 arg2"
