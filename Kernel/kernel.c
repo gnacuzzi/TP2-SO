@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #include <string.h>
 #include <lib.h>
@@ -18,6 +20,8 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 static void *const heapAddress  = (void *)0x600000;
+
+extern void test_mm(int argc, char *argv[]);
 
 typedef int (*EntryPoint)();
 
@@ -52,8 +56,7 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-int main()
-{	
+int main(){	
 	load_idt();
 	((EntryPoint)sampleCodeModuleAddress)();
 	

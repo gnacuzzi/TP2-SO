@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <videoDriver.h>
 #include <stdint.h>
 #include <font.h>
@@ -92,8 +94,9 @@ void draw_rect(int x, int y, int width, int height, Color color){
 
 void clear_screen(){
 	uint8_t* pos = (uint8_t*)((uint64_t)VBE_mode_info->framebuffer);
-    for (uint32_t len = 3 * (uint32_t)VBE_mode_info->width * VBE_mode_info->height; len; len--, pos++)
+    for (uint32_t len = 3 * (uint32_t)VBE_mode_info->width * VBE_mode_info->height; len; len--, pos++){
         *pos = 0;
+    }
 	cursor_x = 0;
 	cursor_y = 0;
 }
