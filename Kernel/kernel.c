@@ -4,7 +4,7 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <idtLoader.h>
-#include "include/memory_manager.h"
+#include "include/memoryManager.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
