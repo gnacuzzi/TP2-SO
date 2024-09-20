@@ -4,7 +4,7 @@
 #define USED 1
 #define BORDER 2
 
-static MemoryManagerADT getMemoryManager();
+
 
 static void * firstAddress;
 
@@ -14,6 +14,8 @@ typedef struct MemoryManagerCDT {
     uint64_t blocks_qty;
     uint64_t used_blocks;    
 } MemoryManagerCDT;
+
+static MemoryManagerADT getMemoryManager();
 
 void mminit(void *start, uint64_t size) {
 

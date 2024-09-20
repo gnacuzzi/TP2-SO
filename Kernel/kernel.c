@@ -4,7 +4,7 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <idtLoader.h>
-#include "include/lib/memory_manager.h"
+#include "include/memory_manager.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -56,6 +56,10 @@ int main()
 {	
 	load_idt();
 	((EntryPoint)sampleCodeModuleAddress)();
+	
+    char *argv[] = { "1000000" };  
+    test_mm(1, argv);
+    
 	while(1){
 
 	}

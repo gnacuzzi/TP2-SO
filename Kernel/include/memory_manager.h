@@ -10,7 +10,7 @@ typedef struct mem_info {
     uint64_t used;
 } mem_info;
 
-typedef MemoryManagerCDT * MemoryManagerADT;
+typedef struct MemoryManagerCDT * MemoryManagerADT;
 
 #define HEAP_SIZE 0x40000 // 256 KiB
 
