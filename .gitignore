@@ -1,87 +1,37 @@
-# Prerequisites
-*.d
+#Binary Files
+*.bin
+*.sys
 
-# Object files
+#The images
+*.img
+*.qcow2
+*.vmdk
+
+#Object files
 *.o
-*.ko
-*.obj
+
+#gdb files
+.gdb_history
 *.elf
+#docker
+.bash_history
 
-# Linker output
-*.ilk
-*.map
-*.exp
+#vscode settings
+.vscode
 
-# Precompiled Headers
-*.gch
-*.pch
+#Clion settings
+.idea
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+#pvs-studio
+PVS-Studio.log
+report.tasks
+strace_out
+.config/*
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+#clangd lsp
+compile_flags.txt
 
 # Archivos de metadatos de macOS
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Iconos personalizados
-Icon?
-
-# Directorios de caché de macOS
-._*
-.fseventsd
-.Spotlight-V100
-.Trashes
-
-# Archivos de información de aplicaciones macOS
-.DocumentRevisions-V100
-.TemporaryItems
-.VolumeIcon.icns
-.apdisk
-
-# La carpeta de files
-files/
-.config/
-
-# Vscode
-.vscode/
-
-#El bash hhistory
-.bash_history
-
-#ignora archivos de depuracion
-*.log
-report.tasks
-strace_out
