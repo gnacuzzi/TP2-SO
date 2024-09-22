@@ -22,17 +22,10 @@ void mminit(void *start, uint64_t size) {
     firstAddress = start;
 
     MemoryManagerADT memoryManager = (MemoryManagerADT)firstAddress;
-    if (size < sizeof(MemoryManagerCDT) + memoryManager->blocksQty) {
-        return;
-    }
 
     uint64_t sizeMM = sizeof(MemoryManagerCDT);
 
     memoryManager->blocksQty = (size - sizeMM) / BLOCK_SIZE;
-
-    if (size < sizeMM + (memoryManager->blocksQty / 8)) {
-        return;
-    }
 
     memoryManager->bitmap = (uint8_t *)(firstAddress + sizeMM);
 
