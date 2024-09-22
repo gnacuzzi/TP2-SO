@@ -16,6 +16,8 @@ GLOBAL get_ticks
 
 GLOBAL wait_delta
 
+GLOBAL testmm
+
 read_char:
     mov rax, 0
     int 80h
@@ -74,5 +76,10 @@ get_ticks:
 
 wait_delta:
     mov rax, 12
+    int 80h
+    ret
+
+testmm:
+    mov rax, 13
     int 80h
     ret

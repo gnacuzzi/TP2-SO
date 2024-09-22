@@ -58,13 +58,15 @@ void * initializeKernelBinary()
 
 int main(){	
 	load_idt();
+
+	//char *argv[] = { "1000000" };  
+    //test_mm(1, argv);
+
 	((EntryPoint)sampleCodeModuleAddress)();
 	
-    char *argv[] = { "1000000" };  
-    test_mm(1, argv);
-    
 	while(1){
-
+		
 	}
+
 	return 0;
 }

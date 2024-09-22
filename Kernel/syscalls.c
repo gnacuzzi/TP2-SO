@@ -5,6 +5,7 @@
 #include <keyboard.h>
 #include <lib.h>
 #include <time.h>
+#include "tests-TP2/test_mm.h"
 
 #define STDIN 0
 #define STDOUT 1
@@ -22,6 +23,7 @@
 #define RECTANGLE 10
 #define TICKS 11
 #define WAIT 12
+#define TEST 13
 
 extern const uint64_t registers[18];
 extern const uint64_t capturedReg;
@@ -38,6 +40,7 @@ static void make_sound(uint64_t freq, uint64_t time);
 static void draw_rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint32_t color);
 static uint64_t syscall_ticks();
 static void syscall_wait(uint64_t time);
+static void syscall_test(uint64_t aux);
 
 
 uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4, uint64_t arg5) {
@@ -76,6 +79,9 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
             break;
         case WAIT:
             syscall_wait(arg0);
+            break;
+        case TEST:
+            syscall_test(arg0);
             break;
 	}
 	return 0;
@@ -145,4 +151,9 @@ static uint64_t syscall_ticks(){
 
 static void syscall_wait(uint64_t time){
     wait_time((int)time);
+}
+
+static void syscall_test(uint64_t aux){
+    char *argv[] = { "1000000" };  
+    *((int *)aux) = test_mm(1, argv);
 }

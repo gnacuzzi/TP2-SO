@@ -3,8 +3,9 @@
 #include "syscall.h"
 #include "test_util.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include "test_mm.h"
+#include "../include/memoryManager.h"
 
 #define MAX_BLOCKS 128
 
@@ -25,7 +26,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
 
   if ((max_memory = satoi(argv[0])) <= 0)
     return -1;
-
 
   while (1) {
     rq = 0;

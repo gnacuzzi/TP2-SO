@@ -1,13 +1,9 @@
 #!/bin/bash
 
-# Detectar el sistema operativo
-OS=$(uname)
-
-if [ "$OS" == "Darwin" ]; then
-    # macOS - usa CoreAudio
-    qemu-system-x86_64 -hda Image/x64BareBonesImage.qcow2 -m 512 -audiodev coreaudio,id=audio0 -machine pcspk-audiodev=audio0 
-
+if [[ "$1" = "gdb" ]]; then
+    qemu-system-x86_64 -s -S -hda Image/x64BareBonesImage.qcow2 -m 512
+elif [[ "$1" = "int" ]]; then
+    qemu-system-x86_64 -d int -hda Image/x64BareBonesImage.qcow2 -m 512 2>&1 | grep "v="
 else
-    qemu-system-x86_64 -hda Image/x64BareBonesImage.qcow2 -m 512 
-
+    qemu-system-x86_64 -hda Image/x64BareBonesImage.qcow2 -m 512
 fi
