@@ -32,21 +32,11 @@ typedef uint64_t (*syscall)(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, ui
 
 uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4,
 						   uint64_t arg5) {
-	static syscall syscalls[] = {
-        (syscall) syscallRead,          
-        (syscall) syscallWrite,         
-        (syscall) syscallClear,         
-        (syscall) syscallSeconds,       
-        (syscall) syscallMinutes,       
-        (syscall) syscallHours,         
-        (syscall) syscallLettersize,    
-        (syscall) syscallRegisters,      
-        (syscall) makeSound,            
-        (syscall) drawRectangle,        
-        (syscall) syscallTicks,         
-        (syscall) syscallWait,          
-        (syscall) syscallTest           
-    };
+	static syscall syscalls[] = {(syscall) syscallRead,		  (syscall) syscallWrite,	  (syscall) syscallClear,
+								 (syscall) syscallSeconds,	  (syscall) syscallMinutes,	  (syscall) syscallHours,
+								 (syscall) syscallLettersize, (syscall) syscallRegisters, (syscall) makeSound,
+								 (syscall) drawRectangle,	  (syscall) syscallTicks,	  (syscall) syscallWait,
+								 (syscall) syscallTest};
 	return syscalls[nr](arg0, arg1, arg2, arg3, arg4, arg5);
 }
 

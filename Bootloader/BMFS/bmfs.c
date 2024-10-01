@@ -614,7 +614,7 @@ void create(char *filename, unsigned long long maxsize) {
 		fwrite(Directory, 4096, 1, disk); // Write 4096 bytes for the Directory
 
 		//		printf("Complete: file %s starts at block %lld, directory entry #%d.\n", filename, new_file_start,
-		//first_free_entry);
+		// first_free_entry);
 		printf("Complete\n");
 	}
 	else {

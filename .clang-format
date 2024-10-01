@@ -29,7 +29,7 @@ Language: Cpp
 MaxEmptyLinesToKeep: 1
 PointerAlignment: Right
 ReflowComments: true
-SortIncludes: false //sacamos este true porque sino nos tiraba errores de inclusion
+SortIncludes: false #sacamos este true porque sino nos tiraba errores de inclusion
 SpaceAfterCStyleCast: true
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements
