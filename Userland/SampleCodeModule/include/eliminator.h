@@ -15,7 +15,9 @@
 
 #define NAME_LENG 10
 
-#define MSG_START "ELIMINATOR (ARQUI'S VERSION)\n PLAYERS: %d \n SPEED: %d \n\n [SPACE] to begin game \n [ENTER] to change \n [ESCAPE] to exit \n"
+#define MSG_START                                                                                                      \
+	"ELIMINATOR (ARQUI'S VERSION)\n PLAYERS: %d \n SPEED: %d \n\n [SPACE] to begin game \n [ENTER] to change \n "      \
+	"[ESCAPE] to exit \n"
 #define MSG_SPEED "SPEED (1-3): "
 #define MSG_PLAYERS "PLAYERS (1-2): "
 
@@ -37,22 +39,20 @@ void play1();
 
 void play2();
 
-void set_enviroment();    
+void set_enviroment();
 
-int checkWin(uint16_t x1, uint16_t y1, char*  name1, uint16_t x2, uint16_t y2, char*  name2);
+int checkWin(uint16_t x1, uint16_t y1, char *name1, uint16_t x2, uint16_t y2, char *name2);
 
 int want_continue();
 
-int analyseSituation();    
+int analyseSituation();
 
-
-
-typedef struct{
-    uint16_t x, y;
-    uint16_t inc_x, inc_y;
-    uint8_t points;
-    Color color;
-    char* name;
+typedef struct {
+	uint16_t x, y;
+	uint16_t inc_x, inc_y;
+	uint8_t points;
+	Color color;
+	char *name;
 } Player;
 
 #endif

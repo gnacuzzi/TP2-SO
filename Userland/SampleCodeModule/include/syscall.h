@@ -6,19 +6,17 @@
 
 void write(int fd, char c);
 
-uint8_t read_char(char * buff);
+uint8_t read_char(char *buff);
 
 void clear_screen();
 
-void get_seconds(int * sec);
-void get_minutes(int * min);
-void get_hours(int * hours);
+void get_seconds(int *sec);
+void get_minutes(int *min);
+void get_hours(int *hours);
 
+void setlettersize(int size);
 
-void setlettersize(int size);	
-
-uint64_t * getRegs(uint64_t * regarr, uint64_t * flag);
-
+uint64_t *getRegs(uint64_t *regarr, uint64_t *flag);
 
 void make_sound(uint64_t freq, uint64_t time);
 

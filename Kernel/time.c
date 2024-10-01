@@ -17,9 +17,9 @@ int seconds_elapsed() {
 	return ticks / 18;
 }
 
-void wait_time(int delta){ 
+void wait_time(int delta) {
 	int currentTicks = ticks;
-	while(ticks - currentTicks < delta){
+	while (ticks - currentTicks < delta) {
 		htl_lib();
 	}
 }

@@ -9,21 +9,22 @@
 void zero_division();
 void invalid_op_code();
 
-
-uint64_t reg_snap[REGS] = {0};      //valores de los registros
-static char * regs[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","R8","R9","R10","R11","R12","R13","R14","R15", "RSP","RIP", "RFLAGS"};
+uint64_t reg_snap[REGS] = {0}; // valores de los registros
+static char *regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "R8",  "R9",
+					   "R10", "R11", "R12", "R13", "R14", "R15", "RSP", "RIP", "RFLAGS"};
 extern const uint64_t exceptregs[18];
 
 void print_regs() {
-	for (int i = 0; i<REGS; i++){
+	for (int i = 0; i < REGS; i++) {
 		printf("%s: 0x%x\n", regs[i], exceptregs[i]);
-    }
+	}
 }
 
 void exceptionDispatcher(int exception) {
-	if (exception == ZERO_EXCEPTION_ID){
+	if (exception == ZERO_EXCEPTION_ID) {
 		zero_division();
-	} else if (exception == INVALID_OP_CODE_ID){
+	}
+	else if (exception == INVALID_OP_CODE_ID) {
 		invalid_op_code();
 	}
 }
