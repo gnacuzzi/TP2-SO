@@ -11,87 +11,50 @@
 #define STDOUT 1
 #define STDERR 2
 
-#define READ 0
-#define WRITE 1
-#define CLEAR 2
-#define SECONDS 3
-#define MINUTES 4
-#define HOURS 5
-#define LETTERSIZE 6
-#define REGISTERS 7
-#define SOUND 9
-#define RECTANGLE 10
-#define TICKS 11
-#define WAIT 12
-#define TEST 13
-
 extern const uint64_t registers[18];
 extern const uint64_t capturedReg;
 
-static void syscall_write(uint32_t fd, char c);
-static void syscall_read(uint64_t buffer);
-static void syscall_clear();
-static void syscall_seconds(uint64_t arg0);
-static void syscall_minutes(uint64_t arg0);
-static void syscall_hours(uint64_t arg0);
-static void syscall_lettersize(int size);
-static void syscall_registers(uint64_t *buffer, uint64_t *flag);
-static void make_sound(uint64_t freq, uint64_t time);
-static void draw_rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint32_t color);
-static uint64_t syscall_ticks();
-static void syscall_wait(uint64_t time);
-static void syscall_test(uint64_t aux);
+static void syscallRead(uint64_t buffer);
+static void syscallWrite(uint32_t fd, char c);
+static void syscallClear();
+static void syscallSeconds(uint64_t arg0);
+static void syscallMinutes(uint64_t arg0);
+static void syscallHours(uint64_t arg0);
+static void syscallLettersize(int size);
+static void syscallRegisters(uint64_t *buffer, uint64_t *flag);
+static void makeSound(uint64_t freq, uint64_t time);
+static void drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint32_t color);
+static uint64_t syscallTicks();
+static void syscallWait(uint64_t time);
+static void syscallTest(uint64_t aux);
+
+typedef uint64_t (*syscall)(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
 uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg4,
 						   uint64_t arg5) {
-	switch (nr) {
-		case READ:
-			syscall_read(arg0);
-		case WRITE:
-			syscall_write((uint32_t) arg0, (char) arg1);
-			break;
-		case CLEAR:
-			syscall_clear();
-			break;
-		case SECONDS:
-			syscall_seconds(arg0);
-			break;
-		case MINUTES:
-			syscall_minutes(arg0);
-			break;
-		case HOURS:
-			syscall_hours(arg0);
-			break;
-		case LETTERSIZE:
-			syscall_lettersize((int) arg0);
-			break;
-		case REGISTERS:
-			syscall_registers((uint64_t *) arg0, (uint64_t *) arg1);
-			break;
-		case SOUND:
-			make_sound(arg0, arg1);
-			break;
-		case RECTANGLE:
-			draw_rectangle((uint16_t) arg0, (uint16_t) arg1, (uint16_t) arg2, (uint16_t) arg3, (uint32_t) arg4);
-			break;
-		case TICKS:
-			return syscall_ticks();
-			break;
-		case WAIT:
-			syscall_wait(arg0);
-			break;
-		case TEST:
-			syscall_test(arg0);
-			break;
-	}
-	return 0;
+	static syscall syscalls[] = {
+        (syscall) syscallRead,          
+        (syscall) syscallWrite,         
+        (syscall) syscallClear,         
+        (syscall) syscallSeconds,       
+        (syscall) syscallMinutes,       
+        (syscall) syscallHours,         
+        (syscall) syscallLettersize,    
+        (syscall) syscallRegisters,      
+        (syscall) makeSound,            
+        (syscall) drawRectangle,        
+        (syscall) syscallTicks,         
+        (syscall) syscallWait,          
+        (syscall) syscallTest           
+    };
+	return syscalls[nr](arg0, arg1, arg2, arg3, arg4, arg5);
 }
 
-static void syscall_read(uint64_t buffer) {
+static void syscallRead(uint64_t buffer) {
 	((char *) buffer)[0] = next();
 }
 
-static void syscall_write(uint32_t fd, char c) {
+static void syscallWrite(uint32_t fd, char c) {
 	if (fd == STDERR)
 		return;
 	else if (fd != STDOUT)
@@ -99,27 +62,27 @@ static void syscall_write(uint32_t fd, char c) {
 	draw_char(c);
 }
 
-static void syscall_clear() {
+static void syscallClear() {
 	clear_screen();
 }
 
-static void syscall_seconds(uint64_t sec) {
+static void syscallSeconds(uint64_t sec) {
 	*((int *) sec) = get_sec();
 }
 
-static void syscall_minutes(uint64_t min) {
+static void syscallMinutes(uint64_t min) {
 	*((int *) min) = get_min();
 }
 
-static void syscall_hours(uint64_t hour) {
+static void syscallHours(uint64_t hour) {
 	*((int *) hour) = get_hour();
 }
 
-static void syscall_lettersize(int size) {
+static void syscallLettersize(int size) {
 	set_lettersize(size);
 }
 
-static void syscall_registers(uint64_t *buffer, uint64_t *flag) {
+static void syscallRegisters(uint64_t *buffer, uint64_t *flag) {
 	*flag = capturedReg;
 	if (capturedReg) {
 		for (int i = 0; i < 18; i++) {
@@ -128,7 +91,7 @@ static void syscall_registers(uint64_t *buffer, uint64_t *flag) {
 	}
 }
 
-static void make_sound(uint64_t freq, uint64_t tick) {
+static void makeSound(uint64_t freq, uint64_t tick) {
 	if (freq > 0) {
 		beep(freq);
 	}
@@ -137,20 +100,20 @@ static void make_sound(uint64_t freq, uint64_t tick) {
 		stop_beep();
 }
 
-static void draw_rectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint32_t color) {
+static void drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint32_t color) {
 	ColorInt mycolor = {bits: color};
 	draw_rect(x, y, width, height, mycolor.color);
 }
 
-static uint64_t syscall_ticks() {
+static uint64_t syscallTicks() {
 	return ticks_elapsed();
 }
 
-static void syscall_wait(uint64_t time) {
+static void syscallWait(uint64_t time) {
 	wait_time((int) time);
 }
 
-static void syscall_test(uint64_t aux) {
+static void syscallTest(uint64_t aux) {
 	char *argv[] = {"1000000"};
 	*((int *) aux) = test_mm(1, argv);
 }
