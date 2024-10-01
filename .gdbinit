@@ -1,7 +1,7 @@
 target remote 192.168.0.158:1234
 
-add-symbol-file Kernel/kernel.elf 0x100000
-add-symbol-file Userland/0000-shell.elf 0x400000
+add-symbol-file /root/Kernel/kernel.elf 0x100000
+add-symbol-file /root/Userland/0000-sampleCodeModule.elf 0x400000
 
 define src-prof
     dashboard -layout source expressions stack variables
