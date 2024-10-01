@@ -59,27 +59,27 @@ getRegs:
     ret
 
 make_sound:
-    mov rax, 9
+    mov rax, 8
     int 80h
     ret
 
 draw_rectangle:
-    mov rax, 10
+    mov rax, 9
     mov r10, rcx
     int 80h
     ret
 
 get_ticks:
-    mov rax, 11
+    mov rax, 10
     int 80h
     ret
 
 wait_delta:
-    mov rax, 12
+    mov rax, 11
     int 80h
     ret
 
 testmm:
-    mov rax, 13
+    mov rax, 12
     int 80h
     ret
