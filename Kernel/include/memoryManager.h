@@ -12,7 +12,7 @@ typedef struct mem_info {
 
 typedef struct MemoryManagerCDT *MemoryManagerADT;
 
-#define HEAP_SIZE 0x10000000 // 256 MiB
+#define HEAP_SIZE 0x100000 // 1 MiB
 
 #define BLOCK_SIZE 64
 #define STRUCT_SIZE (HEAP_SIZE / BLOCK_SIZE)
