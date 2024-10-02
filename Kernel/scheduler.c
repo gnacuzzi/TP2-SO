@@ -1,6 +1,6 @@
 #include <doubleLinkedList.h>
 #include <memoryManager.h>
-#include "scheduler.h"
+#include <scheduler.h>
 #include <stdint.h>
 
 
