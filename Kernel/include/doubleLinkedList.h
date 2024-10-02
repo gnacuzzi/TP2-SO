@@ -10,7 +10,7 @@ Node *addElement(doubleLinkedListADT list, void *data);
 Node *addNode(doubleLinkedListADT list, Node *node);
 Node *addNodeInFirst(doubleLinkedListADT list, Node *node);
 void *removeNode(doubleLinkedListADT list, Node *node);
-Node *getFirst(doubleLinkedListADT list);
+void *getFirstData(doubleLinkedListADT list);
 int isEmpty(doubleLinkedListADT list);
 void freeLinkedListADT(doubleLinkedListADT list);
 int getSize(doubleLinkedListADT list);

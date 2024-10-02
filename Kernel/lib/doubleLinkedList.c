@@ -91,15 +91,17 @@ void *removeNode(doubleLinkedListADT list, Node *node) {
 	void *data = node->data;
 	node->next = NULL;
 	node->prev = NULL;
-	// free?
+	free(node);
 	return data;
 }
 
-Node *getFirst(doubleLinkedListADT list) {
-	if (list == NULL)
-		return NULL;
-	return list->head;
+void *getFirstData(doubleLinkedListADT list) {
+    if (list == NULL) {
+        return NULL;
+    }
+	return removeNode(list, list->head);
 }
+
 
 void freeLinkedListADT(doubleLinkedListADT list) {
 	Node *current = list->head;
