@@ -3,16 +3,18 @@
 #include <videoDriver.h>
 #include <stdint.h>
 #include <font.h>
-#include <videoDriver.h>
 #include <lib.h>
 // para poder imprimir en el back
 #include <stdarg.h>
+#include <stddef.h>
 #define MAX_CHARS 256
 
 static int CHAR_WIDTH = 9;
 static int CHAR_HEIGHT = 16;
 
 static int DEFAULT_LETTER_SIZE = 1;
+
+static int strcpychar(char *dest, const char *origin, char limit);
 
 struct vbe_mode_info_structure {
 	uint16_t attributes;  // deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a
@@ -278,4 +280,25 @@ int strlen(const char *str) {
 	while (*(str++) != '\0')
 		len++;
 	return len;
+}
+
+int arrLen(char **array) {
+	int len = 0;
+	while (*(array++) != NULL)
+		len++;
+	return len;
+}
+
+int strcpy(char *dest, const char *origin) {
+	return strcpychar(dest, origin, '\0');
+}
+
+static int strcpychar(char *dest, const char *origin, char limit) {
+	int idx = 0;
+	while (origin[idx] != limit && origin[idx] != '\0') {
+		dest[idx] = origin[idx];
+		idx++;
+	}
+	dest[idx] = 0;
+	return idx;
 }
