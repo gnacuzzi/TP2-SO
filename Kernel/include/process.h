@@ -20,6 +20,5 @@ typedef struct PCB{
 
 void initProcess(PCB * pcb, uint16_t pid, uint16_t parentPid, Function function, char ** argv, char * name, uint8_t priority, uint16_t fileDescriptors[]);
 void freeProcess(PCB * pcb);
-void closeFileDescriptors(PCB * pcb);
 
 #endif

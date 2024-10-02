@@ -272,3 +272,10 @@ int strtoi(const char *s, const char **end) {
 int isnumber(int n) {
 	return ((n) >= '0' && (n) <= '9');
 }
+
+int strlen(const char *str) {
+	int len = 0;
+	while (*(str++) != '\0')
+		len++;
+	return len;
+}
