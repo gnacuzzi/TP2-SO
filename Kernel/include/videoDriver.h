@@ -32,5 +32,8 @@ void printchars(char c, int n);
 int strtoi(const char *s, const char **end);
 int itoa(int n, char *buffer, int base);
 int isnumber(int ch);
+int strlen(const char *str);
+int arrLen(char **array);
+int strcpy(char *dest, const char *origin);
 
 #endif
