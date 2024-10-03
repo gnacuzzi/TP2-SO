@@ -2,24 +2,23 @@
 #define __SCHEDULER_H
 
 #include <stdint.h>
+#include <process.h>
 
 #define SCHEDULER_ADRESS 0x705000
 
 typedef struct schedulerCDT *schedulerADT;
 
 void createScheduler();
-/*
+
 void * schedule(void * prevRSP);
 
 uint16_t createProcess();//faltan los parametros que recibe
 void blockProcess(uint16_t pid);
 void readyProcess(uint16_t pid);
-PCB *findProcess(pid_t pid);
-
-//comento todo porque en realidad deberiamos mergear las ramas porque yo uso cosas que hizo agos
-*/
-
-//aca me faltaria hacer la funcion que mata a los procesos
-//yield
+PCB *findProcess(uint16_t pid);
+void yield();
+void killProcess(uint16_t pid);
+uint16_t getPid();
+//para poder hacer la de imprimir los procesos necesito la funcion de process que imprima?
 
 #endif
