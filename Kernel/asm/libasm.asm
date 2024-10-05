@@ -7,6 +7,8 @@ GLOBAL get_hour
 GLOBAL beep
 GLOBAL stop_beep
 
+GLOBAL callTimerTick
+
 ;vectores
 GLOBAL htl_lib
 
@@ -117,3 +119,6 @@ htl_lib:
 	hlt
 	ret
 
+callTimerTick:
+	int 20h
+	ret

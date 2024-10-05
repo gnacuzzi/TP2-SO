@@ -14,5 +14,6 @@ int get_hour();
 void beep(uint64_t freq);
 void stop_beep();
 void htl_lib();
+void callTimerTick();
 
 #endif
