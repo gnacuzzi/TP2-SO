@@ -43,7 +43,7 @@ void *schedule(void *prevRSP) {
     if (!scheduler->processQty || scheduler->quantums > 0) return prevRSP;  
 
     if (scheduler->currentProcess != NULL) {
-        scheduler->currentProcess->stackPointer = prevRSP;      
+        scheduler->currentProcess->stackPos = prevRSP;      
         scheduler->currentProcess->status = READY;     
         addNode(scheduler->readyProcess, scheduler->currentProcess); 
     }
@@ -58,7 +58,7 @@ void *schedule(void *prevRSP) {
     scheduler->currentPid = firstProcess->pid;  
     scheduler->currentProcess->status = RUNNING;  
 
-    return scheduler->currentProcess->stackPointer; 
+    return scheduler->currentProcess->stackPos; 
 }
 
 

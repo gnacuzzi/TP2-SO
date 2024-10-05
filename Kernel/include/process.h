@@ -15,7 +15,7 @@ typedef struct PCB{
     char *name;
     uint8_t priority;
     Status status;
-    int16_t fileDescriptors[BUILT_IN_DESCRIPTORS];
+    int16_t fileDescriptors[CANT_FILE_DESCRIPTORS];
 } PCB;
 
 // Declaración de la función de inicialización del marco de pila

@@ -7,8 +7,8 @@
 static char ** allocArgv(char ** argv);
 static void executeProcess(Function code, char ** argv);
 
-void initProcess(Process *process, uint16_t pid, uint16_t parentPid,
-                 MainFunction code, char **args, char *name,
+void initProcess(PCB *process, uint16_t pid, uint16_t parentPid,
+                 Function code, char **args, char *name,
                  uint8_t priority, int16_t fileDescriptors[]) {
     process->pid = pid;
     process->parentPid = parentPid;
@@ -22,7 +22,7 @@ void initProcess(Process *process, uint16_t pid, uint16_t parentPid,
     process->status = READY;
 
     // Inicializar descriptores de archivo básicos
-    for (int i = 0; i < BUILT_IN_DESCRIPTORS; i++) {
+    for (int i = 0; i < CANT_FILE_DESCRIPTORS; i++) {
         process->fileDescriptors[i] = fileDescriptors[i];
     }
 }
