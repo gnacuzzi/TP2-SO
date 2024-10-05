@@ -9,16 +9,16 @@
 typedef struct PCB{
     uint16_t pid;
     uint16_t parentPid;
+    void *stackBase;
+    void *stackPos;
+    char **argv;
+    char *name;
     uint8_t priority;
-    int16_t fileDescriptors[CANT_FILE_DESCRIPTORS];
-    void * stackBase;
-    void * stackPointer;
-    char ** argv;
-    char * name;
     Status status;
+    int16_t fileDescriptors[BUILT_IN_DESCRIPTORS];
 } PCB;
 
-void initProcess(PCB * pcb, uint16_t pid, uint16_t parentPid, Function function, char ** argv, char * name, uint8_t priority, uint16_t fileDescriptors[]);
-void freeProcess(PCB * pcb);
+// Declaración de la función de inicialización del marco de pila
+void * setupStackFrame(void *executeProcess, Function code, void *stackEnd, void *args);
 
 #endif

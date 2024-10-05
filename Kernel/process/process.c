@@ -5,17 +5,26 @@
 #define STACK_SIZE 4096 // 4KB
 
 static char ** allocArgv(char ** argv);
+static void executeProcess(Function code, char ** argv);
 
-void initProcess(PCB * pcb, uint16_t pid, uint16_t parentPid, Function function, char ** argv, char * name, uint8_t priority, uint16_t fileDescriptors[]){
-    pcb->pid = pid;
-    pcb->parentPid = parentPid;
-    pcb->priority = priority;
-    pcb->argv = allocArgv(argv); 
-    pcb->name = malloc(strlen(name) + 1);
-    strcpy(pcb->name, name);
-    pcb->stackBase = malloc(STACK_SIZE);
-    pcb->stackPointer = pcb->stackBase + STACK_SIZE; // creo que aca hay que agragr más cosas
-    pcb->status = READY;
+void initProcess(Process *process, uint16_t pid, uint16_t parentPid,
+                 MainFunction code, char **args, char *name,
+                 uint8_t priority, int16_t fileDescriptors[]) {
+    process->pid = pid;
+    process->parentPid = parentPid;
+    process->stackBase = malloc(STACK_SIZE);
+    process->argv = allocArgv(args);
+    process->name = malloc(strlen(name) + 1);
+    strcpy(process->name, name);
+    process->priority = priority;
+    void *stackEnd = (void *)((uint64_t)process->stackBase + STACK_SIZE);
+    process->stackPos = setupStackFrame(&executeProcess, code, stackEnd, (void *)process->argv);
+    process->status = READY;
+
+    // Inicializar descriptores de archivo básicos
+    for (int i = 0; i < BUILT_IN_DESCRIPTORS; i++) {
+        process->fileDescriptors[i] = fileDescriptors[i];
+    }
 }
 
 void freeProcess(PCB * pcb){
@@ -40,4 +49,9 @@ static char ** allocArgv(char ** argv){
     }
     newArgv[argc] = NULL;
     return newArgv;
+}
+
+void executeProcess(Function code, char ** argv){
+    code(arrLen(argv), argv);
+    killCurrentProcess(); //TODO ver como hacer esto
 }
