@@ -35,7 +35,7 @@ void createScheduler(){
 }
 
 
-void *schedule(void *prevRSP) {//OJO!! no actualizo en ningun momento el pid
+void *schedule(void *prevRSP) {
     if (!created) return prevRSP;  
     schedulerADT scheduler = getScheduler();
 
@@ -54,7 +54,8 @@ void *schedule(void *prevRSP) {//OJO!! no actualizo en ningun momento el pid
     }
 
     scheduler->currentProcess = firstProcess;  
-    scheduler->quantums = scheduler->currentProcess->priority;  
+    scheduler->quantums = scheduler->currentProcess->priority;
+    scheduler->currentPid = firstProcess->pid;  
     scheduler->currentProcess->status = RUNNING;  
 
     return scheduler->currentProcess->stackPointer; 
@@ -72,8 +73,8 @@ uint16_t createProcess() {//no tengo en claro cuales serian los parametros todav
     }
     //initProcess(); //la hizo agos
     
-    addElement(scheduler->processList, newProcess);  
-    addElement(scheduler->readyProcess, newProcess);  
+    addNode(scheduler->processList, newProcess);  
+    addNode(scheduler->readyProcess, newProcess);  
 
     scheduler->processQty++;
     return newProcess->pid;  

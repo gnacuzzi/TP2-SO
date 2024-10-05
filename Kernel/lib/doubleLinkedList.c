@@ -25,33 +25,31 @@ doubleLinkedListADT createDoubleLinkedListADT() {
 	return list;
 }
 
-Node *addElement(doubleLinkedListADT list, void *data) {
-	if (list == NULL)
-		return NULL;
-	Node *newNode = (Node *) malloc(sizeof(Node));
-	if (newNode == NULL)
-		return NULL;
-	newNode->data = data;
-	return addNode(list, newNode);
+
+Node *addNode(doubleLinkedListADT list, void *data) {
+    if (list == NULL)
+        return NULL;
+
+    Node *newNode = (Node *) malloc(sizeof(Node));
+    if (newNode == NULL)
+        return NULL;
+
+    newNode->data = data;  
+    newNode->next = NULL;
+
+    if (list->size > 0) {
+        list->tail->next = newNode;
+    } else {
+        list->head = newNode;
+    }
+
+    newNode->prev = list->tail;
+    list->tail = newNode;
+    list->size++;
+
+    return newNode;
 }
 
-Node *addNode(doubleLinkedListADT list, Node *node) {
-	if (list == NULL)
-		return NULL;
-	if (node == NULL)
-		return NULL;
-	node->next = NULL;
-	if (list->size > 0) {
-		list->tail->next = node;
-	}
-	else {
-		list->head = node;
-	}
-	node->prev = list->tail;
-	list->tail = node;
-	list->size++;
-	return node;
-}
 
 Node *addNodeInFirst(doubleLinkedListADT list, Node *node) {
 	if (list == NULL)
@@ -71,35 +69,42 @@ Node *addNodeInFirst(doubleLinkedListADT list, Node *node) {
 	return node;
 }
 
-void *removeNode(doubleLinkedListADT list, Node *node) {
-	if (node == NULL || list == NULL)
-		return NULL;
+void *removeNode(doubleLinkedListADT list, void *data) {
+    if (list == NULL || data == NULL)
+        return NULL;
 
-	if (list->head == node) {
-		list->head = node->next;
-	}
-	else {
-		node->prev->next = node->next;
-	}
-	if (list->tail == node) {
-		list->tail = node->prev;
-	}
-	else {
-		node->next->prev = node->prev;
-	}
-	list->size--;
-	void *data = node->data;
-	node->next = NULL;
-	node->prev = NULL;
-	free(node);
-	return data;
+    Node *current = list->head;
+    while (current != NULL) {
+        if (current->data == data) {  
+            if (current->prev != NULL) {
+                current->prev->next = current->next;
+            } else {
+                list->head = current->next;
+            }
+            if (current->next != NULL) {
+                current->next->prev = current->prev;
+            } else {
+                list->tail = current->prev;
+            }
+
+            list->size--;
+
+            void *removedData = current->data;
+            free(current);
+            return removedData;
+        }
+        current = current->next;
+    }
+
+    return NULL;  
 }
+
 
 void *getFirstData(doubleLinkedListADT list) {
     if (list == NULL) {
         return NULL;
     }
-	return removeNode(list, list->head);
+	return removeNode(list, list->head->data);
 }
 
 
