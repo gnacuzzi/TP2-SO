@@ -62,16 +62,14 @@ void *schedule(void *prevRSP) {
 }
 
 
-uint16_t createProcess() {//no tengo en claro cuales serian los parametros todavia
-//como que desde aca tengo que definir que pid le doy y no se si poner una cantidad maxima 
-//de procesos
+uint16_t createProcess(Function code, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]) {
     schedulerADT scheduler = getScheduler();
 
     PCB *newProcess = malloc(sizeof(PCB));  
     if (newProcess == NULL) {
         return -1;
     }
-    //initProcess(); //la hizo agos
+    //initProcess(newProcess, scheduler->nextPid, code, args, name, priority, fileDescriptors);
     
     addNode(scheduler->processList, newProcess);  
     addNode(scheduler->readyProcess, newProcess);  
@@ -98,6 +96,11 @@ void readyProcess(uint16_t pid) {
         addNode(scheduler->readyProcess, process);  
         process->status = READY;
     }
+}
+
+void killCurrentProcess(){
+    schedulerADT scheduler = getScheduler();
+    killProcess(scheduler->currentProcess->pid);
 }
 
 void killProcess(uint16_t pid) {
