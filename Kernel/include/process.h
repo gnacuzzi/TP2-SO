@@ -17,7 +17,11 @@ typedef struct PCB{
     int16_t fileDescriptors[CANT_FILE_DESCRIPTORS];
 } PCB;
 
-// Declaración de la función de inicialización del marco de pila
+
+void initProcess(PCB *process, uint16_t pid, Function code, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]);
 void * setupStackFrame(void *executeProcess, Function code, void *stackEnd, void *args);
+int changePriority(uint16_t pid, uint8_t priority);
+void freeProcess(PCB * pcb);
+
 
 #endif

@@ -1,8 +1,11 @@
 #include <process.h>
+#include <scheduler.h>
 #include <videoDriver.h>
 #include <memoryManager.h>
 
 #define STACK_SIZE 4096 // 4KB
+#define MAX_PRIORITY 5
+#define MIN_PRIORITY 1
 
 static char ** allocArgv(char ** argv);
 static void executeProcess(Function code, char ** argv);
@@ -50,7 +53,20 @@ static char ** allocArgv(char ** argv){
     return newArgv;
 }
 
-void executeProcess(Function code, char ** argv){
+static void executeProcess(Function code, char ** argv){
     code(arrLen(argv), argv);
-    killCurrentProcess(); //TODO ver como hacer esto
+    killCurrentProcess();
+}
+
+int changePriority(uint16_t pid, uint8_t priority) {
+    if(priority>MAX_PRIORITY || priority<MIN_PRIORITY) {
+        return -1;
+    }
+
+    PCB * process = findProcess(pid);
+    if(process == NULL) {
+        return -1;
+    }
+    process->priority = priority;
+    return priority;
 }
