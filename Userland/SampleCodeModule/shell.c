@@ -88,11 +88,11 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 		"TIME                       Show current time\n"
 		"CLEAR                      Clears the screen\n"
 		"REGISTERS                  Prints each register with it's values at the moment of the snapshot\n"
-		"MEM						Test the memory manager\n";
+		"TESTMM						Test the memory manager\n";
 	printf(manual);
 }
 
-static void mem(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
+static void testMM(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
 	if (cantParams != 0) {
 		printf("Memory doesn't need parameters\n");
 		return;
@@ -100,6 +100,10 @@ static void mem(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPara
 	int aux;
 	testmm(&aux);
 	printf("Memory manager test result: %d\n", aux);
+}
+
+static void createProcessInShell() {
+	// createProcess();
 }
 
 static char *regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "R8",  "R9",
@@ -125,9 +129,9 @@ static void registers(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int ca
 }
 
 static const char *allCommands[] = {"CLEAR",	  "DIVIDEBYZERO", "ELIMINATOR", "HELP", "INVALIDOPERATION",
-									"LETTERSIZE", "MEM",		  "REGISTERS",	"TIME"};
+									"LETTERSIZE", "TESTMM",		  "REGISTERS",	"TIME"};
 static void (*commandsFunction[])(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) = {
-	clear, dividebyzero, eliminator, help, invalidoperation, lettersize, mem, registers, time}; // funciones a hacer
+	clear, dividebyzero, eliminator, help, invalidoperation, lettersize, testMM, registers, time}; // funciones a hacer
 
 int scanCommand(char *command, char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], char *buffer) {
 	// buffer = "command arg1 arg2"
