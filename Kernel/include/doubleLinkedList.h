@@ -6,11 +6,10 @@ typedef struct Node Node;
 typedef struct doubleLinkedListCDT *doubleLinkedListADT;
 
 doubleLinkedListADT createDoubleLinkedListADT();
-Node *addElement(doubleLinkedListADT list, void *data);
-Node *addNode(doubleLinkedListADT list, Node *node);
+Node *addNode(doubleLinkedListADT list, void *data);
 Node *addNodeInFirst(doubleLinkedListADT list, Node *node);
-void *removeNode(doubleLinkedListADT list, Node *node);
-Node *getFirst(doubleLinkedListADT list);
+void *removeNode(doubleLinkedListADT list, void *data);
+void *getFirstData(doubleLinkedListADT list);
 int isEmpty(doubleLinkedListADT list);
 void freeLinkedListADT(doubleLinkedListADT list);
 int getSize(doubleLinkedListADT list);
