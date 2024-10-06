@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <vars.h>
+#include <doubleLinkedList.h>
 
 #define CANT_FILE_DESCRIPTORS 5
 
@@ -15,6 +16,7 @@ typedef struct PCB{
     uint8_t priority;
     Status status;
     int16_t fileDescriptors[CANT_FILE_DESCRIPTORS];
+    doubleLinkedListADT waitingList;
 } PCB;
 
 
@@ -22,6 +24,6 @@ void initProcess(PCB *process, uint16_t pid, Function code, char **args, char *n
 void * setupStackFrame(void *executeProcess, Function code, void *stackEnd, void *args);
 int changePriority(uint16_t pid, uint8_t priority);
 void freeProcess(PCB * pcb);
-
+int waitProcess(uint16_t pid);
 
 #endif

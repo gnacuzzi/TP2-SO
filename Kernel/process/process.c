@@ -70,3 +70,15 @@ int changePriority(uint16_t pid, uint8_t priority) {
     process->priority = priority;
     return priority;
 }
+
+int waitProcess(uint16_t pid) {
+    PCB * process = findProcess(pid);
+    uint16_t currentPid = getPid();
+
+    if(process == NULL || currentPid == pid) {
+        return -1;
+    }
+    addNode(process->waitingList, process);
+    blockProcess(currentPid);
+    return 0;
+}
