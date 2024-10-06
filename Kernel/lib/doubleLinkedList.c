@@ -139,7 +139,7 @@ void toBegin(doubleLinkedListADT list) {
 
 int hasNext(doubleLinkedListADT list) {
 	if (list == NULL)
-		return -1;
+		return 0;
 	return list->current != NULL;
 }
 
