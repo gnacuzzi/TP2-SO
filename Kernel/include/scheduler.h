@@ -17,6 +17,7 @@ void blockProcess(uint16_t pid);
 void readyProcess(uint16_t pid);
 PCB *findProcess(uint16_t pid);
 void yield();
+void killCurrentProcess();
 void killProcess(uint16_t pid);
 uint16_t getPid();
 //para poder hacer la de imprimir los procesos necesito la funcion de process que imprima?

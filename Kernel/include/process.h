@@ -8,7 +8,6 @@
 
 typedef struct PCB{
     uint16_t pid;
-    uint16_t parentPid;
     void *stackBase;
     void *stackPos;
     char **argv;

@@ -7,11 +7,10 @@
 static char ** allocArgv(char ** argv);
 static void executeProcess(Function code, char ** argv);
 
-void initProcess(PCB *process, uint16_t pid, uint16_t parentPid,
+void initProcess(PCB *process, uint16_t pid,
                  Function code, char **args, char *name,
                  uint8_t priority, int16_t fileDescriptors[]) {
     process->pid = pid;
-    process->parentPid = parentPid;
     process->stackBase = malloc(STACK_SIZE);
     process->argv = allocArgv(args);
     process->name = malloc(strlen(name) + 1);
