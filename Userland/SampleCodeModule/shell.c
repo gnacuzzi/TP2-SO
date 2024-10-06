@@ -6,7 +6,6 @@
 #include "include/userasm.h"
 #include "include/syscall.h"
 #include "include/eliminator.h"
-#include "../include/scheduler.h"
 
 #define BUFFER_LENGTH 256
 #define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
@@ -104,19 +103,21 @@ static void testMM(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantP
 }
 
 static void createProcessInShell(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 1) {
-        printf("Usage: CREATE <process_name>\n");
+	if (cantParams != 2) {
+        printf("Usage: CREATE <process_name> <process_priority>\n");
         return;
     }
-    
+    /*
     char *process_name = parameters[0];
-    int pid = createProcess(process_name);
+	int priority = parameters[1];
+    int pid = createProcess();
     
     if (pid >= 0) {
         printf("Process '%s' created successfully. PID: %d\n", process_name, pid);
     } else {
         printf("Failed to create process '%s'. Error code: %d\n", process_name, pid);
     }	
+	*/
 }
 
 static char *regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "R8",  "R9",
