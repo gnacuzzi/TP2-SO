@@ -6,6 +6,7 @@
 #include "include/userasm.h"
 #include "include/syscall.h"
 #include "include/eliminator.h"
+#include "../include/scheduler.h"
 
 #define BUFFER_LENGTH 256
 #define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
@@ -102,8 +103,20 @@ static void testMM(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantP
 	printf("Memory manager test result: %d\n", aux);
 }
 
-static void createProcessInShell() {
-	// createProcess();
+static void createProcessInShell(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
+	if (cantParams != 1) {
+        printf("Usage: CREATE <process_name>\n");
+        return;
+    }
+    
+    char *process_name = parameters[0];
+    int pid = createProcess(process_name);
+    
+    if (pid >= 0) {
+        printf("Process '%s' created successfully. PID: %d\n", process_name, pid);
+    } else {
+        printf("Failed to create process '%s'. Error code: %d\n", process_name, pid);
+    }	
 }
 
 static char *regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "R8",  "R9",
@@ -128,10 +141,10 @@ static void registers(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int ca
 	}
 }
 
-static const char *allCommands[] = {"CLEAR",	  "DIVIDEBYZERO", "ELIMINATOR", "HELP", "INVALIDOPERATION",
-									"LETTERSIZE", "TESTMM",		  "REGISTERS",	"TIME"};
+static const char *allCommands[] = {"CLEAR", "CREATE"	,  "DIVIDEBYZERO", "ELIMINATOR", "HELP", "INVALIDOPERATION",
+									"LETTERSIZE", "TESTMM",  "REGISTERS",	"TIME"};
 static void (*commandsFunction[])(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) = {
-	clear, dividebyzero, eliminator, help, invalidoperation, lettersize, testMM, registers, time}; // funciones a hacer
+	clear, createProcessInShell, dividebyzero, eliminator, help, invalidoperation, lettersize, testMM, registers, time}; // funciones a hacer
 
 int scanCommand(char *command, char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], char *buffer) {
 	// buffer = "command arg1 arg2"
