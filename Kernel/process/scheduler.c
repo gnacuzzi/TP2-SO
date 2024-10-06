@@ -72,7 +72,7 @@ void *schedule(void *prevRSP) {
         if(process == NULL){
             return prevRSP;
         }else{
-            return process->pid;
+            return process->stackPos;
         }
     }
 
