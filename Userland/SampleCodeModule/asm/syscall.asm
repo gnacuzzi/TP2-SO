@@ -6,19 +6,21 @@ GLOBAL get_minutes
 GLOBAL get_hours
 GLOBAL setlettersize
 GLOBAL getRegs
-GLOBAL get_control
-
 GLOBAL make_sound
-
 GLOBAL draw_rectangle
-
 GLOBAL get_ticks
-
 GLOBAL wait_delta
-
-GLOBAL testmm
-
-GLOBAL create_process
+GLOBAL syscreateProcess
+GLOBAL sysmalloc
+GLOBAL sysfree
+GLOBAL sysgetMemInfo
+GLOBAL sysgetpid
+GLOBAL syskillProcess
+GLOBAL syschangePriority
+GLOBAL sysblockProcess
+GLOBAL sysunblockProcess
+GLOBAL sysyield
+GLOBAL syswaitProcess
 
 read_char:
     mov rax, 0
@@ -81,12 +83,58 @@ wait_delta:
     int 80h
     ret
 
-testmm:
+sysmalloc:
     mov rax, 12
     int 80h
     ret
 
-create_process:
+sysfree:
     mov rax, 13
+    int 80h
+    ret
+
+sysgetMemInfo:
+    mov rax, 14
+    int 80h
+    ret
+
+syscreateProcess:
+    mov rax, 15
+    int 80h
+    ret
+
+sysgetpid:
+    mov rax, 16
+    int 80h
+    ret
+
+
+syskillProcess:
+    mov rax, 18
+    int 80h
+    ret
+
+syschangePriority:
+    mov rax, 19
+    int 80h
+    ret
+
+sysblockProcess:
+    mov rax, 20
+    int 80h
+    ret
+
+sysunblockProcess:
+    mov rax, 21
+    int 80h
+    ret
+
+sysyield:
+    mov rax, 22
+    int 80h
+    ret
+
+syswaitProcess:
+    mov rax, 23
     int 80h
     ret

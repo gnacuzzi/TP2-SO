@@ -4,6 +4,11 @@
 #include <stdint.h>
 #include "color.h"
 typedef int (*Function)(int argc, char **argv);
+typedef struct mem_info {
+	uint64_t total;
+	uint64_t free;
+	uint64_t used;
+} mem_info;
 
 void write(int fd, char c);
 
@@ -27,7 +32,27 @@ uint64_t get_ticks();
 
 void wait_delta(uint64_t time);
 
-void testmm();
+void *sysmalloc(uint64_t size);
 
-int create_process(Function code, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]);
+void sysfree(void * p);
+
+int64_t sysgetMemInfo(mem_info *memInfo);
+
+int syscreateProcess(Function code, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]);
+
+uint16_t sysgetpid();
+
+void syskillProcess(uint16_t pid);
+
+int syschangePriority(uint16_t pid, uint8_t priority);
+
+void sysblockProcess(uint16_t pid);
+
+void sysunblockProcess(uint16_t pid);
+
+void sysyield();
+
+int syswaitProcess(uint16_t pid);
+
+
 #endif

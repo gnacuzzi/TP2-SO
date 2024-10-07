@@ -97,9 +97,12 @@ static void testMM(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantP
 		printf("Memory doesn't need parameters\n");
 		return;
 	}
+	/*
 	int aux;
-	testmm(&aux);
+	//testmm(&aux); ESTO HAY QUE CAMBIARLO testmm no es una syscall es un proceso
+	//HAY QUE HACERLO PROCESO NO PUEDE SER BUILTIN
 	printf("Memory manager test result: %d\n", aux);
+	*/
 }
 
 static void createProcessInShell(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
@@ -107,10 +110,11 @@ static void createProcessInShell(char parameters[MAX_PARAMETERS][PARAMETERS_LENG
         printf("Usage: CREATE <process_name> <process_priority>\n");
         return;
     }
+	/*
 	//pusheo cualquier cosa porque me tengo que ir rajando
 	int16_t fileDescriptors[] = {0, 1, 2};
-	create_process(eliminator, parameters, parameters[0], parameters[1], fileDescriptors);
-    
+	syscreateProcess(eliminator, parameters, parameters[0], parameters[1], fileDescriptors);
+    */
 }
 
 static char *regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "R8",  "R9",
