@@ -18,6 +18,8 @@ GLOBAL wait_delta
 
 GLOBAL testmm
 
+GLOBAL create_process
+
 read_char:
     mov rax, 0
     int 80h
@@ -81,5 +83,10 @@ wait_delta:
 
 testmm:
     mov rax, 12
+    int 80h
+    ret
+
+create_process:
+    mov rax, 13
     int 80h
     ret
