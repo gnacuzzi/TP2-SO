@@ -107,17 +107,10 @@ static void createProcessInShell(char parameters[MAX_PARAMETERS][PARAMETERS_LENG
         printf("Usage: CREATE <process_name> <process_priority>\n");
         return;
     }
-    /*
-    char *process_name = parameters[0];
-	int priority = parameters[1];
-    int pid = createProcess();
+	//pusheo cualquier cosa porque me tengo que ir rajando
+	int16_t fileDescriptors[] = {0, 1, 2};
+	create_process(eliminator, parameters, parameters[0], parameters[1], fileDescriptors);
     
-    if (pid >= 0) {
-        printf("Process '%s' created successfully. PID: %d\n", process_name, pid);
-    } else {
-        printf("Failed to create process '%s'. Error code: %d\n", process_name, pid);
-    }	
-	*/
 }
 
 static char *regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "R8",  "R9",

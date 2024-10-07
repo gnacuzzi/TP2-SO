@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "color.h"
+typedef int (*Function)(int argc, char **argv);
 
 void write(int fd, char c);
 
@@ -28,4 +29,5 @@ void wait_delta(uint64_t time);
 
 void testmm();
 
+int create_process(Function code, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]);
 #endif
