@@ -16,8 +16,8 @@ typedef struct schedulerCDT{
     doubleLinkedListADT readyProcess;
     doubleLinkedListADT blockedProcess;
     doubleLinkedListADT zombieProcess; //todavia no tengo muy en claro si esta hace falta
-    uint16_t currentPid;
-    uint16_t nextPid;
+    int16_t currentPid;
+    int16_t nextPid;
     PCB * currentProcess;
     uint16_t processQty;
     int quantums; //cantidad de quantums segun prioridad
