@@ -39,6 +39,8 @@ void createScheduler(){
     scheduler->nextPid = 0;
     scheduler->currentPid = -1;
     scheduler->currentProcess = NULL;
+    char *argsIdle[2] = {"idle", NULL};
+    createProcess((Function) &idle, argsIdle, "idle", 1, NULL);//no se tema fds
 }
 
 

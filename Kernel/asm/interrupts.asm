@@ -22,6 +22,7 @@ EXTERN exceptionDispatcher
 EXTERN keyboard_handler
 EXTERN syscallDispatcher
 EXTERN load_main
+EXTERN schedule
 
 
 GLOBAL exceptregs
@@ -156,7 +157,20 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	pushState
+
+	mov rdi, 0 
+	call irqDispatcher
+
+	mov rdi, rsp
+	call schedule
+	mov rsp, rax
+
+	mov al, 20h
+	out 20h, al
+
+	popState
+	iretq
 
 ;Keyboard
 _irq01Handler:

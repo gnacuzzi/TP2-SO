@@ -7,6 +7,8 @@
 #include <naiveConsole.h>
 #include <idtLoader.h>
 #include "include/memoryManager.h"
+#include <scheduler.h>
+#include <interrupts.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -49,14 +51,15 @@ void *initializeKernelBinary() {
 
 int main() {
 	load_idt();
+	
+	_cli();
+	createScheduler();
+	char *argv[2] = {"shell", NULL};
+	int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR};
+	createProcess((Function) sampleCodeModuleAddress, argv, "shell", 5, fileDescriptors);
+	_sti();
 
-	// char *argv[] = { "1000000" };
-	// test_mm(1, argv);
-
-	((EntryPoint) sampleCodeModuleAddress)();
-
-	while (1) {
-	}
+	while (1);
 
 	return 0;
 }

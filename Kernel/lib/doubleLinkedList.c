@@ -101,7 +101,7 @@ void *removeNode(doubleLinkedListADT list, void *data) {
 
 
 void *getFirstData(doubleLinkedListADT list) {
-    if (list == NULL) {
+    if (list == NULL || list->size == 0) {
         return NULL;
     }
 	return removeNode(list, list->head->data);
