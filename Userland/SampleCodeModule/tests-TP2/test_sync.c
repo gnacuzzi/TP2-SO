@@ -2,8 +2,9 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #include <stdio.h>
+#include "../include/syscall.h"
+#include "../include/test_util.h"
 #include "syscall.h"
-#include "test_util.h"
 
 #define SEM_ID "sem"
 #define TOTAL_PAIR_PROCESSES 2
@@ -12,7 +13,7 @@ int64_t global; // shared memory
 
 void slowInc(int64_t *p, int64_t inc) {
 	uint64_t aux = *p;
-	my_yield(); // This makes the race condition highly probable
+	sysyield(); // This makes the race condition highly probable
 	aux += inc;
 	*p = aux;
 }
@@ -66,13 +67,13 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
 
 	uint64_t i;
 	for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-		pids[i] = my_create_process("my_process_inc", 3, argvDec);
-		pids[i + TOTAL_PAIR_PROCESSES] = my_create_process("my_process_inc", 3, argvInc);
+		pids[i] = syscreateProcess(&my_process_inc, argvDec, "my_process_dec", 3, 0);
+		pids[i + TOTAL_PAIR_PROCESSES] = syscreateProcess(&my_process_inc, argvInc, "my_process_inc", 3, 0);
 	}
 
 	for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-		my_wait(pids[i]);
-		my_wait(pids[i + TOTAL_PAIR_PROCESSES]);
+		syswaitProcess(pids[i]);
+		syswaitProcess(pids[i + TOTAL_PAIR_PROCESSES]);
 	}
 
 	printf("Final value: %d\n", global);
