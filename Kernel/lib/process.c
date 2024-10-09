@@ -8,7 +8,6 @@
 #define MIN_PRIORITY 1
 
 static char ** allocArgv(char ** argv);
-static void executeProcess(Function code, char ** argv);
 
 void initProcess(PCB *process, uint16_t pid,
                  Function code, char **args, int argc, char *name,
