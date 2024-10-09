@@ -10,9 +10,9 @@ typedef struct schedulerCDT *schedulerADT;
 
 void createScheduler();
 
-void * schedule(void * prevRSP);
+uint64_t schedule(uint64_t prevRSP);
 
-uint16_t createProcess(Function code, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]);
+uint16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]);
 void blockProcess(uint16_t pid);
 void readyProcess(uint16_t pid);
 PCB *findProcess(uint16_t pid);

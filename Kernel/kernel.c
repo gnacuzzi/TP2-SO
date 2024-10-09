@@ -56,7 +56,7 @@ int main() {
 	createScheduler();
 	char *argv[2] = {"shell", NULL};
 	int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR};
-	createProcess((Function) sampleCodeModuleAddress, argv, 1,"shell", 5, fileDescriptors);
+	createProcess((uint64_t) sampleCodeModuleAddress, argv, 1,"shell", 5, fileDescriptors);
 	_sti();
 
 	while (1);

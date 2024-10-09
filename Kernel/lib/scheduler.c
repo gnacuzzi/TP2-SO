@@ -17,7 +17,7 @@ typedef struct schedulerCDT{
     doubleLinkedListADT blockedProcess;
     doubleLinkedListADT zombieProcess; //todavia no tengo muy en claro si esta hace falta
     int16_t currentPid;
-    int16_t nextPid;
+    uint16_t nextPid;
     PCB * currentProcess;
     uint16_t processQty;
     int quantums; //cantidad de quantums segun prioridad
@@ -40,11 +40,11 @@ void createScheduler(){
     scheduler->currentPid = -1;
     scheduler->currentProcess = NULL;
     char *argsIdle[2] = {"idle", NULL};
-    createProcess((Function) &idle, argsIdle, 1,"idle", 1, NULL);//no se tema fds
+    createProcess((uint64_t)idle, argsIdle, 1,"idle", 1, NULL);//no se tema fds
 }
 
 
-void *schedule(void *prevRSP) {
+uint64_t schedule(uint64_t prevRSP) {
     if (!created) return prevRSP;  
     schedulerADT scheduler = getScheduler();
 
@@ -87,7 +87,7 @@ void *schedule(void *prevRSP) {
 }
 
 
-uint16_t createProcess(Function code, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
+uint16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
     schedulerADT scheduler = getScheduler();
     
     if(scheduler->processQty > MAX_PROCESS) return -1;
@@ -96,7 +96,7 @@ uint16_t createProcess(Function code, char **args, int argc,char *name, uint8_t 
     if (newProcess == NULL) {
         return -1;
     }
-    initProcess(newProcess, scheduler->nextPid, code, args, argc,name, priority, fileDescriptors);
+    initProcess(newProcess, scheduler->nextPid, rip, args, argc,name, priority, fileDescriptors);
     
     addNode(scheduler->processList, newProcess);  
     if(scheduler->nextPid != IDLE_PID){//no quiero que el idle este en la lista de ready

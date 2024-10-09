@@ -2,11 +2,6 @@ global setupStackFrame
 
 section .text
 
-entryWrapper:
-    call rdx
-    mov rax, 24
-    int 80h
-
 setupStackFrame:
     push rbp
     mov rbp, rsp
@@ -17,9 +12,8 @@ setupStackFrame:
     push rdi
     push 0x202
     push 0x8
-    push entryWrapper
+    push rsi
 
-   ;obs: rdi rsi , rdx and rcx have been swapped
     push r15
 	push r14
 	push r13
@@ -29,13 +23,12 @@ setupStackFrame:
 	push r9
 	push r8
 
-    ;for processes arguments
-	push rcx ; argv -> rsi
-	push rdx ; argc -> rdi
+	push rcx 
+	push rdx 
 
 	push rbp
-	push rsi ; rip (rdx)
-	push rdi ; stackbase (not necessary) (rcx)
+	push rsi 
+	push rdi 
 	push rbx
 	push rax
 

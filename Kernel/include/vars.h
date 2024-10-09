@@ -5,7 +5,6 @@ typedef enum { BLOCKED = 0,
 			   READY,
 			   RUNNING } Status;
 
-typedef int (*Function)(int argc, char **argv);
 
 #define STDIN 0
 #define STDOUT 1

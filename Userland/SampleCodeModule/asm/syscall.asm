@@ -22,6 +22,8 @@ GLOBAL sysunblockProcess
 GLOBAL sysyield
 GLOBAL syswaitProcess
 
+GLOBAL sysexit
+
 read_char:
     mov rax, 0
     int 80h
@@ -136,5 +138,10 @@ sysyield:
 
 syswaitProcess:
     mov rax, 23
+    int 80h
+    ret
+
+sysexit:
+    mov rax, 24
     int 80h
     ret

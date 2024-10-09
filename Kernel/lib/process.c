@@ -9,18 +9,18 @@
 
 static char ** allocArgv(char ** argv, int argc);
 
-void initProcess(PCB *process, int16_t pid,
-                 Function code, char **args, int argc, char *name,
+void initProcess(PCB *process, uint16_t pid,
+                 uint64_t rip, char **args, int argc, char *name,
                  uint8_t priority, int16_t fileDescriptors[]) {
     process->pid = pid;
-    process->stackBase = malloc(STACK_SIZE);
+    process->stackBase = (uint64_t) malloc(STACK_SIZE);
     process->argv = allocArgv(args, argc);
     process->argc = argc;
     process->name = malloc(strlen(name) + 1);
     strcpy(process->name, name);
     process->priority = priority;
-    process->rip = (void*)code;
-    process->stackPos = setupStackFrame(process->stackBase, (uint64_t)code, argc, process->argv);
+    process->rip = rip;
+    process->stackPos = setupStackFrame(process->stackBase, process->rip, argc, process->argv);
     process->status = READY;
 
     // Inicializar descriptores de archivo básicos
@@ -32,7 +32,7 @@ void initProcess(PCB *process, int16_t pid,
 void freeProcess(PCB * pcb){
     free(pcb->argv);
     free(pcb->name);
-    free(pcb->stackBase);
+    free((void *)pcb->stackBase);
     free(pcb);
 }
 

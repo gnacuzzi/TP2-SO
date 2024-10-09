@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "color.h"
-typedef int (*Function)(int argc, char **argv);
+
 typedef struct mem_info {
 	uint64_t total;
 	uint64_t free;
@@ -38,7 +38,7 @@ void sysfree(void * p);
 
 int64_t sysgetMemInfo(mem_info *memInfo);
 
-int syscreateProcess(Function code, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]);
+int syscreateProcess(uint64_t rip, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]);
 
 uint16_t sysgetpid();
 
@@ -53,6 +53,8 @@ void sysunblockProcess(uint16_t pid);
 void sysyield();
 
 int syswaitProcess(uint16_t pid);
+
+void sysexit();
 
 
 #endif
