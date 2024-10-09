@@ -222,7 +222,7 @@ int main() {
 				builtInCommands[id].exec(params, cantParams);
 			} else if (id >= builtinsDim && id < builtinsDim + processDim) {
 				int processIndex = id - builtinsDim;
-				int fileDescriptors[] = {0, 1, 2};
+				int16_t fileDescriptors[] = {0, 1, 2};
 				uint64_t rip = (uint64_t)processCommands[processIndex].exec;
 				int pid = syscreateProcess(rip, (char **)params, processCommands[processIndex].name, 1, fileDescriptors);
 				syswaitProcess(pid);
