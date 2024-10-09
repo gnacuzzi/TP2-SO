@@ -1,23 +1,29 @@
+global setupStackFrame
+
 section .text
-global setupStackFrame
+
+entryWrapper:
+    call rdi
+    
 
 setupStackFrame:
-global setupStackFrame
+    ; RDI: Dirección de la función (code)
+    ; RSI: Base de la pila (stackBase)
+    ; RDX: Argumentos (args)
+    ; RCX: Número de argumentos (argc)
 
-setupStackFrame:
     mov r8, rsp     ; Preservar rsp actual
     mov r9, rbp     ; Preservar rbp actual
     mov rsp, rdx    ; Cargar sp del nuevo proceso
     mov rbp, rdx    ; Establecer rbp del nuevo proceso
     
+    and rsp, -16    ; Alinear la pila a 16 bytes
+    
     push 0x0        ; SS
     push rdx        ; RSP
     push 0x202      ; RFLAGS (IF bit set)
     push 0x8        ; CS
-    push rdi        ; RIP (dirección de executeProcess)
-    
-    mov rdi, rsi    ; Primer argumento de executeProcess (código de la función principal)
-    mov rsi, rcx    ; Segundo argumento (args)
+    push entryWrapper ; RIP (dirección de entryWrapper)
     
     ; Guardar el estado de los registros
     push r15
@@ -28,11 +34,13 @@ setupStackFrame:
     push r10
     push r9
     push r8
-    push rdi
-    push rsi
+    
+    push rcx        ; argv (tercer argumento original)
+    push rsi        ; argc (segundo argumento original)
+    
     push rbp
-    push rdx
-    push rcx
+    push rdi        ; RIP (primer argumento original - dirección de la función)
+    push rdx        ; Stack base (no necesario, pero mantenido por consistencia)
     push rbx
     push rax
     

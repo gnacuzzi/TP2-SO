@@ -11,7 +11,9 @@ typedef struct PCB{
     uint16_t pid;
     void *stackBase;
     void *stackPos;
+    void *rip;
     char **argv;
+    int argc;
     char *name;
     uint8_t priority;
     Status status;
@@ -20,8 +22,8 @@ typedef struct PCB{
 } PCB;
 
 
-void initProcess(PCB *process, uint16_t pid, Function code, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]);
-void * setupStackFrame(void *executeProcess, Function code, void *stackEnd, void *args);
+void initProcess(PCB *process, uint16_t pid, Function code, char **args, int argc, char *name, uint8_t priority, int16_t fileDescriptors[]);
+void * setupStackFrame(Function code, void * stackBase, char * args[], int argc);
 int changePriority(uint16_t pid, uint8_t priority);
 void freeProcess(PCB * pcb);
 int waitProcess(uint16_t pid);

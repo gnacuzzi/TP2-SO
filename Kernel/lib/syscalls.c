@@ -43,7 +43,8 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
 								 (syscall) malloc,			  (syscall) free, 			  (syscall) syscallMemInfo,
 								 (syscall) syscallCreateProcess, (syscall) getPid,		  /*(syscall) processDump,*/
 								 (syscall) killProcess, 	  (syscall) changePriority,	  (syscall) blockProcess,
-								 (syscall) readyProcess,	  (syscall) yield,			  (syscall) waitProcess };
+								 (syscall) readyProcess,	  (syscall) yield,			  (syscall) waitProcess,
+								 (syscall) syscallExit };
 	return syscalls[nr](arg0, arg1, arg2, arg3, arg4, arg5);
 }
 //0
@@ -132,3 +133,9 @@ static int16_t syscallCreateProcess(Function code, char **args, char *name, uint
 //21 unblockProcess
 //22 yield
 //23 waitProcess
+
+//24
+static void syscallExit(){
+	killCurrentProcess();
+	yield();
+}

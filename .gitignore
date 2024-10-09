@@ -37,3 +37,6 @@ compile_flags.txt
 .LSOverride
 
 .cache
+
+#gdb
+.gdbinit

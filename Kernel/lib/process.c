@@ -11,16 +11,16 @@ static char ** allocArgv(char ** argv);
 static void executeProcess(Function code, char ** argv);
 
 void initProcess(PCB *process, uint16_t pid,
-                 Function code, char **args, char *name,
+                 Function code, char **args, int argc, char *name,
                  uint8_t priority, int16_t fileDescriptors[]) {
     process->pid = pid;
     process->stackBase = malloc(STACK_SIZE);
     process->argv = allocArgv(args);
+    process->argc = argc;
     process->name = malloc(strlen(name) + 1);
     strcpy(process->name, name);
     process->priority = priority;
-    void *stackEnd = (void *)((uint64_t)process->stackBase + STACK_SIZE);
-    process->stackPos = setupStackFrame(&executeProcess, code, stackEnd, (void *)process->argv);
+    process->rip = setupStackFrame(code, process->stackBase, process->argv, argc);
     process->status = READY;
 
     // Inicializar descriptores de archivo básicos
@@ -36,26 +36,21 @@ void freeProcess(PCB * pcb){
     free(pcb);
 }
 
-static char ** allocArgv(char ** argv){
-    int argc = arrLen(argv);
+static char ** allocArgv(char ** argv, int argc){
+    int cant = argc;
     int totalLen = 0;
-    for(int i = 0; i < argc; i++){
+    for(int i = 0; i < cant; i++){
         totalLen += strlen(argv[i]) + 1;
     }
-    char ** newArgv = (char **) malloc(totalLen + sizeof(char **) * (argc + 1));
-    char * current = (char *) newArgv + ( sizeof(char **) * (argc + 1) );
-    for(int i = 0; i < argc; i++){
+    char ** newArgv = (char **) malloc(totalLen + sizeof(char **) * (cant + 1));
+    char * current = (char *) newArgv + ( sizeof(char **) * (cant + 1) );
+    for(int i = 0; i < cant; i++){
         newArgv[i] = current;
         strcpy(current, argv[i]);
         current += strlen(argv[i]) + 1;
     }
-    newArgv[argc] = NULL;
+    newArgv[cant] = NULL;
     return newArgv;
-}
-
-static void executeProcess(Function code, char ** argv){
-    code(arrLen(argv), argv);
-    killCurrentProcess();
 }
 
 int changePriority(uint16_t pid, uint8_t priority) {
