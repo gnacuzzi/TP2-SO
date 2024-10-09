@@ -11,10 +11,8 @@
 #define BUFFER_LENGTH 256
 #define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
 #define PARAMETERS_LENGTH 256
-#define BUILTIN_COMMANDS_COUNT (sizeof(builtInCommands) / sizeof(command))
-#define PROCESS_COMMANDS_COUNT (sizeof(processCommands) / sizeof(command))
 
-typedef void (*functionPointer)(int argc, char *argv[]);
+typedef void (*functionPointer)(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams);
 
 typedef struct command {
     char * name;
@@ -148,6 +146,9 @@ static const command processCommands[] = {
 	{"TESTPROCESSES", (functionPointer)test_processes}
 };
 
+static int processDim = sizeof(processCommands) / sizeof(processCommands[0]);
+static int builtinsDim = sizeof(builtInCommands) / sizeof(builtInCommands[0]);
+
 int scanCommand(char *command, char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], char *buffer) {
 	// buffer = "command arg1 arg2"
 	int i, j, k;
@@ -192,17 +193,17 @@ int scanCommand(char *command, char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH
 
 int commandId(char *command) {
 	char *aux = command;
-	for (int i = 0; i < BUILTIN_COMMANDS_COUNT; i++) {
+	for (int i = 0; i < builtinsDim; i++) {
         if (strcmp(aux, builtInCommands[i].name) == 0) {
             return i;
         }
     }
-	for (int i = 0; i < PROCESS_COMMANDS_COUNT; i++) {
+    for (int i = 0; i < processDim; i++) {
         if (strcmp(aux, processCommands[i].name) == 0) {
-            return -(i + 1); // Return negative index for process commands
+            return builtinsDim + i; 
         }
     }
-	return -BUILTIN_COMMANDS_COUNT;
+    return -1;
 }
 
 int main() {
@@ -216,15 +217,16 @@ int main() {
 			char command[BUFFER_LENGTH] = {0};
 			char params[MAX_PARAMETERS][PARAMETERS_LENGTH] = {{0}};
 			int cantParams = scanCommand(command, params, buffer);
-			int id;
-			if ((id = commandId(command)) >= 0) {
+			int id = commandId(command);
+			if (id >= 0 && id < builtinsDim) {
 				builtInCommands[id].exec(params, cantParams);
-			}else if(id > -BUILTIN_COMMANDS_COUNT){
+			} else if (id >= builtinsDim && id < builtinsDim + processDim) {
+				int processIndex = id - builtinsDim;
 				int fileDescriptors[] = {0, 1, 2};
-				uint64_t rip = (uint64_t)processCommands[-id-1].exec;
-				int pid = syscreateProcess(rip, params, processCommands[-id-1].name , 1, fileDescriptors);
-                syswaitProcess(pid);
-			}else {
+				uint64_t rip = (uint64_t)processCommands[processIndex].exec;
+				int pid = syscreateProcess(rip, (char **)params, processCommands[processIndex].name, 1, fileDescriptors);
+				syswaitProcess(pid);
+			} else {
 				printf(command);
 				printf(": command not found\n");
 			}
