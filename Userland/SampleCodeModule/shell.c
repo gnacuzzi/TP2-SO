@@ -6,10 +6,20 @@
 #include "include/userasm.h"
 #include "include/syscall.h"
 #include "include/eliminator.h"
+#include "include/processes.h"
 
 #define BUFFER_LENGTH 256
 #define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
 #define PARAMETERS_LENGTH 256
+#define BUILTIN_COMMANDS_COUNT (sizeof(builtInCommands) / sizeof(command))
+#define PROCESS_COMMANDS_COUNT (sizeof(processCommands) / sizeof(command))
+
+typedef void (*functionPointer)(int argc, char *argv[]);
+
+typedef struct command {
+    char * name;
+    functionPointer exec;
+} command;
 
 static void dividebyzero(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
 	if (cantParams != 0) {
@@ -80,6 +90,7 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 	}
 
 	const char *manual =
+		"-------------BUILT-INS-------------\n"
 		"DIVIDEBYZERO               Command to verify the exception routine \"Divide by zero\"\n"
 		"ELIMINATOR                 Challenge yourself or you and a friend to an elimination game\n"
 		"HELP                       Display a menu with all the available commands in StarShell\n"
@@ -88,6 +99,7 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 		"TIME                       Show current time\n"
 		"CLEAR                      Clears the screen\n"
 		"REGISTERS                  Prints each register with it's values at the moment of the snapshot\n"
+		"-------------PROCESSES-------------\n"
 		"TESTMM						Test the memory manager\n";
 	printf(manual);
 }
@@ -97,24 +109,14 @@ static void testMM(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantP
 		printf("Memory doesn't need parameters\n");
 		return;
 	}
-	/*
-	int aux;
-	//testmm(&aux); ESTO HAY QUE CAMBIARLO testmm no es una syscall es un proceso
-	//HAY QUE HACERLO PROCESO NO PUEDE SER BUILTIN
-	printf("Memory manager test result: %d\n", aux);
-	*/
-}
-
-static void createProcessInShell(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 2) {
-        printf("Usage: CREATE <process_name> <process_priority>\n");
-        return;
-    }
-	/*
-	//pusheo cualquier cosa porque me tengo que ir rajando
-	int16_t fileDescriptors[] = {0, 1, 2};
-	syscreateProcess(eliminator, parameters, parameters[0], parameters[1], fileDescriptors);
-    */
+	uint64_t rip = (uint64_t)test_mm;
+	int fileDescriptors[] = {0, 1, 2};
+	int pid = syscreateProcess(rip, parameters, "TestMM", 0, fileDescriptors);
+	sysunblockProcess(pid);
+	syswaitProcess(pid);
+	if(pid < 0){
+		printf("Error creating process\n");
+	}
 }
 
 static char *regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "R8",  "R9",
@@ -139,10 +141,23 @@ static void registers(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int ca
 	}
 }
 
-static const char *allCommands[] = {"CLEAR", "CREATE"	,  "DIVIDEBYZERO", "ELIMINATOR", "HELP", "INVALIDOPERATION",
-									"LETTERSIZE", "TESTMM",  "REGISTERS",	"TIME"};
-static void (*commandsFunction[])(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) = {
-	clear, createProcessInShell, dividebyzero, eliminator, help, invalidoperation, lettersize, testMM, registers, time}; // funciones a hacer
+static const command builtInCommands[] = {
+	{"CLEAR", (functionPointer)clear},
+    {"DIVIDEBYZERO", (functionPointer)dividebyzero},
+    {"ELIMINATOR", (functionPointer)eliminator},
+    {"HELP", (functionPointer)help},
+    {"INVALIDOPERATION", (functionPointer)invalidoperation},
+    {"LETTERSIZE", (functionPointer)lettersize},
+    {"REGISTERS", (functionPointer)registers},
+    {"TIME", (functionPointer)time}
+
+};
+
+static const command processCommands[] = {
+	{"TESTMM", (functionPointer)testMM},
+	{"TESTPRIO", (functionPointer)test_prio},
+	{"TESTPROCESSES", (functionPointer)test_processes}
+};
 
 int scanCommand(char *command, char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], char *buffer) {
 	// buffer = "command arg1 arg2"
@@ -188,16 +203,17 @@ int scanCommand(char *command, char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH
 
 int commandId(char *command) {
 	char *aux = command;
-	for (int i = 0; allCommands[i] != 0; i++) {
-		int cmp = strcmp(aux, allCommands[i]);
-		if (cmp < 0) { // ordenado alfabeticamente
-			return -1;
-		}
-		else if (cmp == 0) {
-			return i;
-		}
-	}
-	return -1;
+	for (int i = 0; i < BUILTIN_COMMANDS_COUNT; i++) {
+        if (strcmp(aux, builtInCommands[i].name) == 0) {
+            return i;
+        }
+    }
+	for (int i = 0; i < PROCESS_COMMANDS_COUNT; i++) {
+        if (strcmp(aux, processCommands[i].name) == 0) {
+            return -(i + 1); // Return negative index for process commands
+        }
+    }
+	return -BUILTIN_COMMANDS_COUNT;
 }
 
 int main() {
@@ -213,9 +229,14 @@ int main() {
 			int cantParams = scanCommand(command, params, buffer);
 			int id;
 			if ((id = commandId(command)) >= 0) {
-				commandsFunction[id](params, cantParams);
-			}
-			else {
+				builtInCommands[id].exec(params, cantParams);
+			}else if(id > -BUILTIN_COMMANDS_COUNT){
+				int fileDescriptors[] = {0, 1, 2};
+				uint64_t rip = (uint64_t)processCommands[-id-1].exec;
+				int pid = syscreateProcess(rip, params, processCommands[-id-1].name , 1, fileDescriptors);
+            	sysunblock(pid);
+                syswaitProcess(pid);
+			}else {
 				printf(command);
 				printf(": command not found\n");
 			}
