@@ -108,56 +108,79 @@ uint16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t p
     return newProcess->pid;  
 }
 
-void blockProcess(uint16_t pid) {
+int64_t blockProcess(uint16_t pid) {
     schedulerADT scheduler = getScheduler();
-    PCB *process = findProcess(pid);  
-    if (process != NULL && process->status == READY) {
-        removeNode(scheduler->readyProcess, process);  
-        addNode(scheduler->blockedProcess, process);  
+    PCB *process = findProcess(pid);
+    if(process == NULL){
+        return -1;
+    }  
+    if (process->status == READY) {
+        if(removeNode(scheduler->readyProcess, process) == NULL){
+            return -1;
+        }
+        if(addNode(scheduler->blockedProcess, process) == NULL){
+            return -1;
+        }
         process->status = BLOCKED;
     }
+    return 0;
 }
 
-void readyProcess(uint16_t pid) {
+int64_t readyProcess(uint16_t pid) {
     schedulerADT scheduler = getScheduler();
-    PCB *process = findProcess(pid);  
-    if (process != NULL && process->status == BLOCKED) {
-        removeNode(scheduler->blockedProcess, process);  
-        addNode(scheduler->readyProcess, process);  
+    PCB *process = findProcess(pid);
+    if(process == NULL){
+        return -1;
+    }  
+    if (process->status == BLOCKED) {
+        if(removeNode(scheduler->blockedProcess, process) == NULL){
+            return -1;
+        }
+        if(addNode(scheduler->readyProcess, process) == NULL){
+            return -1;
+        }
         process->status = READY;
     }
+    return 0;
 }
 
-void killCurrentProcess(){
+int64_t killCurrentProcess(){
     schedulerADT scheduler = getScheduler();
-    killProcess(scheduler->currentProcess->pid);
+    return killProcess(scheduler->currentProcess->pid);
 }
 
-void killProcess(uint16_t pid) {
+int64_t killProcess(uint16_t pid) {
     schedulerADT scheduler = getScheduler();
     PCB *process = findProcess(pid);  
     if (process == NULL) {
-        return;  
+        return -1;  
     }
 
     if (process->status == READY) {
-        removeNode(scheduler->readyProcess, process);
-    }
-    else if (process->status == BLOCKED) {
-        removeNode(scheduler->blockedProcess, process);
+        if(removeNode(scheduler->readyProcess, process) == NULL){
+            return -1;
+        }
+    } else if (process->status == BLOCKED) {
+        if(removeNode(scheduler->blockedProcess, process) == NULL){
+            return -1;
+        }
     }
 
     toBegin(process->waitingList);
     PCB *aux;
     while(hasNext(process->waitingList)) {
         aux = nextInList(process->waitingList);
-        readyProcess(aux->pid);
+        if(readyProcess(aux->pid) == -1){
+            return -1;
+        }
     }
-
-    removeNode(scheduler->processList, process);
+    if(removeNode(scheduler->processList, process) == NULL){
+        return -1;
+    }
 
     scheduler->processQty--;
     freeProcess(process);
+    return 0;
 }
 
 

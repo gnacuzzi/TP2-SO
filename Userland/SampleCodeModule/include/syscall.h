@@ -42,13 +42,13 @@ int syscreateProcess(uint64_t rip, char **args, char *name, uint8_t priority, in
 
 uint16_t sysgetpid();
 
-void syskillProcess(uint16_t pid);
+int64_t syskillProcess(uint16_t pid);
 
 int syschangePriority(uint16_t pid, uint8_t priority);
 
-void sysblockProcess(uint16_t pid);
+int64_t sysblockProcess(uint16_t pid);
 
-void sysunblockProcess(uint16_t pid);
+int64_t sysunblockProcess(uint16_t pid);
 
 void sysyield();
 
