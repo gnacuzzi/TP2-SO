@@ -7,19 +7,20 @@
 #define MAX_PRIORITY 5
 #define MIN_PRIORITY 1
 
-static char ** allocArgv(char ** argv);
+static char ** allocArgv(char ** argv, int argc);
 
-void initProcess(PCB *process, uint16_t pid,
+void initProcess(PCB *process, int16_t pid,
                  Function code, char **args, int argc, char *name,
                  uint8_t priority, int16_t fileDescriptors[]) {
     process->pid = pid;
     process->stackBase = malloc(STACK_SIZE);
-    process->argv = allocArgv(args);
+    process->argv = allocArgv(args, argc);
     process->argc = argc;
     process->name = malloc(strlen(name) + 1);
     strcpy(process->name, name);
     process->priority = priority;
-    process->rip = setupStackFrame(code, process->stackBase, process->argv, argc);
+    process->rip = (void*)code;
+    process->stackPos = setupStackFrame(process->stackBase, (uint64_t)code, argc, process->argv);
     process->status = READY;
 
     // Inicializar descriptores de archivo básicos

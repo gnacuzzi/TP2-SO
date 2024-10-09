@@ -40,7 +40,7 @@ void createScheduler(){
     scheduler->currentPid = -1;
     scheduler->currentProcess = NULL;
     char *argsIdle[2] = {"idle", NULL};
-    createProcess((Function) &idle, argsIdle, "idle", 1, NULL);//no se tema fds
+    createProcess((Function) &idle, argsIdle, 1,"idle", 1, NULL);//no se tema fds
 }
 
 
@@ -87,7 +87,7 @@ void *schedule(void *prevRSP) {
 }
 
 
-uint16_t createProcess(Function code, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]) {
+uint16_t createProcess(Function code, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
     schedulerADT scheduler = getScheduler();
     
     if(scheduler->processQty > MAX_PROCESS) return -1;
@@ -96,7 +96,7 @@ uint16_t createProcess(Function code, char **args, char *name, uint8_t priority,
     if (newProcess == NULL) {
         return -1;
     }
-    initProcess(newProcess, scheduler->nextPid, code, args, name, priority, fileDescriptors);
+    initProcess(newProcess, scheduler->nextPid, code, args, argc,name, priority, fileDescriptors);
     
     addNode(scheduler->processList, newProcess);  
     if(scheduler->nextPid != IDLE_PID){//no quiero que el idle este en la lista de ready

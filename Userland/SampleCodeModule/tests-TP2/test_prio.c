@@ -17,6 +17,7 @@
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
 void test_prio() {
+	/*
 	int64_t pids[TOTAL_PROCESSES];
 	char *argv[] = {"endless_loop_print"};
 	
@@ -52,4 +53,5 @@ void test_prio() {
 
 	for (i = 0; i < TOTAL_PROCESSES; i++)
 		syskillProcess(pids[i]);
+	*/
 }

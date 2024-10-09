@@ -1,10 +1,10 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
-#include "include/libc.h"
-#include "include/eliminator.h"
-#include "include/syscall.h"
-#include "include/rand.h"
+#include <libc.h>
+#include <eliminator.h>
+#include <syscall.h>
+#include <rand.h>
 
 static int CANT_PLAYERS = 1;
 static int SPEED = 1;

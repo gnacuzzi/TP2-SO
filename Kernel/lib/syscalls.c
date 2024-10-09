@@ -5,7 +5,6 @@
 #include <keyboard.h>
 #include <lib.h>
 #include <time.h>
-#include "tests-TP2/test_mm.h"
 #include <memoryManager.h>
 #include <vars.h>
 #include <scheduler.h>
@@ -30,7 +29,8 @@ static void drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh
 static uint64_t syscallTicks();
 static void syscallWait(uint64_t time);
 static int64_t syscallMemInfo(mem_info * memInfo);
-static int16_t syscallCreateProcess(Function code, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]);
+static int16_t syscallCreateProcess(Function code, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]);
+static void syscallExit();
 
 typedef uint64_t (*syscall)(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
@@ -121,8 +121,8 @@ static int64_t syscallMemInfo(mem_info * memInfo){
     return 0;
 }
 //15
-static int16_t syscallCreateProcess(Function code, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]) {
-	return createProcess(code, args, name, priority, fileDescriptors);
+static int16_t syscallCreateProcess(Function code, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
+	return createProcess(code, args, argc, name, priority, fileDescriptors);
 }
 
 //16 getPid
