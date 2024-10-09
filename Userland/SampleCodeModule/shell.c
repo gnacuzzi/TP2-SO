@@ -107,20 +107,6 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 	printf(manual);
 }
 
-static void testMM(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 0) {
-		printf("Memory doesn't need parameters\n");
-		return;
-	}
-	uint64_t rip = (uint64_t)test_mm;
-	int fileDescriptors[] = {0, 1, 2};
-	int pid = syscreateProcess(rip, parameters, "TestMM", 0, fileDescriptors);
-	sysunblockProcess(pid);
-	syswaitProcess(pid);
-	if(pid < 0){
-		printf("Error creating process\n");
-	}
-}
 
 static char *regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "R8",  "R9",
 					   "R10", "R11", "R12", "R13", "R14", "R15", "RSP", "RIP", "RFLAGS"};
@@ -157,7 +143,7 @@ static const command builtInCommands[] = {
 };
 
 static const command processCommands[] = {
-	{"TESTMM", (functionPointer)testMM},
+	{"TESTMM", (functionPointer)test_mm},
 	{"TESTPRIO", (functionPointer)test_prio},
 	{"TESTPROCESSES", (functionPointer)test_processes}
 };
@@ -237,7 +223,6 @@ int main() {
 				int fileDescriptors[] = {0, 1, 2};
 				uint64_t rip = (uint64_t)processCommands[-id-1].exec;
 				int pid = syscreateProcess(rip, params, processCommands[-id-1].name , 1, fileDescriptors);
-            	sysunblock(pid);
                 syswaitProcess(pid);
 			}else {
 				printf(command);
