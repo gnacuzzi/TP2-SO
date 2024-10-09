@@ -100,7 +100,10 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 		"CLEAR                      Clears the screen\n"
 		"REGISTERS                  Prints each register with it's values at the moment of the snapshot\n"
 		"-------------PROCESSES-------------\n"
-		"TESTMM						Test the memory manager\n";
+		"TESTMM						Test the memory manager\n"
+		"TESTPRIO					\n"
+		"TESTPROCESSES				Test the processes\n"
+		;
 	printf(manual);
 }
 
