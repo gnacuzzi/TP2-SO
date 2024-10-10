@@ -6,7 +6,7 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <idtLoader.h>
-#include "include/memoryManager.h"
+#include <memoryManager.h>
 #include <scheduler.h>
 #include <interrupts.h>
 
@@ -24,6 +24,8 @@ static void *const sampleDataModuleAddress = (void *) 0x500000;
 static void *const heapAddress = (void *) 0x600000;
 
 extern void test_mm(int argc, char *argv[]);
+extern void test_processes(int argc, char *argv[]);
+extern void test_prio(int argc, char *argv[]);
 
 typedef int (*EntryPoint)();
 
@@ -57,6 +59,15 @@ int main() {
 	char *argv[2] = {"shell", NULL};
 	int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR};
 	createProcess((uint64_t) sampleCodeModuleAddress, argv, 1,"shell", 5, fileDescriptors);
+	//descomentar si se quiere testear
+	/*
+	char *argvp[] = {"test_processes", "58", NULL};
+	createProcess((uint64_t) test_processes, argvp, 2,"test_processes", 1, fileDescriptors);
+	char *argvpi[] = {"test_prio", NULL};
+	createProcess((uint64_t) test_prio, argvpi, 1,"test_prio", 1, fileDescriptors);
+	char *argvm[] = {"test_mm", "100000", NULL};
+	createProcess((uint64_t) test_mm, argvm, 2,"test_mm", 1, fileDescriptors);
+	*/
 	_sti();
 
 	while (1);
