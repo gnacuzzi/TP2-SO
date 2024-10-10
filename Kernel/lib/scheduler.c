@@ -17,7 +17,7 @@ typedef struct schedulerCDT{
     doubleLinkedListADT blockedProcess;
     doubleLinkedListADT zombieProcess; //todavia no tengo muy en claro si esta hace falta
     int16_t currentPid;
-    uint16_t nextPid;
+    int16_t nextPid;
     PCB * currentProcess;
     uint16_t processQty;
     int quantums; //cantidad de quantums segun prioridad
@@ -87,7 +87,7 @@ uint64_t schedule(uint64_t prevRSP) {
 }
 
 
-uint16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
+int16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
     schedulerADT scheduler = getScheduler();
     
     if(scheduler->processQty > MAX_PROCESS) return -1;
@@ -108,7 +108,7 @@ uint16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t p
     return newProcess->pid;  
 }
 
-int64_t blockProcess(uint16_t pid) {
+int64_t blockProcess(int16_t pid) {
     schedulerADT scheduler = getScheduler();
     PCB *process = findProcess(pid);
     if(process == NULL){
@@ -126,7 +126,7 @@ int64_t blockProcess(uint16_t pid) {
     return 0;
 }
 
-int64_t readyProcess(uint16_t pid) {
+int64_t readyProcess(int16_t pid) {
     schedulerADT scheduler = getScheduler();
     PCB *process = findProcess(pid);
     if(process == NULL){
@@ -149,7 +149,7 @@ int64_t killCurrentProcess(){
     return killProcess(scheduler->currentProcess->pid);
 }
 
-int64_t killProcess(uint16_t pid) {
+int64_t killProcess(int16_t pid) {
     schedulerADT scheduler = getScheduler();
     PCB *process = findProcess(pid);  
     if (process == NULL) {
@@ -184,7 +184,7 @@ int64_t killProcess(uint16_t pid) {
 }
 
 
-PCB *findProcess(uint16_t pid) {
+PCB *findProcess(int16_t pid) {
     schedulerADT scheduler = getScheduler();
     toBegin(scheduler->processList);  
     PCB *aux;
@@ -203,7 +203,7 @@ void yield() {
     callTimerTick();
 }
 
-uint16_t getPid(){
+int16_t getPid(){
     schedulerADT scheduler = getScheduler();
 	return scheduler->currentPid;
 }

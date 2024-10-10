@@ -8,7 +8,7 @@
 #define CANT_FILE_DESCRIPTORS 5
 
 typedef struct PCB{
-    uint16_t pid;
+    int16_t pid;
     uint64_t stackBase;
     uint64_t stackPos;
     uint64_t rip;
@@ -22,10 +22,10 @@ typedef struct PCB{
 } PCB;
 
 
-void initProcess(PCB *process, uint16_t pid, uint64_t rip, char **args, int argc, char *name, uint8_t priority, int16_t fileDescriptors[]);
+void initProcess(PCB *process, int16_t pid, uint64_t rip, char **args, int argc, char *name, uint8_t priority, int16_t fileDescriptors[]);
 uint64_t setupStackFrame(uint64_t stackBase, uint64_t code,int argc, char * args[]);
-int changePriority(uint16_t pid, uint8_t priority);
+int changePriority(int16_t pid, uint8_t priority);
 void freeProcess(PCB * pcb);
-int waitProcess(uint16_t pid);
+int waitProcess(int16_t pid);
 
 #endif

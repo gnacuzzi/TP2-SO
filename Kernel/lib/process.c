@@ -9,7 +9,7 @@
 
 static char ** allocArgv(char ** argv, int argc);
 
-void initProcess(PCB *process, uint16_t pid,
+void initProcess(PCB *process, int16_t pid,
                  uint64_t rip, char **args, int argc, char *name,
                  uint8_t priority, int16_t fileDescriptors[]) {
     process->pid = pid;
@@ -54,7 +54,7 @@ static char ** allocArgv(char ** argv, int argc){
     return newArgv;
 }
 
-int changePriority(uint16_t pid, uint8_t priority) {
+int changePriority(int16_t pid, uint8_t priority) {
     if(priority>MAX_PRIORITY || priority<MIN_PRIORITY) {
         return -1;
     }
@@ -67,9 +67,9 @@ int changePriority(uint16_t pid, uint8_t priority) {
     return priority;
 }
 
-int waitProcess(uint16_t pid) {
+int waitProcess(int16_t pid) {
     PCB * process = findProcess(pid);
-    uint16_t currentPid = getPid();
+    int16_t currentPid = getPid();
 
     if(process == NULL || currentPid == pid) {
         return -1;

@@ -40,19 +40,19 @@ int64_t sysgetMemInfo(mem_info *memInfo);
 
 int syscreateProcess(uint64_t rip, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]);
 
-uint16_t sysgetpid();
+int16_t sysgetpid();
 
-int64_t syskillProcess(uint16_t pid);
+int64_t syskillProcess(int16_t pid);
 
-int syschangePriority(uint16_t pid, uint8_t priority);
+int syschangePriority(int16_t pid, uint8_t priority);
 
-int64_t sysblockProcess(uint16_t pid);
+int64_t sysblockProcess(int16_t pid);
 
-int64_t sysunblockProcess(uint16_t pid);
+int64_t sysunblockProcess(int16_t pid);
 
 void sysyield();
 
-int syswaitProcess(uint16_t pid);
+int syswaitProcess(int16_t pid);
 
 void sysexit();
 
