@@ -2,11 +2,14 @@
 #define PROCESSES_H
 
 #include <stdint.h>
-#include "test_util.h"
+#include "tests.h"
 
-void test_mm(uint64_t argc, char *argv[]);
-void test_prio();
-int64_t test_processes(uint64_t argc, char *argv[]);
+#define BUFFER_LENGTH 256
+#define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
+#define PARAMETERS_LENGTH 256
 
+void testMemory(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams);
+void testPrio(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams);
+void testProcesses(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams);
 
 #endif

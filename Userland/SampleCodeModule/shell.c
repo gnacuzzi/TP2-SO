@@ -8,10 +8,6 @@
 #include "include/eliminator.h"
 #include "include/processes.h"
 
-#define BUFFER_LENGTH 256
-#define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
-#define PARAMETERS_LENGTH 256
-
 typedef void (*functionPointer)(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams);
 
 typedef struct command {
@@ -141,9 +137,9 @@ static const command builtInCommands[] = {
 };
 
 static const command processCommands[] = {
-	{"TESTMM", (functionPointer)test_mm},
-	{"TESTPRIO", (functionPointer)test_prio},
-	{"TESTPROCESSES", (functionPointer)test_processes}
+	{"TESTMM", (functionPointer)testMemory},
+	{"TESTPRIO", (functionPointer)testPrio},
+	{"TESTPROCESSES", (functionPointer)testProcesses}
 };
 
 static int processDim = sizeof(processCommands) / sizeof(processCommands[0]);
