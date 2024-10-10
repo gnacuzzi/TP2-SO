@@ -13,7 +13,7 @@ void initProcess(PCB *process, uint16_t pid,
                  uint64_t rip, char **args, int argc, char *name,
                  uint8_t priority, int16_t fileDescriptors[]) {
     process->pid = pid;
-    process->stackBase = (uint64_t) malloc(STACK_SIZE);
+    process->stackBase = (uint64_t) malloc(STACK_SIZE) + STACK_SIZE;
     process->argv = allocArgv(args, argc);
     process->argc = argc;
     process->name = malloc(strlen(name) + 1);
@@ -37,19 +37,20 @@ void freeProcess(PCB * pcb){
 }
 
 static char ** allocArgv(char ** argv, int argc){
-    int cant = argc;
-    int totalLen = 0;
-    for(int i = 0; i < cant; i++){
-        totalLen += strlen(argv[i]) + 1;
+    char ** newArgv = malloc((argc) * sizeof(char *));
+    if(newArgv == NULL){
+        return NULL;
     }
-    char ** newArgv = (char **) malloc(totalLen + sizeof(char **) * (cant + 1));
-    char * current = (char *) newArgv + ( sizeof(char **) * (cant + 1) );
-    for(int i = 0; i < cant; i++){
-        newArgv[i] = current;
-        strcpy(current, argv[i]);
-        current += strlen(argv[i]) + 1;
+    for (int i = 0; i < argc; i++){
+        newArgv[i] = malloc(strlen(argv[i])+1);
+
+        if(newArgv[i] == NULL){
+            return NULL;
+        }
+
+        strcpy(newArgv[i], argv[i]);
     }
-    newArgv[cant] = NULL;
+    newArgv[argc] = NULL;
     return newArgv;
 }
 

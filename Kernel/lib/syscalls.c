@@ -30,7 +30,8 @@ static uint64_t syscallTicks();
 static void syscallWait(uint64_t time);
 static int64_t syscallMemInfo(mem_info * memInfo);
 static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]);
-static void syscallExit();
+static void processDump();
+void syscallExit();
 
 typedef uint64_t (*syscall)(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
@@ -41,7 +42,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
 								 (syscall) syscallLettersize, (syscall) syscallRegisters, (syscall) makeSound,
 								 (syscall) drawRectangle,	  (syscall) syscallTicks,	  (syscall) syscallWait,
 								 (syscall) malloc,			  (syscall) free, 			  (syscall) syscallMemInfo,
-								 (syscall) syscallCreateProcess, (syscall) getPid,		  /*(syscall) processDump,*/
+								 (syscall) syscallCreateProcess, (syscall) getPid,		  (syscall) processDump,
 								 (syscall) killProcess, 	  (syscall) changePriority,	  (syscall) blockProcess,
 								 (syscall) readyProcess,	  (syscall) yield,			  (syscall) waitProcess,
 								 (syscall) syscallExit };
@@ -126,7 +127,10 @@ static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc,char *na
 }
 
 //16 getPid
-//17 FALTA: ps-Listar todos los procesos: nombre, ID, prioridad, stack y base pointer, foreground y cualquier otra variable que consideren necesaria.
+//17 FALTA: ps-Listar todos los procesos: nombre, ID, prioridad, stack y base pointer, foreground y cualquier otra variable que consideren necesaria
+static void processDump(){
+	return;
+}
 //18 killProcess
 //19 changePriority
 //20 blockProcess
@@ -135,7 +139,7 @@ static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc,char *na
 //23 waitProcess
 
 //24
-static void syscallExit(){
+void syscallExit(){
 	killCurrentProcess();
 	yield();
 }

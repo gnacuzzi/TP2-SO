@@ -4,6 +4,8 @@
 #include "test_util.h"
 #include <scheduler.h>
 
+extern void syscallExit();
+
 enum State { RUN, BLOCK, KILL };
 
 typedef struct P_rq {
@@ -18,11 +20,11 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 	uint64_t max_processes;
 	char *argvAux[] = {"endless_loop", NULL};
 
-	if (argc != 1)
-		return -1;
+	if (argc != 2)
+		syscallExit();
 
-	if ((max_processes = satoi(argv[0])) <= 0)
-		return -1;
+	if ((max_processes = satoi(argv[1])) <= 0)
+		syscallExit();
 
 	p_rq p_rqs[max_processes];
 
@@ -33,7 +35,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 
 			if (p_rqs[rq].pid == -1) {
 				printf("test_processes: ERROR creating process\n");
-				return -1;
+				syscallExit();
 			}
 			else {
 				p_rqs[rq].state = RUN;
@@ -51,7 +53,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 						if (p_rqs[rq].state == RUN || p_rqs[rq].state == BLOCK) {
 							if (killProcess(p_rqs[rq].pid) == -1) {
 								printf("test_processes: ERROR killing process\n");
-								return -1;
+								syscallExit();
 							}
 							p_rqs[rq].state = KILL;
 							alive--;
@@ -62,7 +64,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 						if (p_rqs[rq].state == RUN) {
 							if (blockProcess(p_rqs[rq].pid) == -1) {
 								printf("test_processes: ERROR blocking process\n");
-								return -1;
+								syscallExit();
 							}
 							p_rqs[rq].state = BLOCK;
 						}
@@ -75,11 +77,12 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 				if (p_rqs[rq].state == BLOCK && GetUniform(100) % 2) {
 					if (readyProcess(p_rqs[rq].pid) == -1) {
 						printf("test_processes: ERROR unblocking process\n");
-						return -1;
+						syscallExit();
 					}
 					p_rqs[rq].state = RUN;
 				}
 		}
 	}
-	return 0;
+	//return 0;
+	syscallExit(); //no se bien si esto es correcto, creo que cuando lo agreguemos en la shell es mejor poner un wrapper
 }

@@ -6,6 +6,8 @@
 #include <string.h>
 #include <memoryManager.h>
 
+extern void syscallExit();
+
 #define MAX_BLOCKS 128
 
 typedef struct MM_rq {
@@ -19,11 +21,11 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
 	uint32_t total;
 	uint64_t max_memory;
 
-	if (argc != 1)
-		return -1;
+	if (argc != 2)
+		syscallExit();
 
-	if ((max_memory = satoi(argv[0])) <= 0)
-		return -1;
+	if ((max_memory = satoi(argv[1])) <= 0)
+		syscallExit();
 
 	while (1) {
 		rq = 0;
@@ -51,7 +53,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
 			if (mm_rqs[i].address)
 				if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
 					printf("test_mm ERROR\n");
-					return -1;
+					syscallExit();
 				}
 
 		// Free
@@ -59,4 +61,5 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
 			if (mm_rqs[i].address)
 				free(mm_rqs[i].address);
 	}
+	syscallExit(); //no se bien si esto es correcto, creo que cuando lo agreguemos en la shell es mejor poner un wrapper
 }
