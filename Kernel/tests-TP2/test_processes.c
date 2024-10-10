@@ -18,7 +18,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 	uint8_t alive = 0;
 	uint8_t action;
 	uint64_t max_processes;
-	char *argvAux[] = {"endless_loop", NULL};
+	char *argvAux[] = {"endless_loop"};
 
 	if (argc != 2)
 		syscallExit();
