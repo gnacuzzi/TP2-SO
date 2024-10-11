@@ -57,7 +57,7 @@ static void lettersize(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int c
 
 static void time(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
 	if (cantParams != 0) {
-		printf("time doesn't need parameters\n");
+		printf("Time doesn't need parameters\n");
 		return;
 	}
 	printf("CURRENT TIME: \n");
@@ -94,9 +94,9 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 		"CLEAR                      Clears the screen\n"
 		"REGISTERS                  Prints each register with it's values at the moment of the snapshot\n"
 		"-------------PROCESSES-------------\n"
-		"TESTMM						Test the memory manager\n"
-		"TESTPRIO					\n"
-		"TESTPROCESSES				Test the processes\n"
+		"TESTMM                     Test the memory manager\n"
+		"TESTPRIO							\n"
+		"TESTPROCESSES              Test the processes\n"
 		;
 	printf(manual);
 }
