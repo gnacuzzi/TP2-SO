@@ -60,15 +60,16 @@ int main() {
 	int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR};
 	createProcess((uint64_t) sampleCodeModuleAddress, argv, 1,"shell", 5, fileDescriptors);
 	//descomentar si se quiere testear
-	/*
-	char *argvp[] = {"test_processes", "58"};
+	
+	char *argvp[] = {"test_processes", "56"};
 	createProcess((uint64_t) test_processes, argvp, 2,"test_processes", 1, fileDescriptors);
+	/*
 	char *argvpi[] = {"test_prio"};
 	createProcess((uint64_t) test_prio, argvpi, 1,"test_prio", 1, fileDescriptors);
-	*/
+	
 	char *argvm[] = {"test_mm", "1064960"};
 	createProcess((uint64_t) test_mm, argvm, 2,"test_mm", 1, fileDescriptors);
-	
+	*/
 	_sti();
 
 	while (1);
