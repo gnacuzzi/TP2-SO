@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <process.h>
 
-#define SCHEDULER_ADRESS 0x705000
 
 typedef struct schedulerCDT *schedulerADT;
 

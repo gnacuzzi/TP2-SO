@@ -65,9 +65,10 @@ int main() {
 	createProcess((uint64_t) test_processes, argvp, 2,"test_processes", 1, fileDescriptors);
 	char *argvpi[] = {"test_prio"};
 	createProcess((uint64_t) test_prio, argvpi, 1,"test_prio", 1, fileDescriptors);
+	*/
 	char *argvm[] = {"test_mm", "1064960"};
 	createProcess((uint64_t) test_mm, argvm, 2,"test_mm", 1, fileDescriptors);
-	*/
+	
 	_sti();
 
 	while (1);

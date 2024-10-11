@@ -26,9 +26,13 @@ typedef struct schedulerCDT{
 static int created = 0;
 static schedulerADT getScheduler();
 static void idle();
+schedulerADT scheduler = NULL;
 
 void createScheduler(){
-    schedulerADT scheduler = (schedulerADT) SCHEDULER_ADRESS;
+    scheduler = (schedulerADT) malloc(sizeof(schedulerCDT));
+    if(scheduler == NULL){
+        return;
+    }
 
     scheduler->processList = createDoubleLinkedListADT();
     scheduler->readyProcess = createDoubleLinkedListADT();
@@ -209,7 +213,7 @@ int16_t getPid(){
 }
 
 schedulerADT getScheduler(){
-    return (schedulerADT) SCHEDULER_ADRESS;
+    return scheduler;
 }
 
 static void idle() {
