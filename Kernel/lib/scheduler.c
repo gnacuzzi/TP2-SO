@@ -100,7 +100,11 @@ int16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t pr
     if (newProcess == NULL) {
         return -1;
     }
-    initProcess(newProcess, scheduler->nextPid, rip, args, argc,name, priority, fileDescriptors);
+    if(initProcess(newProcess, scheduler->nextPid, rip, args, argc,name, priority, fileDescriptors) == -1){
+        free(newProcess);
+        return -1;
+    }
+    
     
     addNode(scheduler->processList, newProcess);  
     if(scheduler->nextPid != IDLE_PID){//no quiero que el idle este en la lista de ready

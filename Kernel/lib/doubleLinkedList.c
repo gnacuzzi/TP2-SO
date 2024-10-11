@@ -16,12 +16,13 @@ typedef struct doubleLinkedListCDT {
 
 doubleLinkedListADT createDoubleLinkedListADT() {
 	doubleLinkedListADT list = (doubleLinkedListADT) malloc(sizeof(doubleLinkedListCDT));
-	if (list) {
-		list->head = NULL;
+	if (list == NULL) {
+		return NULL;
+	}
+	list->head = NULL;
 		list->tail = NULL;
 		list->current = NULL;
 		list->size = 0;
-	}
 	return list;
 }
 
