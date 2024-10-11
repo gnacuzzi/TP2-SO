@@ -2,6 +2,7 @@
 #include <scheduler.h>
 #include <videoDriver.h>
 #include <memoryManager.h>
+#include <doubleLinkedList.h>
 
 #define STACK_SIZE 4096 // 4KB
 #define MAX_PRIORITY 5
@@ -22,6 +23,7 @@ void initProcess(PCB *process, int16_t pid,
     process->rip = rip;
     process->stackPos = setupStackFrame(process->stackBase, process->rip, argc, process->argv);
     process->status = READY;
+    process->waitingList = createDoubleLinkedListADT();
 
     // Inicializar descriptores de archivo básicos
     for (int i = 0; i < CANT_FILE_DESCRIPTORS; i++) {
