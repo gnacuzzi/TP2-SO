@@ -1,5 +1,5 @@
-target remote 192.168.0.158:1234
-#target remote 172.22.139.11:1234
+#target remote 192.168.0.158:1234
+target remote 172.22.139.11:1234
 
 add-symbol-file /root/Kernel/kernel.elf 0x100000
 add-symbol-file /root/Userland/0000-sampleCodeModule.elf 0x400000

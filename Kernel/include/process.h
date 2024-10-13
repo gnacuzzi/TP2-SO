@@ -6,6 +6,8 @@
 #include <doubleLinkedList.h>
 
 #define CANT_FILE_DESCRIPTORS 5
+#define STACK_SIZE 4096 // 4KB
+
 
 typedef struct PCB{
     int16_t pid;

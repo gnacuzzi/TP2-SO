@@ -5,6 +5,7 @@
 #include <process.h>
 #include <lib.h>
 #include <interrupts.h>
+#include <stdio.h>
 
 #define MAX_PROCESS 60
 #define KERNEL_PID -1
@@ -47,7 +48,6 @@ void createScheduler(){
     createProcess((uint64_t)idle, argsIdle, 1,"idle", 1, NULL);//no se tema fds
 }
 
-
 uint64_t schedule(uint64_t prevRSP) {
     if (!created) return prevRSP;  
     schedulerADT scheduler = getScheduler();
@@ -55,7 +55,8 @@ uint64_t schedule(uint64_t prevRSP) {
     scheduler->quantums--;
     if (!scheduler->processQty || scheduler->quantums > 0) return prevRSP;  
 
-    if(scheduler->currentPid == KERNEL_PID){
+    // Manejo del caso del kernel
+    if (scheduler->currentPid == KERNEL_PID) {
         scheduler->currentProcess = getFirstData(scheduler->readyProcess);
         if(scheduler->currentProcess == NULL){//no llego a crearse la shell
             return prevRSP;
@@ -66,30 +67,47 @@ uint64_t schedule(uint64_t prevRSP) {
         return scheduler->currentProcess->stackPos;
     }
 
+    // Guardar el contexto del proceso actual
     if (scheduler->currentProcess != NULL) {
         scheduler->currentProcess->stackPos = prevRSP;      
-        scheduler->currentProcess->status = READY;     
-        addNode(scheduler->readyProcess, scheduler->currentProcess); 
-    }
-
-    PCB *firstProcess = getFirstData(scheduler->readyProcess);
-    if (firstProcess == NULL) {
-        PCB *process = findProcess(IDLE_PID);
-        if(process == NULL){
-            return prevRSP;
-        }else{
-            return process->stackPos;
+        if (scheduler->currentProcess->status != BLOCKED) {
+            scheduler->currentProcess->status = READY;     
+            addNode(scheduler->readyProcess, scheduler->currentProcess); 
         }
     }
 
-    scheduler->currentProcess = firstProcess;  
+    // Seleccionar el próximo proceso
+    while (1) {
+        PCB *nextProcess = getFirstData(scheduler->readyProcess);
+        if (nextProcess == NULL) {
+            // Si no hay procesos listos, ejecutar el proceso idle
+            PCB *idleProcess = findProcess(IDLE_PID);
+            if (idleProcess == NULL) {
+                return prevRSP;
+            }
+            scheduler->currentProcess = idleProcess;
+            scheduler->currentPid = IDLE_PID;
+        } else {
+            scheduler->currentProcess = nextProcess;
+            scheduler->currentPid = nextProcess->pid;
+        }
+
+        // Verificar los límites del stack
+        if (scheduler->currentProcess->stackPos < scheduler->currentProcess->stackBase - STACK_SIZE || 
+            scheduler->currentProcess->stackPos > scheduler->currentProcess->stackBase) {
+            printf("Error: stackPos fuera de los límites del stack para el proceso %d\n", scheduler->currentProcess->pid);
+            killProcess(scheduler->currentProcess->pid);
+            continue;
+        }
+
+        break;
+    }
+
     scheduler->quantums = scheduler->currentProcess->priority;
-    scheduler->currentPid = firstProcess->pid;  
-    scheduler->currentProcess->status = RUNNING;  
+    scheduler->currentProcess->status = RUNNING;
 
     return scheduler->currentProcess->stackPos; 
 }
-
 
 int16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
     schedulerADT scheduler = getScheduler();
@@ -104,7 +122,7 @@ int16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t pr
         free(newProcess);
         return -1;
     }
-    
+
     
     addNode(scheduler->processList, newProcess);  
     if(scheduler->nextPid != IDLE_PID){//no quiero que el idle este en la lista de ready

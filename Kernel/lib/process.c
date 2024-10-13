@@ -4,7 +4,6 @@
 #include <memoryManager.h>
 #include <doubleLinkedList.h>
 
-#define STACK_SIZE 4096 // 4KB
 #define MAX_PRIORITY 5
 #define MIN_PRIORITY 1
 
@@ -49,6 +48,11 @@ int initProcess(PCB *process, int16_t pid,
     for (int i = 0; i < CANT_FILE_DESCRIPTORS; i++) {
         process->fileDescriptors[i] = fileDescriptors[i];
     }
+
+    if(process->pid == 22367){
+        printf("process created\n");
+    }
+
     return 0;
 }
 

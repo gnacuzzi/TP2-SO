@@ -61,5 +61,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
 			if (mm_rqs[i].address)
 				free(mm_rqs[i].address);
 	}
+	printf("test_mm OK\n");
 	syscallExit(); //no se bien si esto es correcto, creo que cuando lo agreguemos en la shell es mejor poner un wrapper
 }

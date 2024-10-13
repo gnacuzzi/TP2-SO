@@ -84,5 +84,6 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 		}
 	}
 	//return 0;
+	printf("test_processes OK\n");
 	syscallExit(); //no se bien si esto es correcto, creo que cuando lo agreguemos en la shell es mejor poner un wrapper
 }
