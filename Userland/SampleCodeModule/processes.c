@@ -7,7 +7,8 @@
 void testMemory(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams){
     
     if(cantParams != 2){
-        printf("TestMM needs two parameters\n");
+        printf("You must insert ONE parameter indicating the number of processes you desire to test\n");
+        return;
     }
 
     char *params[] = { parameters[1] };
@@ -18,12 +19,16 @@ void testMemory(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPara
 }
 
 void testPrio(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams){
+    if(cantParams != 1){
+        printf("TestPrio doesn't need parameters\n");
+        return;
+    }
     test_prio();
 }
 
 void testProcesses(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams){
     if (cantParams != 2) {
-        printf("TestProcesses needs two parameters\n");
+        printf("You must insert ONE parameter indicating the number of processes you desire to test\n");
         return;
     }
 
