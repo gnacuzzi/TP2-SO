@@ -8,6 +8,7 @@
 #include <memoryManager.h>
 #include <vars.h>
 #include <scheduler.h>
+#include <process.h>
 
 #define STDIN 0
 #define STDOUT 1
@@ -123,7 +124,7 @@ static int64_t syscallMemInfo(mem_info * memInfo){
 }
 //15
 static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
-	return createProcess(rip, args, argc, name, priority, fileDescriptors);
+	return initProcess(rip, args, argc, name, priority, fileDescriptors);
 }
 
 //16 getPid

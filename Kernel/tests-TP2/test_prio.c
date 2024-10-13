@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <scheduler.h>
 #include "test_util.h"
+#include <process.h>
 
 extern void syscallExit();
 
@@ -25,7 +26,7 @@ void test_prio() {
 	uint64_t i;
 
 	for (i = 0; i < TOTAL_PROCESSES; i++)
-		pids[i] = createProcess((uint64_t)endless_loop_print, argv,1, "endless_loop_print", LOWEST, 0);
+		pids[i] = initProcess((uint64_t)endless_loop_print, argv,1, "endless_loop_print", LOWEST, 0);
 
 	bussy_wait(WAIT);
 	printf("\nCHANGING PRIORITIES...\n");

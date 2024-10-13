@@ -7,7 +7,6 @@
 #include <interrupts.h>
 #include <stdio.h>
 
-#define MAX_PROCESS 60
 #define KERNEL_PID -1
 #define IDLE_PID 0
 
@@ -16,11 +15,8 @@ typedef struct schedulerCDT{
     doubleLinkedListADT processList;
     doubleLinkedListADT readyProcess;
     doubleLinkedListADT blockedProcess;
-    doubleLinkedListADT zombieProcess; //todavia no tengo muy en claro si esta hace falta
     int16_t currentPid;
-    int16_t nextPid;
     PCB * currentProcess;
-    uint16_t processQty;
     int quantums; //cantidad de quantums segun prioridad
 }schedulerCDT;
 
@@ -38,14 +34,12 @@ void createScheduler(){
     scheduler->processList = createDoubleLinkedListADT();
     scheduler->readyProcess = createDoubleLinkedListADT();
     scheduler->blockedProcess = createDoubleLinkedListADT();
-    scheduler->zombieProcess = createDoubleLinkedListADT();
-    scheduler->processQty = 0;
     created = 1;
-    scheduler->nextPid = 0;
     scheduler->currentPid = -1;
     scheduler->currentProcess = NULL;
-    char *argsIdle[2] = {"idle", NULL};
-    createProcess((uint64_t)idle, argsIdle, 1,"idle", 1, NULL);//no se tema fds
+    scheduler->quantums = 1;
+    char *argsIdle[2] = {"idle"};
+    initProcess((uint64_t)idle, argsIdle, 1,"idle", 1, NULL);//no se tema fds
 }
 
 uint64_t schedule(uint64_t prevRSP) {
@@ -53,7 +47,7 @@ uint64_t schedule(uint64_t prevRSP) {
     schedulerADT scheduler = getScheduler();
 
     scheduler->quantums--;
-    if (!scheduler->processQty || scheduler->quantums > 0) return prevRSP;  
+    if (scheduler->quantums > 0) return prevRSP;  
 
     // Manejo del caso del kernel
     if (scheduler->currentPid == KERNEL_PID) {
@@ -107,65 +101,45 @@ uint64_t schedule(uint64_t prevRSP) {
     scheduler->currentProcess->status = RUNNING;
 
     return scheduler->currentProcess->stackPos; 
+    
 }
 
-int16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
+int64_t addProcessList(PCB * process){
     schedulerADT scheduler = getScheduler();
-    
-    if(scheduler->processQty > MAX_PROCESS) return -1;
 
-    PCB *newProcess = malloc(sizeof(PCB));  
-    if (newProcess == NULL) {
-        return -1;
-    }
-    if(initProcess(newProcess, scheduler->nextPid, rip, args, argc,name, priority, fileDescriptors) == -1){
-        free(newProcess);
-        return -1;
-    }
-
-    
-    addNode(scheduler->processList, newProcess);  
-    if(scheduler->nextPid != IDLE_PID){//no quiero que el idle este en la lista de ready
-        addNode(scheduler->readyProcess, newProcess);
-    }
-      
-    scheduler->processQty++;
-    scheduler->nextPid++;
-    return newProcess->pid;  
-}
-
-int64_t blockProcess(int16_t pid) {
-    schedulerADT scheduler = getScheduler();
-    PCB *process = findProcess(pid);
     if(process == NULL){
         return -1;
-    }  
-    if (process->status == READY) {
-        if(removeNode(scheduler->readyProcess, process) == NULL){
-            return -1;
-        }
-        if(addNode(scheduler->blockedProcess, process) == NULL){
-            return -1;
-        }
-        process->status = BLOCKED;
+    }
+    if(addNode(scheduler->processList, process) == NULL){
+        return -1;
     }
     return 0;
 }
 
-int64_t readyProcess(int16_t pid) {
+int64_t addBlockProcess(PCB * process){
     schedulerADT scheduler = getScheduler();
-    PCB *process = findProcess(pid);
     if(process == NULL){
         return -1;
-    }  
-    if (process->status == BLOCKED) {
-        if(removeNode(scheduler->blockedProcess, process) == NULL){
-            return -1;
-        }
-        if(addNode(scheduler->readyProcess, process) == NULL){
-            return -1;
-        }
-        process->status = READY;
+    }
+    if(addNode(scheduler->blockedProcess, process) == NULL){
+        return -1;
+    }
+    if(removeNode(scheduler->readyProcess, process) == NULL){
+        return -1;
+    }
+    return 0;
+}
+
+int64_t addReadyProcess(PCB * process){
+    schedulerADT scheduler = getScheduler();
+    if(process == NULL){
+        return -1;
+    }
+    if(addNode(scheduler->readyProcess, process) == NULL){
+        return -1;
+    }
+    if(removeNode(scheduler->blockedProcess, process) == NULL){
+        return -1;
     }
     return 0;
 }
@@ -204,7 +178,11 @@ int64_t killProcess(int16_t pid) {
         return -1;
     }
 
-    scheduler->processQty--;
+
+    if(process->pid == scheduler->currentPid){
+        yield();
+    }
+
     freeProcess(process);
     return 0;
 }
