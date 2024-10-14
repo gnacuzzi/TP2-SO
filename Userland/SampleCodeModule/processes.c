@@ -6,21 +6,20 @@
 #include <stdio.h>
 
 void testMemory(int argc, char *argv[]){
-
-    if(argc != 1){
+    if(argc != 2){
         printf("You must insert ONE parameter indicating the memory size you desire to test\n");
         sysexit();
     }
 
-    char *params[] = { argv[0] };
+    char *params[] = { argv[1] };
     int out = test_mm(1, params);
 
     printf("Memory test %s\n", out == 0 ? "passed" : "failed");
     sysexit();
 }
 
-void testPrio(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams){
-    if(cantParams != 1){
+void testPrio(int argc, char *argv[]){
+    if(argc != 1){
         printf("TestPrio doesn't need parameters\n");
         sysexit();
     }
@@ -28,18 +27,19 @@ void testPrio(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams
     sysexit();
 }
 
-void testProcesses(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams){
-    if (cantParams != 2) {
+void testProcesses(int argc, char *argv[]){
+    printf("%d", argc);
+    if (argc != 2) {
         printf("You must insert ONE parameter indicating the number of processes you desire to test\n");
         sysexit();;
     }
 
-    if (satoi(parameters[1]) <= 0) {
+    if (satoi(argv[1]) <= 0) {
         printf("Number of processes must be greater than 0\n");
         sysexit();;
     }
 
-    char *params[] = {parameters[1]};
+    char *params[] = {argv[1]};
 
     int out = test_processes(1, params);
 

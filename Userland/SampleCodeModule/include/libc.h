@@ -32,4 +32,6 @@ int scanf(char *buffer);
 
 int atoi(char *str);
 
+void strcpy(char *string, char *target);
+
 #endif

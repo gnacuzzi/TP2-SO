@@ -8,6 +8,10 @@
 #include "include/eliminator.h"
 #include "include/processes.h"
 
+#define BUFFER_LENGTH 256
+#define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
+#define PARAMETERS_LENGTH 256
+
 typedef void (*functionPointer)(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams);
 
 typedef struct command {
@@ -217,12 +221,18 @@ int main() {
 			if (id >= 0 && id < builtinsDim) {
 				builtInCommands[id].exec(params, cantParams);
 			} else if (id >= builtinsDim && id < builtinsDim + processDim) {
-				int processIndex = id - builtinsDim;
-				int16_t fileDescriptors[] = {0, 1, 2};
+				int processIndex = id - builtinsDim;	
 				uint64_t rip = (uint64_t)processCommands[processIndex].exec;
-				int16_t pid = syscreateProcess(rip, (char **)params, cantParams ,processCommands[processIndex].name, 1, fileDescriptors);
+
+				char *newParams[MAX_PARAMETERS + 1];
+				strcpy(processCommands[processIndex].name , newParams[0]);
+            	for (int i = 0; i < cantParams; i++) {
+               		newParams[i + 1] = params[i];
+            	}
+				int16_t fileDescriptors[] = {0, 1, 2};	
+				int16_t pid = syscreateProcess(rip, (char **)newParams, cantParams + 1,processCommands[processIndex].name, 1, fileDescriptors);
 				if(pid == -1){
-					printf("error creating process\n");
+					printf("Error creating process\n");
 				}
 				syswaitProcess(pid);
 			} else {
