@@ -38,7 +38,7 @@ void sysfree(void * p);
 
 int64_t sysgetMemInfo(mem_info *memInfo);
 
-int syscreateProcess(uint64_t rip, char **args, char *name, uint8_t priority, int16_t fileDescriptors[]);
+int syscreateProcess(uint64_t rip, char **args, int argc ,char *name, uint8_t priority, int16_t fileDescriptors[]);
 
 int16_t sysgetpid();
 

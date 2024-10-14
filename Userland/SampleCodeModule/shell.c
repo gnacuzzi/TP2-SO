@@ -220,7 +220,7 @@ int main() {
 				int processIndex = id - builtinsDim;
 				int16_t fileDescriptors[] = {0, 1, 2};
 				uint64_t rip = (uint64_t)processCommands[processIndex].exec;
-				int16_t pid = syscreateProcess(rip, (char **)params, processCommands[processIndex].name, 1, fileDescriptors);
+				int16_t pid = syscreateProcess(rip, (char **)params, cantParams ,processCommands[processIndex].name, 1, fileDescriptors);
 				syswaitProcess(pid);
 			} else {
 				printf(command);
