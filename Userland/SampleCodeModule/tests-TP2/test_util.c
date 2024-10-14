@@ -5,6 +5,8 @@
 #include "syscall.h"
 #include "../include/test_util.h"
 
+#define MINOR_WAIT 1000000
+
 // Random
 static uint32_t m_z = 362436069;
 static uint32_t m_w = 521288629;
@@ -72,6 +74,6 @@ void endless_loop_print(uint64_t wait) {
 
 	while (1) {
 		printf("%d ", pid);
-		bussy_wait(wait);
+		bussy_wait(MINOR_WAIT); // valor para que no se sature la pantalla
 	}
 }
