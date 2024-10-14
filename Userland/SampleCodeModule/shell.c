@@ -1,5 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // #include <userasm.h>
 
 #include "include/libc.h"
@@ -102,7 +104,7 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 		"TESTPRIO					Command to test the priority\n"
 		"TESTPROCESSES              Command to test the processes\n"
 		;
-	printf(manual);
+	printf("%s",manual);
 }
 
 
@@ -231,7 +233,7 @@ int main() {
 				}
 				syswaitProcess(pid);
 			} else {
-				printf(command);
+				printf("%s",command);
 				printf(": command not found\n");
 			}
 			for (int i = 0; buffer[i] != 0; i++) { // vaciamos el buffer

@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <process.h>
 #include <scheduler.h>
 #include <videoDriver.h>
@@ -73,7 +75,10 @@ static char ** allocArgv(PCB * pcb, char ** argv, int argc){
         newArgv[i] = malloc(strlen(argv[i])+1);
 
         if(newArgv[i] == NULL){
-            free(pcb->argv);
+            for (int j = 0; j < i; j++) {
+                free(newArgv[j]);
+            }
+            free(newArgv);
             return NULL;
         }
 
