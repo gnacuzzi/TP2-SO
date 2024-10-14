@@ -65,7 +65,7 @@ void freeProcess(PCB * pcb){
 }
 
 static char ** allocArgv(PCB * pcb, char ** argv, int argc){
-    char ** newArgv = malloc((argc) * sizeof(char *));
+    char ** newArgv = malloc((argc + 1) * sizeof(char *));
     if(newArgv == NULL){
         return NULL;
     }
@@ -79,7 +79,7 @@ static char ** allocArgv(PCB * pcb, char ** argv, int argc){
 
         strcpy(newArgv[i], argv[i]);
     }
-    newArgv[argc - 1] = NULL;
+    newArgv[argc] = NULL;
     return newArgv;
 }
 
