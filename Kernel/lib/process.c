@@ -46,7 +46,6 @@ int initProcess(PCB *process, int16_t pid,
         return -1;
     }
 
-    // Inicializar descriptores de archivo básicos
     for (int i = 0; i < CANT_FILE_DESCRIPTORS; i++) {
         process->fileDescriptors[i] = fileDescriptors[i];
     }

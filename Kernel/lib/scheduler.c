@@ -18,12 +18,12 @@ typedef struct schedulerCDT{
     doubleLinkedListADT processList;
     doubleLinkedListADT readyProcess;
     doubleLinkedListADT blockedProcess;
-    doubleLinkedListADT zombieProcess; //todavia no tengo muy en claro si esta hace falta
+    doubleLinkedListADT zombieProcess; 
     int16_t currentPid;
     int16_t nextPid;
     PCB * currentProcess;
     uint16_t processQty;
-    int quantums; //cantidad de quantums segun prioridad
+    int quantums; 
 }schedulerCDT;
 
 static int created = 0;
@@ -47,7 +47,7 @@ void createScheduler(){
     scheduler->currentPid = -1;
     scheduler->currentProcess = NULL;
     char *argsIdle[2] = {"idle", NULL};
-    createProcess((uint64_t)idle, argsIdle, 1,"idle", 1, NULL);//no se tema fds
+    createProcess((uint64_t)idle, argsIdle, 1,"idle", 1, NULL);
 }
 
 uint64_t schedule(uint64_t prevRSP) {
@@ -59,7 +59,7 @@ uint64_t schedule(uint64_t prevRSP) {
 
     if(scheduler->currentPid == KERNEL_PID){
         scheduler->currentProcess = getFirstData(scheduler->readyProcess);
-        if(scheduler->currentProcess == NULL){//no llego a crearse la shell
+        if(scheduler->currentProcess == NULL){
             return prevRSP;
         }
         scheduler->currentPid = scheduler->currentProcess->pid;
@@ -112,7 +112,7 @@ int16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t pr
 
     
     addNode(scheduler->processList, newProcess);  
-    if(scheduler->nextPid != IDLE_PID){//no quiero que el idle este en la lista de ready
+    if(scheduler->nextPid != IDLE_PID){
         addNode(scheduler->readyProcess, newProcess);
     }
       

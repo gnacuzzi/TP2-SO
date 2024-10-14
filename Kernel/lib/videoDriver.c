@@ -1,12 +1,10 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <videoDriver.h>
 #include <stdint.h>
 #include <font.h>
 #include <lib.h>
-// para poder imprimir en el back
 #include <stdarg.h>
 #include <stddef.h>
 #define MAX_CHARS 256
