@@ -5,19 +5,18 @@
 #include "include/syscall.h"
 #include <stdio.h>
 
-void testMemory(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams){
-    
-    if(cantParams != 2){
-        printf("You must insert ONE parameter indicating the number of processes you desire to test\n");
+void testMemory(int argc, char *argv[]){
+
+    if(argc != 1){
+        printf("You must insert ONE parameter indicating the memory size you desire to test\n");
         sysexit();
     }
 
-    char *params[] = { parameters[1] };
+    char *params[] = { argv[0] };
     int out = test_mm(1, params);
 
     printf("Memory test %s\n", out == 0 ? "passed" : "failed");
     sysexit();
-
 }
 
 void testPrio(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams){

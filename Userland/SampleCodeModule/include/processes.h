@@ -8,7 +8,7 @@
 #define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
 #define PARAMETERS_LENGTH 256
 
-void testMemory(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams);
+void testMemory(int argc, char *argv[]);
 void testPrio(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams);
 void testProcesses(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams);
 

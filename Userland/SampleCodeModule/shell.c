@@ -221,6 +221,9 @@ int main() {
 				int16_t fileDescriptors[] = {0, 1, 2};
 				uint64_t rip = (uint64_t)processCommands[processIndex].exec;
 				int16_t pid = syscreateProcess(rip, (char **)params, cantParams ,processCommands[processIndex].name, 1, fileDescriptors);
+				if(pid == -1){
+					printf("error creating process\n");
+				}
 				syswaitProcess(pid);
 			} else {
 				printf(command);
