@@ -102,7 +102,7 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 		"-------------PROCESSES-------------\n"
 		"TESTMM                     Command to test the memory manager\n"
 		"TESTPRIO					Command to test the priority\n"
-		"TESTPROCESSES              Command to test the processes\n"
+		"TESTPROC                   Command to test the processes\n"
 		;
 	printf("%s",manual);
 }
@@ -145,7 +145,7 @@ static const command builtInCommands[] = {
 static const command processCommands[] = {
 	{"TESTMM", (functionPointer)testMemory},
 	{"TESTPRIO", (functionPointer)testPrio},
-	{"TESTPROCESSES", (functionPointer)testProcesses}
+	{"TESTPROC", (functionPointer)testProcesses}
 };
 
 static int processDim = sizeof(processCommands) / sizeof(processCommands[0]);

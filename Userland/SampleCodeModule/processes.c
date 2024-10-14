@@ -40,8 +40,8 @@ void testProcesses(int argc, char *argv[]){
         return;
     }
 
-    if (satoi(argv[1]) <= 0) {
-        printf("Number of processes must be greater than 0\n");
+    if (satoi(argv[1]) <= 0 || satoi(argv[1]) > MAX_PROCESSES) {
+        printf("Number of processes must be between 0 and 40\n");
         sysexit();
         return;
     }
