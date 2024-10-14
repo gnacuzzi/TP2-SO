@@ -1,6 +1,8 @@
 #Binary Files
 *.bin
 *.sys
+mp.bin
+
 
 #The images
 *.img
