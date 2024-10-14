@@ -169,32 +169,25 @@ int scanCommand(char *command, char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH
 
 	int toReturn = 1;
 
-	// Escanear parámetros
-	for (j = 0; j < MAX_PARAMETERS && buffer[i] != 0; j++) {
-		k = 0;
-		if (isNumber(buffer[i])) {
-			// Si es un número, convertirlo a valor numérico
-			int num = 0;
-			while (isNumber(buffer[i])) {
-				num = num * 10 + (buffer[i] - '0');
-				i++;
-			}
-			parameters[j][0] = (char)num;
-			parameters[j][1] = 0;  // Null-terminated
-		} else {
-			while (buffer[i] != ' ' && buffer[i] != 0) {
+	for (j = 0, k = 0; buffer[i] != 0;) {
+		if (buffer[i] != ' ') {
+			if (!isNumber(buffer[i])) {
 				parameters[j][k++] = buffer[i++];
 			}
-			parameters[j][k] = 0;  // Null-terminated
+			else {
+				parameters[j][k++] = (buffer[i++] - '0'); // lo paso de su ascii
+			}
 		}
-		toReturn++;
-
-		// Saltar espacios para el próximo parámetro
-		while (buffer[i] == ' ') {
-			i++;
+		else {
+			parameters[j][k] = 0;
+			k = 0;
+			j++;
+			toReturn++;
+			while (buffer[i] == ' ') {
+				i++;
+			}
 		}
 	}
-
 	return toReturn;
 }
 
@@ -233,7 +226,6 @@ int main() {
 
 				char *newParams[MAX_PARAMETERS + 1] = {0};
 				newParams[0] = processCommands[processIndex].name;
-				printf("%s", newParams[0]);
             	for (int i = 0; i < cantParams; i++) {
                		newParams[i + 1] = params[i];
             	}
