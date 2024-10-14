@@ -183,10 +183,3 @@ int atoi(char *str) {
 
 	return res;
 }
-
-void strcpy(char *string, char *target){
-    while(*target != 0){
-        *(string++) = *(target++);
-    }
-    *string = 0;
-}

@@ -224,8 +224,9 @@ int main() {
 				int processIndex = id - builtinsDim;	
 				uint64_t rip = (uint64_t)processCommands[processIndex].exec;
 
-				char *newParams[MAX_PARAMETERS + 1];
-				strcpy(processCommands[processIndex].name , newParams[0]);
+				char *newParams[MAX_PARAMETERS + 1] = {0};
+				newParams[0] = processCommands[processIndex].name;
+				printf("%s", newParams[0]);
             	for (int i = 0; i < cantParams; i++) {
                		newParams[i + 1] = params[i];
             	}
