@@ -205,6 +205,7 @@ int64_t killProcess(int16_t pid) {
     }
 
     scheduler->processQty--;
+    freeLinkedListADT(process->waitingList);
     freeProcess(process);
     return 0;
 }

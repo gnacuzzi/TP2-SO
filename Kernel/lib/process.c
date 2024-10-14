@@ -59,28 +59,26 @@ int initProcess(PCB *process, int16_t pid,
 void freeProcess(PCB * pcb){
     freeArgv(pcb, pcb->argv, pcb->argc);
     free(pcb->name);
-    free((void *)pcb->stackBase);
+    free((void *)pcb->stackBase - STACK_SIZE);
     free(pcb);
 }
 
 static char ** allocArgv(PCB * pcb, char ** argv, int argc){
     char ** newArgv = malloc((argc) * sizeof(char *));
     if(newArgv == NULL){
-        free((void *) (pcb->stackBase - STACK_SIZE));
         return NULL;
     }
     for (int i = 0; i < argc; i++){
         newArgv[i] = malloc(strlen(argv[i])+1);
 
         if(newArgv[i] == NULL){
-            free((void *) (pcb->stackBase - STACK_SIZE));
             free(pcb->argv);
             return NULL;
         }
 
         strcpy(newArgv[i], argv[i]);
     }
-    newArgv[argc] = NULL;
+    newArgv[argc - 1] = NULL;
     return newArgv;
 }
 
