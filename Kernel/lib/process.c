@@ -60,6 +60,7 @@ void freeProcess(PCB * pcb){
     freeArgv(pcb, pcb->argv, pcb->argc);
     free(pcb->name);
     free((void *)pcb->stackBase - STACK_SIZE);
+    freeLinkedListADT(pcb->waitingList);
     free(pcb);
 }
 
@@ -116,7 +117,8 @@ int waitProcess(int16_t pid) {
     if(process == NULL || currentPid == pid) {
         return -1;
     }
-    addNode(process->waitingList, process);
+    PCB * currentProcess = findProcess(currentPid);
+    addNode(process->waitingList, currentProcess);
     blockProcess(currentPid);
     return 0;
 }

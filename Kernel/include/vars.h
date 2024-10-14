@@ -3,7 +3,8 @@
 
 typedef enum { BLOCKED = 0,
 			   READY,
-			   RUNNING } Status;
+			   RUNNING,
+			   KILLED } Status;
 
 
 #define STDIN 0
