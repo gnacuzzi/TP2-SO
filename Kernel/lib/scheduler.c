@@ -201,15 +201,11 @@ int64_t killProcess(int16_t pid) {
     if(removeNode(scheduler->processList, process) == NULL){
         return -1;
     }
-    process->status == KILLED;
+    process->status = KILLED;
 
     scheduler->processQty--;
 
-    if (pid == getPid()) {
-        yield();
-    }
-
-    freeProcess(process);
+    free(process);
 
     return 0;
 }

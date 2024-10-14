@@ -171,12 +171,7 @@ int scanCommand(char *command, char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH
 
 	for (j = 0, k = 0; buffer[i] != 0;) {
 		if (buffer[i] != ' ') {
-			if (!isNumber(buffer[i])) {
-				parameters[j][k++] = buffer[i++];
-			}
-			else {
-				parameters[j][k++] = (buffer[i++] - '0'); // lo paso de su ascii
-			}
+			parameters[j][k++] = buffer[i++];
 		}
 		else {
 			parameters[j][k] = 0;
