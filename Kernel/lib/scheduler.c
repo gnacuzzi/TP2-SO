@@ -86,12 +86,6 @@ uint64_t schedule(uint64_t prevRSP) {
         }
     }
 
-    if (scheduler->currentProcess->stackPos < scheduler->currentProcess->stackBase - STACK_SIZE) {
-        printf("Error: stackPos fuera de los limites del stack para el proceso %d\n", scheduler->currentProcess->pid);
-        killProcess(scheduler->currentProcess->pid);
-        return prevRSP;
-    }
-
     scheduler->currentProcess = firstProcess;  
     scheduler->quantums = scheduler->currentProcess->priority;
     scheduler->currentPid = firstProcess->pid;  
