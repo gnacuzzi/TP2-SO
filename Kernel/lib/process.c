@@ -50,10 +50,6 @@ int initProcess(PCB *process, int16_t pid,
         process->fileDescriptors[i] = fileDescriptors[i];
     }
 
-    if(process->pid == 22367){
-        printf("process created\n");
-    }
-
     return 0;
 }
 

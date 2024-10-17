@@ -5,7 +5,7 @@
 #include <vars.h>
 #include <doubleLinkedList.h>
 
-#define CANT_FILE_DESCRIPTORS 5
+#define CANT_FILE_DESCRIPTORS 3
 #define STACK_SIZE 4096 // 4KB
 
 
