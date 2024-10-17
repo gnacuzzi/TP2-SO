@@ -237,7 +237,7 @@ int main() {
                		newParams[i + 1] = params[i];
             	}
 				int16_t fileDescriptors[] = {0, 1, 2};	
-				int16_t pid = syscreateProcess(rip, (char **)newParams, cantParams + 1,processCommands[processIndex].name, 1, fileDescriptors);
+				int16_t pid = syscreateProcess(rip, (char **)newParams, cantParams + 1, 1, fileDescriptors);
 				if(pid == -1){
 					printf("Error creating process\n");
 				}

@@ -14,7 +14,7 @@ static char ** allocArgv(PCB * pcb, char ** argv, int argc);
 static void freeArgv(PCB * pcb, char ** argv, int argc);
 
 int initProcess(PCB *process, int16_t pid,
-                 uint64_t rip, char **args, int argc, char *name,
+                 uint64_t rip, char **args, int argc,
                  uint8_t priority, int16_t fileDescriptors[]) {
     process->pid = pid;
     process->stackBase = (uint64_t) malloc(STACK_SIZE) + STACK_SIZE;
@@ -27,13 +27,13 @@ int initProcess(PCB *process, int16_t pid,
         return -1;
     }
     process->argc = argc;
-    process->name = malloc(strlen(name) + 1);
+    process->name = malloc(strlen(args[0]) + 1);
     if(process->name == NULL){
         free((void *) (process->stackBase - STACK_SIZE));
         freeArgv(process, process->argv, argc);
         return -1;
     }
-    strcpy(process->name, name);
+    strcpy(process->name, args[0]);
     process->priority = priority;
     process->rip = rip;
     process->stackPos = setupStackFrame(process->stackBase, process->rip, argc, process->argv);

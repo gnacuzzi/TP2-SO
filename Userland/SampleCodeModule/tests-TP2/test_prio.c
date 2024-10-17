@@ -15,7 +15,7 @@
 #define MEDIUM 2  // TODO: Change as required
 #define HIGHEST 5 // TODO: Change as required
 
-int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
+uint8_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
 void test_prio() {
 	int64_t pids[TOTAL_PROCESSES];
@@ -24,7 +24,7 @@ void test_prio() {
 	uint64_t i;
 
 	for (i = 0; i < TOTAL_PROCESSES; i++)
-		pids[i] = syscreateProcess((uint64_t)endless_loop_print, argv, 1,  "endless_loop_print", LOWEST, 0);
+		pids[i] = syscreateProcess((uint64_t)endless_loop_print, argv, 1, LOWEST, 0);
 
 	bussy_wait(WAIT);
 	printf("\nCHANGING PRIORITIES...\n");

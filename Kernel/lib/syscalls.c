@@ -30,7 +30,7 @@ static void drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh
 static uint64_t syscallTicks();
 static void syscallWait(uint64_t time);
 static int64_t syscallMemInfo(mem_info * memInfo);
-static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]);
+static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc, uint8_t priority, int16_t fileDescriptors[]);
 static PCB * processDump(uint16_t * proccesQty);
 void syscallExit();
 
@@ -123,8 +123,8 @@ static int64_t syscallMemInfo(mem_info * memInfo){
     return 0;
 }
 //15
-static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
-	return createProcess(rip, args, argc, name, priority, fileDescriptors);
+static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc, uint8_t priority, int16_t fileDescriptors[]) {
+	return createProcess(rip, args, argc, priority, fileDescriptors);
 }
 
 //16 getPid
