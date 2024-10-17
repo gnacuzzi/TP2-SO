@@ -7,6 +7,7 @@
 #include "include/syscall.h"
 #include "include/eliminator.h"
 #include "include/processes.h"
+#include "include/builtins.h"
 
 #define BUFFER_LENGTH 256
 #define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
@@ -97,6 +98,10 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 		"TIME                       Show current time\n"
 		"CLEAR                      Clears the screen\n"
 		"REGISTERS                  Prints each register with it's values at the moment of the snapshot\n"
+		"MEM                        Prints the memory state\n"
+		"KILL                       Command to kill a process\n"
+		"NICE                       Command to change the priority of a process\n"
+		"BLOCK                      Command to block a process\n"
 		"-------------PROCESSES-------------\n"
 		"TESTMM                     Command to test the memory manager\n"
 		"TESTPRIO                   Command to test the priority\n"
@@ -104,9 +109,6 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 		"TESTSYNCHRO                Command to test the synchronization\n"
 		"TESTNOSYNCHRO              Command to test the no synchronization\n"
 		"LOOP                       Command to print its ID with a greeting every specified number of seconds\n"
-		"KILL                       Command to kill a process\n"
-		"NICE                       Command to change the priority of a process\n"
-		"BLOCK                      Command to block a process\n"
 		;
 	printf("%s",manual);
 }
@@ -135,27 +137,27 @@ static void registers(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int ca
 }
 
 static const command builtInCommands[] = {
+	{"BLOCK", (functionPointer)blockProcess}, 
 	{"CLEAR", (functionPointer)clear},
-    {"DIVIDEBYZERO", (functionPointer)dividebyzero},
-    {"ELIMINATOR", (functionPointer)eliminator},
-    {"HELP", (functionPointer)help},
-    {"INVALIDOPERATION", (functionPointer)invalidoperation},
-    {"LETTERSIZE", (functionPointer)lettersize},
-    {"REGISTERS", (functionPointer)registers},
-    {"TIME", (functionPointer)time}
-
+	{"DIVIDEBYZERO", (functionPointer)dividebyzero},
+	{"ELIMINATOR", (functionPointer)eliminator},
+	{"HELP", (functionPointer)help},
+	{"KILL", (functionPointer)killProcess},
+	{"LETTERSIZE", (functionPointer)lettersize},
+	{"MEM", (functionPointer)memState},
+	{"NICE", (functionPointer)changePriority},
+	{"REGISTERS", (functionPointer)registers},
+	{"TIME", (functionPointer)time},
+	{"INVALIDOPERATION", (functionPointer)invalidoperation}
 };
 
 static const command processCommands[] = {
+	{"LOOP", (functionPointer)loop},
 	{"TESTMM", (functionPointer)testMemory},
+	{"TESTNOSYNCHRO", (functionPointer)testNoSynchronization},
 	{"TESTPRIO", (functionPointer)testPrio},
 	{"TESTPROC", (functionPointer)testProcesses},
-	{"TESTSYNCHRO", (functionPointer)testSynchronization},
-	{"TESTNOSYNCHRO", (functionPointer)testNoSynchronization},
-	{"LOOP", (functionPointer)loop},
-	{"KILL", (functionPointer)killProcess},
-	{"NICE", (functionPointer)changePriority},
-	{"BLOCK", (functionPointer)blockProcess}
+	{"TESTSYNCHRO", (functionPointer)testSynchronization}
 };
 
 static int processDim = sizeof(processCommands) / sizeof(processCommands[0]);
