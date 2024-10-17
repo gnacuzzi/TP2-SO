@@ -7,7 +7,7 @@
 #include <process.h>
 #include <lib.h>
 #include <interrupts.h>
-#include <stdio.h>
+#include <videoDriver.h>
 
 #define MAX_PROCESS 60
 #define KERNEL_PID -1
@@ -18,7 +18,6 @@ typedef struct schedulerCDT{
     doubleLinkedListADT processList;
     doubleLinkedListADT readyProcess;
     doubleLinkedListADT blockedProcess;
-    doubleLinkedListADT zombieProcess; 
     int16_t currentPid;
     int16_t nextPid;
     PCB * currentProcess;
@@ -40,7 +39,6 @@ void createScheduler(){
     scheduler->processList = createDoubleLinkedListADT();
     scheduler->readyProcess = createDoubleLinkedListADT();
     scheduler->blockedProcess = createDoubleLinkedListADT();
-    scheduler->zombieProcess = createDoubleLinkedListADT();
     scheduler->processQty = 0;
     created = 1;
     scheduler->nextPid = 0;
@@ -229,6 +227,54 @@ void yield() {
 int16_t getPid(){
     schedulerADT scheduler = getScheduler();
 	return scheduler->currentPid;
+}
+
+PCB * ps(uint16_t * proccesQty){
+    schedulerADT scheduler = getScheduler();
+    if(scheduler->processList == NULL){
+        *proccesQty = 0;
+        return NULL;
+    }
+    
+    PCB * processes = malloc(sizeof(PCB) * scheduler->processQty);
+    if(processes == NULL){
+        *proccesQty = 0;
+        return NULL;
+    }
+
+    toBegin(scheduler->processList);
+    PCB *aux;
+    for (int i = 0; i < scheduler->processQty; i++){
+        aux = nextInList(scheduler->processList);
+        if(copyProcess(&processes[i], aux) == -1){
+            free(processes[i].name);
+            free(processes);
+            *proccesQty = 0;
+            return NULL;
+        }
+    }
+    *proccesQty = scheduler->processQty;
+    return processes;
+}
+
+int16_t copyProcess(PCB *dest, PCB *src){
+    dest->pid = src->pid;
+    dest->stackBase = src->stackBase;
+    dest->stackPos = src->stackPos;
+    dest->priority = src->priority;
+
+    if(src->name != NULL){
+        dest->name = malloc(strlen(src->name) + 1);
+        if(dest->name == NULL){
+            return -1;
+        }
+        strcpy(dest->name, src->name);
+
+    }else{
+        dest->name = NULL;
+    }
+
+    return 0;
 }
 
 schedulerADT getScheduler(){

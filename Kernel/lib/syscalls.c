@@ -31,7 +31,7 @@ static uint64_t syscallTicks();
 static void syscallWait(uint64_t time);
 static int64_t syscallMemInfo(mem_info * memInfo);
 static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]);
-static void processDump();
+static PCB * processDump(uint16_t * proccesQty);
 void syscallExit();
 
 typedef uint64_t (*syscall)(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
@@ -128,9 +128,9 @@ static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc,char *na
 }
 
 //16 getPid
-//17 FALTA: ps-Listar todos los procesos: nombre, ID, prioridad, stack y base pointer, foreground y cualquier otra variable que consideren necesaria
-static void processDump(){
-	return;
+//17 ps
+static PCB * processDump(uint16_t * proccesQty){
+	return ps(proccesQty);
 }
 //18 killProcess
 //19 changePriority

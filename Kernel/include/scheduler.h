@@ -19,6 +19,7 @@ void yield();
 int64_t killCurrentProcess();
 int64_t killProcess(int16_t pid);
 int16_t getPid();
-//para poder hacer la de imprimir los procesos necesito la funcion de process que imprima?
+PCB * ps(uint16_t * proccesQty);
+int16_t copyProcess(PCB *dest, PCB *src);
 
 #endif

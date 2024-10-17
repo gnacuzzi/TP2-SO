@@ -10,6 +10,16 @@ typedef struct mem_info {
 	uint64_t used;
 } mem_info;
 
+typedef struct PCB{
+    int16_t pid;
+    uint64_t stackBase;
+    uint64_t stackPos;
+	//falta el foreground
+    char *name;
+    uint8_t priority;
+    
+} PCB;
+
 void write(int fd, char c);
 
 uint8_t read_char(char *buff);
@@ -41,6 +51,8 @@ int64_t sysgetMemInfo(mem_info *memInfo);
 int syscreateProcess(uint64_t rip, char **args, int argc ,char *name, uint8_t priority, int16_t fileDescriptors[]);
 
 int16_t sysgetpid();
+
+PCB * sysps(uint16_t * proccesQty);
 
 int64_t syskillProcess(int16_t pid);
 
