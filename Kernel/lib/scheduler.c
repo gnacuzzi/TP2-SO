@@ -45,7 +45,7 @@ void createScheduler(){
     scheduler->currentPid = -1;
     scheduler->currentProcess = NULL;
     char *argsIdle[2] = {"idle", NULL};
-    createProcess((uint64_t)idle, argsIdle, 1,"idle", 1, NULL);
+    createProcess((uint64_t)idle, argsIdle, 1, 1, NULL);
 }
 
 uint64_t schedule(uint64_t prevRSP) {
@@ -94,7 +94,7 @@ uint64_t schedule(uint64_t prevRSP) {
     return scheduler->currentProcess->stackPos; 
 }
 
-int16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t priority, int16_t fileDescriptors[]) {
+int16_t createProcess(uint64_t rip, char **args, int argc, uint8_t priority, int16_t fileDescriptors[]) {
     schedulerADT scheduler = getScheduler();
     
     if(scheduler->processQty > MAX_PROCESS) return -1;
@@ -103,7 +103,7 @@ int16_t createProcess(uint64_t rip, char **args, int argc,char *name, uint8_t pr
     if (newProcess == NULL) {
         return -1;
     }
-    if(initProcess(newProcess, scheduler->nextPid, rip, args, argc,name, priority, fileDescriptors) == -1){
+    if(initProcess(newProcess, scheduler->nextPid, rip, args, argc, priority, fileDescriptors) == -1){
         free(newProcess);
         return -1;
     }
