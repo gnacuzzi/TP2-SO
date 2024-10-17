@@ -101,6 +101,7 @@ sysgetMemInfo:
     ret
 
 syscreateProcess:
+    mov r10, rcx
     mov rax, 15
     int 80h
     ret

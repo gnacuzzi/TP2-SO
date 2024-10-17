@@ -15,7 +15,7 @@
 #define MEDIUM 2  // TODO: Change as required
 #define HIGHEST 5 // TODO: Change as required
 
-int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
+uint8_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
 void test_prio() {
 	int64_t pids[TOTAL_PROCESSES];
