@@ -32,4 +32,6 @@ int scanf(char *buffer);
 
 int atoi(char *str);
 
+int strtol(const char *str, const char **endptr, int base);
+
 #endif

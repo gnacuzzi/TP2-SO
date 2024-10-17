@@ -99,8 +99,14 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 		"REGISTERS                  Prints each register with it's values at the moment of the snapshot\n"
 		"-------------PROCESSES-------------\n"
 		"TESTMM                     Command to test the memory manager\n"
-		"TESTPRIO					Command to test the priority\n"
+		"TESTPRIO                   Command to test the priority\n"
 		"TESTPROC                   Command to test the processes\n"
+		"TESTSYNCHRO                Command to test the synchronization\n"
+		"TESTNOSYNCHRO              Command to test the no synchronization\n"
+		"LOOP                       Command to print its ID with a greeting every specified number of seconds\n"
+		"KILL                       Command to kill a process\n"
+		"NICE                       Command to change the priority of a process\n"
+		"BLOCK                      Command to block a process\n"
 		;
 	printf("%s",manual);
 }
@@ -143,7 +149,13 @@ static const command builtInCommands[] = {
 static const command processCommands[] = {
 	{"TESTMM", (functionPointer)testMemory},
 	{"TESTPRIO", (functionPointer)testPrio},
-	{"TESTPROC", (functionPointer)testProcesses}
+	{"TESTPROC", (functionPointer)testProcesses},
+	{"TESTSYNCHRO", (functionPointer)testSynchronization},
+	{"TESTNOSYNCHRO", (functionPointer)testNoSynchronization},
+	{"LOOP", (functionPointer)loop},
+	{"KILL", (functionPointer)killProcess},
+	{"NICE", (functionPointer)changePriority},
+	{"BLOCK", (functionPointer)blockProcess}
 };
 
 static int processDim = sizeof(processCommands) / sizeof(processCommands[0]);

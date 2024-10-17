@@ -4,7 +4,9 @@
 #include "include/processes.h"
 #include "include/tests.h"
 #include "include/syscall.h"
-#include <stdio.h>
+#include "include/libc.h"
+
+/* Tests */
 
 void testMemory(int argc, char *argv[]){
     if(argc != 2){
@@ -50,6 +52,155 @@ void testProcesses(int argc, char *argv[]){
     int out = test_processes(1, params);
 
     printf("Process test %s\n", out == 0 ? "passed" : "failed");
+    sysexit();
+    return;
+}
+
+void testSynchronization(int argc, char *argv[]){
+    /*
+    if (argc != 3) {
+        printf("You must insert TWO parameters, one indicating the number of iterations and an other one indication the type of semaphore (named, unnamed, no-sem)\n");
+        sysexit();
+        return;
+    }
+
+    if(satoi(argv[1]) <= 0){
+        printf("Number of iterations must be greater than 0\n");
+        sysexit();
+        return;
+    }
+
+    if(strcmp(argv[2], "named") != 0 && strcmp(argv[2], "unnamed") != 0 && strcmp(argv[2], "no-sem") != 0){
+        printf("Semaphore type must be named, unnamed or no-sem\n");
+        sysexit();
+        return;
+    }
+
+    char * params[] = {argv[1], argv[2]};
+
+    int out = test_sync(2, params);
+
+    printf("Process test %s\n", out == 0 ? "passed" : "failed");
+    sysexit();
+    return;
+    */
+}
+
+void testNoSynchronization(int argc, char *argv[]){
+    /* 
+    if (argc != 1) {
+        printf("TestNoSynchronization doesn't need parameters\n");
+        sysexit();
+        return;
+    }
+
+    test_no_sync();
+    sysexit();
+    return;
+    */
+}
+
+/* Processes */
+
+void killProcess(int argc, char *argv[]){
+    if(argc != 2){
+        printf("You must insert ONE parameter indicating the PID of the process you desire to kill\n");
+        sysexit();
+        return;
+    }
+
+    int pid = satoi(argv[1]);
+
+    if(pid < 0){
+        printf("PID must be greater than 0\n");
+        sysexit();
+        return;
+    }
+
+    int out = syskillProcess(pid);
+
+    printf("Process %d %s\n", pid, out == 0 ? "killed" : "not killed");
+
+    sysexit();
+    return;
+}
+
+void changePriority(int argc, char *argv[]){
+    if(argc != 3){
+        printf("You must insert TWO parameters indicating the PID of the process you desire to change the priority and the new priority\n");
+        sysexit();
+        return;
+    }
+
+    int pid = satoi(argv[1]);
+    int priority = satoi(argv[2]);
+
+    if(pid < 0){
+        printf("PID must be greater than 0\n");
+        sysexit();
+        return;
+    }
+
+    if(priority < 1 || priority > 5){
+        printf("Priority must be between 0 and 5\n");
+        sysexit();
+        return;
+    }
+
+    int out = syschangePriority(pid, priority);
+
+    printf("Priority of process %d %s\n", pid, out == 0 ? "changed" : "not changed");
+
+    sysexit();
+    return;
+}
+
+void blockProcess(int argc, char *argv[]){
+    if(argc != 2){
+        printf("You must insert ONE parameter indicating the PID of the process you desire to block\n");
+        sysexit();
+        return;
+    }
+
+    int pid = satoi(argv[1]);
+
+    if(pid < 0){
+        printf("PID must be greater than 0\n");
+        sysexit();
+        return;
+    }
+
+    int out = sysblockProcess(pid);
+
+    printf("Process %d %s\n", pid, out == 0 ? "blocked" : "not blocked");
+
+    sysexit();
+    return;
+}
+
+
+/* Other */
+
+void loop(int argc, char *argv[]){
+    if(argc != 2){
+        printf("You must insert ONE parameter indicating the number of seconds you desire to test\n");
+        sysexit();
+        return;
+    }
+    const char *aux;
+    int secs = strtol(argv[1], &aux, 10);
+
+    if (secs < 0) {
+        printf("Number of seconds must be greater than 0\n");
+        sysexit();
+        return;
+    }
+
+    while (1) {
+        printf("Hello World! PID: %d\n", sysgetpid());
+        wait_delta(secs);
+    }
+    
     sysexit();
     return;
 }
