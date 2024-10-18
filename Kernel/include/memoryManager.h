@@ -17,6 +17,11 @@ typedef struct MemoryManagerCDT *MemoryManagerADT;
 #define BLOCK_SIZE 64
 #define STRUCT_SIZE (HEAP_SIZE / BLOCK_SIZE)
 
+#ifdef BUDDY
+#undef  HEAP_STRUCTURE_SIZE
+#define HEAP_STRUCTURE_SIZE MemoryManagerCDT
+#endif // BUDDY
+
 void mminit(void *start, uint64_t size);
 void *malloc(uint64_t size);
 void free(void *p);

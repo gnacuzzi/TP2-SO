@@ -2,8 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <stdio.h>
-#include "syscall.h"
-#include "../include/tests.h"
+#include <syscall.h>
+#include <tests.h>
 
 enum State { RUNNING, BLOCKED, KILLED };
 
@@ -18,6 +18,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 	uint8_t action;
 	uint64_t max_processes;
 	char *argvAux[] = {"endless_loop"};
+	int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR}; // stdin, stdout, stderr
 
 	if (argc != 1)
 		return -1;
@@ -30,7 +31,7 @@ int64_t test_processes(uint64_t argc, char *argv[]) {
 	while (1) {
 		// Create max_processes processes
 		for (rq = 0; rq < max_processes; rq++) {
-			p_rqs[rq].pid = syscreateProcess((uint64_t)endless_loop, argvAux, 1, 1, 0);
+			p_rqs[rq].pid = syscreateProcess((uint64_t)endless_loop, argvAux, 1, 1, fileDescriptors);
 
 			if (p_rqs[rq].pid == -1) {
 				printf("test_processes: ERROR creating process\n");

@@ -20,6 +20,10 @@ typedef struct PCB{
     
 } PCB;
 
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
+
 void write(int fd, char c);
 
 uint8_t read_char(char *buff);

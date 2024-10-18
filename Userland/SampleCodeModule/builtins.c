@@ -5,7 +5,6 @@
 void memState(char *argv[], int argc) {
     if(argc != 0){
         printf("Mem doesn't need parameters\n");
-        sysexit();
         return;
     }
 
@@ -13,14 +12,12 @@ void memState(char *argv[], int argc) {
 
     if(sysgetMemInfo(&memInfo) == -1) {
         printf("Couldn't retrive memory information\n");
-        sysexit();
         return;
     }
 
-    printf("Used memory: %d MB\n", memInfo.used / 1024 / 1024);
-    printf("Free memory: %d MB\n", memInfo.free / 1024 / 1024);
-    printf("Total memory: %d MB\n", memInfo.total / 1024 / 1024);
-    sysexit();
+    printf("Used memory: %d bytes\n", memInfo.used);
+    printf("Free memory: %d bytes\n", memInfo.free);
+    printf("Total memory: %d bytes\n", memInfo.total);
     return;
 }
 
@@ -35,7 +32,8 @@ void killProcess(char *argv[], int argc){
     const char *aux;
     int pid = strtoi(argv[1], &aux);
 
-    if(pid < 0){
+    if(pid < 0){//habria que agregar un chequeo para que no pueda matar a la shell
+    //se nos siguen mandando mal los parametros
         printf("PID must be greater than 0\n");
         return;
     }

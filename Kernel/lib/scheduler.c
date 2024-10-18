@@ -44,8 +44,9 @@ void createScheduler(){
     scheduler->nextPid = 0;
     scheduler->currentPid = -1;
     scheduler->currentProcess = NULL;
-    char *argsIdle[2] = {"idle", NULL};
-    createProcess((uint64_t)idle, argsIdle, 1, 1, NULL);
+    char *argsIdle[2] = {"idle"};
+    int16_t fileDescriptors[] = {-1, -1, STDERR}; //devnull, devnull, stderror
+    createProcess((uint64_t)idle, argsIdle, 1, 1, fileDescriptors);
 }
 
 uint64_t schedule(uint64_t prevRSP) {
