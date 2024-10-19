@@ -13,23 +13,23 @@
 #define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
 #define PARAMETERS_LENGTH 256
 
-typedef void (*functionPointer)(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams);
+typedef void (*functionPointer)(int argc, char *argv[]);
 
 typedef struct command {
     char * name;
     functionPointer exec;
 } command;
 
-static void dividebyzero(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 0) {
+static void dividebyzero(int argc, char *argv[]) {
+	if (argc != 0) {
 		printf("DivideByZero doesn't need parameters\n");
 		return;
 	}
 	dividebyzeroexception();
 }
 
-static void eliminator(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 0) {
+static void eliminator(int argc, char *argv[]) {
+	if (argc != 0) {
 		printf("Eliminator doesn't need parameters\n");
 		return;
 	}
@@ -38,8 +38,8 @@ static void eliminator(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int c
 	setlettersize(1);
 }
 
-static void invalidoperation(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 0) {
+static void invalidoperation(int argc, char *argv[]) {
+	if (argc != 0) {
 		printf("InvalidOperation doesn't need parameters\n");
 		return;
 	}
@@ -47,21 +47,21 @@ static void invalidoperation(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH],
 	invalidoperationexception();
 }
 
-static void lettersize(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 1) {
+static void lettersize(int argc, char *argv[]) {
+	if (argc != 1) {
 		printf("You must insert ONE parameter indicating the letter size you desire\n");
 	}
-	else if (parameters[0][0] > 3 || parameters[0][0] < 1) {
+	else if (argv[0][0] > 3 || argv[0][0] < 1) {
 		printf("The letter size must be a number between 1 and 3\n");
 	}
 	else {
-		setlettersize(parameters[0][0]);
+		setlettersize(argv[0][0]);
 	}
 	return;
 }
 
-static void time(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 0) {
+static void time(int argc, char *argv[]) {
+	if (argc != 0) {
 		printf("Time doesn't need parameters\n");
 		return;
 	}
@@ -74,16 +74,16 @@ static void time(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 	printf("\n");
 }
 
-static void clear(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 0) {
+static void clear(int argc, char *argv[]) {
+	if (argc != 0) {
 		printf("Clear doesn't need parameters\n");
 		return;
 	}
 	clearscreen();
 }
 
-static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 0) {
+static void help(int argc, char *argv[]) {
+	if (argc != 0) {
 		printf("Help doesn't need parameters\n");
 		return;
 	}
@@ -117,8 +117,8 @@ static void help(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantPar
 static char *regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "R8",  "R9",
 					   "R10", "R11", "R12", "R13", "R14", "R15", "RSP", "RIP", "RFLAGS"};
 
-static void registers(char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], int cantParams) {
-	if (cantParams != 0) {
+static void registers(int argc, char *argv[]) {
+	if (argc != 0) {
 		printf("Registers doesn't need parameters\n");
 		return;
 	}
@@ -163,7 +163,7 @@ static const command processCommands[] = {
 static int processDim = sizeof(processCommands) / sizeof(processCommands[0]);
 static int builtinsDim = sizeof(builtInCommands) / sizeof(builtInCommands[0]);
 
-int scanCommand(char *command, char parameters[MAX_PARAMETERS][PARAMETERS_LENGTH], char *buffer) {
+int scanCommand(char *command, char *parameters[PARAMETERS_LENGTH], char *buffer) {
 	// buffer = "command arg1 arg2"
 	int i, j, k;
 
@@ -224,11 +224,11 @@ int main() {
 		int rta = scanf(buffer);
 		if (rta == 1) {
 			char command[BUFFER_LENGTH] = {0};
-			char params[MAX_PARAMETERS][PARAMETERS_LENGTH] = {{0}};
+			char *params[PARAMETERS_LENGTH] = {0};
 			int cantParams = scanCommand(command, params, buffer);
 			int id = commandId(command);
 			if (id >= 0 && id < builtinsDim) {
-				builtInCommands[id].exec(params, cantParams);
+				builtInCommands[id].exec(cantParams, params);
 			} else if (id >= builtinsDim && id < builtinsDim + processDim) {
 				int processIndex = id - builtinsDim;	
 				uint64_t rip = (uint64_t)processCommands[processIndex].exec;

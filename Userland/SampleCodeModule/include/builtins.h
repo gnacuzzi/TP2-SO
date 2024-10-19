@@ -1,12 +1,12 @@
 #ifndef BUILTINS_H
 #define BUILTINS_H
 
-void memState(char *argv[], int argc);
+void memState(int argc, char *argv[]);
 
 /* Process Managing */
-void killProcess(char *argv[], int argc);
-void changePriority(char *argv[], int argc);
-void blockProcess(char *argv[], int argc);
+void killProcess(int argc, char *argv[]);
+void changePriority(int argc, char *argv[]);
+void blockProcess(int argc, char *argv[]);
 
 
 #endif

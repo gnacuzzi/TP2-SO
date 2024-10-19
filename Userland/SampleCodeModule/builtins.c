@@ -2,7 +2,7 @@
 #include "include/syscall.h"
 #include "include/libc.h"
 
-void memState(char *argv[], int argc) {
+void memState(int argc, char *argv[]) {
     if(argc != 0){
         printf("Mem doesn't need parameters\n");
         return;
@@ -23,14 +23,13 @@ void memState(char *argv[], int argc) {
 
 /* Process Managing */
 
-void killProcess(char *argv[], int argc){
+void killProcess(int argc, char *argv[]){
     if(argc != 1){
         printf("You must insert ONE parameter indicating the PID of the process you desire to kill\n");
         return;
     }
 
-    const char *aux;
-    int pid = strtoi(argv[1], &aux);
+    int pid = atoi(argv[1]);
 
     if(pid < 0){//habria que agregar un chequeo para que no pueda matar a la shell
     //se nos siguen mandando mal los parametros
@@ -45,14 +44,14 @@ void killProcess(char *argv[], int argc){
     return;
 }
 
-void changePriority(char *argv[], int argc){
+void changePriority(int argc, char *argv[]){
     if(argc != 2){
         printf("You must insert TWO parameters indicating the PID of the process you desire to change the priority and the new priority\n");
         return;
     }
-    const char *aux;
-    int pid = strtoi(argv[1], &aux);
-    int priority = strtoi(argv[2], &aux);
+
+    int pid = atoi(argv[1]);
+    int priority = atoi(argv[2]);
 
     if(pid < 0){
         printf("PID must be greater than 0\n");
@@ -71,14 +70,13 @@ void changePriority(char *argv[], int argc){
     return;
 }
 
-void blockProcess(char *argv[], int argc){
+void blockProcess(int argc, char *argv[]){
     if(argc != 1){
         printf("You must insert ONE parameter indicating the PID of the process you desire to block\n");
         return;
     }
 
-    const char *aux;
-    int pid = strtoi(argv[1], &aux);
+    int pid = atoi(argv[1]);
 
     if(pid < 0){
         printf("PID must be greater than 0\n");
