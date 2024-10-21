@@ -1,6 +1,5 @@
 #ifdef BUDDY
 #include <memoryManager.h>
-#include <videoDriver.h>
 
 #define LEVELS 28
 #define MIN_EXPONENT 6
@@ -23,15 +22,23 @@ typedef struct MemoryManagerCDT {
 
 static void *firstAddress;
 static MemoryManagerADT getMemoryManager();
+static MemoryBlock *createBlock(void *ptr, uint8_t exponent, MemoryBlock *next);
+
+static unsigned int int_log(uint64_t n, int base) {
+	unsigned int count = 1;
+	while (n /= base)
+		count++;
+	return count;
+}
 
 void mminit(void *start, uint64_t size){
     firstAddress = start;
 
 	MemoryManagerADT memoryManager = (MemoryManagerADT) firstAddress;
 
-    memoryManager->maxExponent = log(size, 2);
+    memoryManager->maxExponent = int_log(size, 2);
 
-    if (memoryManager->maxExponent < MIN_EXPONENT) return NULL;
+    if (memoryManager->maxExponent < MIN_EXPONENT) return;
 
     for(int i = 0; i < LEVELS; i++){
         memoryManager->list[i] = NULL;
@@ -48,7 +55,7 @@ void *malloc(uint64_t size){
 
     if(size == 0 || size > memoryManager->freeMemory) return NULL;
 
-    uint8_t exponent = log(size + sizeof(MemoryBlock), 2);
+    uint8_t exponent = int_log(size + sizeof(MemoryBlock), 2);
 
     if(exponent < MIN_EXPONENT) exponent = MIN_EXPONENT;
 
