@@ -21,7 +21,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   int8_t inc;
   int8_t use_sem;
 
-  if (argc != 3)
+  if (argc != 4)
     return -1;
 
   if ((n = satoi(argv[1])) <= 0)
@@ -32,7 +32,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
     return -1;
 
   if (use_sem)
-    if (!syssemOpen(SEM_ID, 1)) {
+    if (syssemOpen(SEM_ID, 1) == -1) {
       printf("test_sync: ERROR opening semaphore\n");
       return -1;
     }
@@ -45,6 +45,8 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
     if (use_sem)
       syspost(SEM_ID);
   }
+
+  printf("Process %d finished\n", (int)sysgetpid());
 
   if (use_sem)
     syssemClose(SEM_ID);
@@ -67,7 +69,13 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   uint64_t i;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     pids[i] = syscreateProcess((uint64_t)my_process_inc, argvDec, 4, 1, fileDescriptors);
+
+    printf("Created process %d\n", (int)pids[i]);
+
     pids[i + TOTAL_PAIR_PROCESSES] = syscreateProcess((uint64_t)my_process_inc, argvInc, 4, 1, fileDescriptors);
+
+    printf("Created process %d\n", (int)pids[i + TOTAL_PAIR_PROCESSES]);
+  
   }
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {

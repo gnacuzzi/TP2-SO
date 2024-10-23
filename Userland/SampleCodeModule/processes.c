@@ -57,10 +57,9 @@ void testProcesses(int argc, char *argv[]){
     return;
 }
 
-void testSynchronization(int argc, char *argv[]){
-    /*
+void testSynchronization(int argc, char *argv[]){//{n, use_sem, 0}
     if (argc != 3) {
-        printf("You must insert TWO parameters, one indicating the number of iterations and an other one indication the type of semaphore (named, unnamed, no-sem)\n");
+        printf("You must insert TWO parameters, one indicating the number of iterations and an other one indicating if you wish to use or not semaphores\n");
         sysexit();
         return;
     }
@@ -71,8 +70,8 @@ void testSynchronization(int argc, char *argv[]){
         return;
     }
 
-    if(strcmp(argv[2], "named") != 0 && strcmp(argv[2], "unnamed") != 0 && strcmp(argv[2], "no-sem") != 0){
-        printf("Semaphore type must be named, unnamed or no-sem\n");
+    if(satoi(argv[2]) < 0){
+        printf("Write 0 for no-sem, write > 0 for sem\n");
         sysexit();
         return;
     }
@@ -84,22 +83,8 @@ void testSynchronization(int argc, char *argv[]){
     printf("Process test %s\n", out == 0 ? "passed" : "failed");
     sysexit();
     return;
-    */
 }
 
-void testNoSynchronization(int argc, char *argv[]){
-    /* 
-    if (argc != 1) {
-        printf("TestNoSynchronization doesn't need parameters\n");
-        sysexit();
-        return;
-    }
-
-    test_no_sync();
-    sysexit();
-    return;
-    */
-}
 
 /* Other */
 
