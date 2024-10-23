@@ -4,7 +4,7 @@ GLOBAL release
 section .text
 
 acquire:
-    mov al, 0
+    mov al, 1
 .retry:
     xchg [rdi], al
     test al, al

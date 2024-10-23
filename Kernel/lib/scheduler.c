@@ -83,6 +83,7 @@ uint64_t schedule(uint64_t prevRSP) {
         if(process == NULL){
             return prevRSP;
         }else{
+            scheduler->currentProcess = process;
             return process->stackPos;
         }
     }
