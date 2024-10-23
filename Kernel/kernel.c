@@ -10,6 +10,7 @@
 #include <memoryManager.h>
 #include <scheduler.h>
 #include <interrupts.h>
+#include <semaphore.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -45,6 +46,7 @@ void *initializeKernelBinary() {
 	clearBSS(&bss, &endOfKernel - &bss);
 
 	mminit(heapAddress, HEAP_SIZE + STRUCT_SIZE);
+	startSemaphores();
 
 	return getStackBase();
 }

@@ -72,5 +72,9 @@ int syswaitProcess(int16_t pid);
 
 void sysexit();
 
+int8_t syssemOpen(uint16_t id, uint32_t initialValue);
+int8_t syssemClose(uint16_t id);
+int8_t syspost(uint16_t id);
+int8_t syswait(uint16_t id);
 
 #endif
