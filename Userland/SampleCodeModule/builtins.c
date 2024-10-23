@@ -29,18 +29,16 @@ void killProcess(int argc, char *argv[]){
         return;
     }
 
-    int pid = atoi(argv[1]);
+    int pid = atoi(argv[0]);
+    printf("Parsed PID: %d\n", pid);
 
-    if(pid < 0){//habria que agregar un chequeo para que no pueda matar a la shell
-    //se nos siguen mandando mal los parametros
+    if(pid < 1){ 
         printf("PID must be greater than 0\n");
         return;
     }
 
     int out = syskillProcess(pid);
-
     printf("Process %d %s\n", pid, out == 0 ? "killed" : "not killed");
-
     return;
 }
 
@@ -50,8 +48,8 @@ void changePriority(int argc, char *argv[]){
         return;
     }
 
-    int pid = atoi(argv[1]);
-    int priority = atoi(argv[2]);
+    int pid = atoi(argv[0]);
+    int priority = atoi(argv[1]);
 
     if(pid < 0){
         printf("PID must be greater than 0\n");
@@ -76,7 +74,7 @@ void blockProcess(int argc, char *argv[]){
         return;
     }
 
-    int pid = atoi(argv[1]);
+    int pid = atoi(argv[0]);
 
     if(pid < 0){
         printf("PID must be greater than 0\n");
@@ -89,4 +87,3 @@ void blockProcess(int argc, char *argv[]){
 
     return;
 }
-

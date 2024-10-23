@@ -51,11 +51,12 @@ static void lettersize(int argc, char *argv[]) {
 	if (argc != 1) {
 		printf("You must insert ONE parameter indicating the letter size you desire\n");
 	}
-	else if (argv[0][0] > 3 || argv[0][0] < 1) {
+	int num = atoi(argv[0]);
+	if (num > 3 || num < 1) {
 		printf("The letter size must be a number between 1 and 3\n");
 	}
 	else {
-		setlettersize(argv[0][0]);
+		setlettersize(num);
 	}
 	return;
 }
@@ -164,13 +165,12 @@ static int processDim = sizeof(processCommands) / sizeof(processCommands[0]);
 static int builtinsDim = sizeof(builtInCommands) / sizeof(builtInCommands[0]);
 
 int scanCommand(char *command, char *parameters[PARAMETERS_LENGTH], char *buffer) {
-	// buffer = "command arg1 arg2"
+	// buffer = "command arg1 arg2 ..."
 	int i, j, k;
 
 	for (i = 0, j = 0; buffer[i] != ' ' && buffer[i] != 0; i++, j++) {
 		command[j] = buffer[i];
 	}
-
 	command[j] = 0;
 
 	if (buffer[i] == 0) {
@@ -181,13 +181,12 @@ int scanCommand(char *command, char *parameters[PARAMETERS_LENGTH], char *buffer
 		i++;
 	}
 
-	int toReturn = 1;
+	int toReturn = 0;
 
 	for (j = 0, k = 0; buffer[i] != 0;) {
 		if (buffer[i] != ' ') {
 			parameters[j][k++] = buffer[i++];
-		}
-		else {
+		} else {
 			parameters[j][k] = 0;
 			k = 0;
 			j++;
@@ -197,6 +196,9 @@ int scanCommand(char *command, char *parameters[PARAMETERS_LENGTH], char *buffer
 			}
 		}
 	}
+	parameters[j][k] = 0;
+	toReturn++;
+
 	return toReturn;
 }
 
@@ -249,7 +251,7 @@ int main() {
 				printf(": command not found\n");
 			}
 			for (int i = 0; buffer[i] != 0; i++) { // vaciamos el buffer
-				buffer[i] = 0;
+				buffer[i] = '\0';
 			}
 		}
 		printf("~$");

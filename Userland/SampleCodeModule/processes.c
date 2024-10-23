@@ -16,6 +16,7 @@ void testMemory(int argc, char *argv[]){
     }
 
     char *params[] = { argv[1] };
+    printf("%d\n", atoi(argv[1]));
     int out = test_mm(1, params);
 
     printf("Memory test %s\n", out == 0 ? "passed" : "failed");
@@ -108,8 +109,7 @@ void loop(int argc, char *argv[]){
         sysexit();
         return;
     }
-    const char *aux;
-    int secs = strtol(argv[1], &aux, 10);
+    int secs = atoi(argv[1]);
 
     if (secs < 0) {
         printf("Number of seconds must be greater than 0\n");
