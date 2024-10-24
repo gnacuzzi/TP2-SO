@@ -26,6 +26,7 @@ GLOBAL syssemOpen
 GLOBAL syssemClose
 GLOBAL syspost
 GLOBAL syswait
+GLOBAL sysps
 GLOBAL syssemInit
 
 read_char:
@@ -115,6 +116,10 @@ sysgetpid:
     int 80h
     ret
 
+sysps:
+    mov rax, 17
+    int 80h
+    ret
 
 syskillProcess:
     mov rax, 18

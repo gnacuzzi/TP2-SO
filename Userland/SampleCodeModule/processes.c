@@ -24,7 +24,7 @@ void testMemory(int argc, char *argv[]){
 }
 
 void testPrio(int argc, char *argv[]){
-    if(argc > 2){
+    if(argc > 1){
         printf("TestPrio doesn't need parameters\n");
         sysexit();
         return;

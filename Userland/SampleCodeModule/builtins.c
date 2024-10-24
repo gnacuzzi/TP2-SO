@@ -1,5 +1,5 @@
-#include "include/builtins.h"
-#include "include/syscall.h"
+#include <builtins.h>
+#include <syscall.h>
 #include "include/libc.h"
 
 void memState(int argc, char *argv[]) {
@@ -86,4 +86,42 @@ void blockProcess(int argc, char *argv[]){
     printf("Process %d %s\n", pid, out == 0 ? "blocked" : "not blocked");
 
     return;
+}
+
+static void printProcInfo(PCB proc) {
+    putchar('\n');
+    printf("NAME: %s\n", proc.name == NULL ? "unnamed" : proc.name);
+
+    printf("PID: %d\n", proc.pid);
+
+    printf("Priority: %d | Stack base: 0x%d | Stack pointer: 0x%d | Foreground: %s\n", 
+           proc.priority, 
+           proc.stackBase, 
+           proc.stackPos, 
+           proc.foreground == 0 ? "foreground" : "background");
+}
+
+void listProcesses(int argc, char *argv[]) {
+    uint16_t procAmount;
+    
+    // Llamada a la syscall `sysps` que nos devuelve un array de PCB y la cantidad de procesos
+    PCB *processes = sysps(&procAmount);
+
+    if (procAmount == 0 || processes == NULL) {
+        printf("No processes found\n");
+        return;
+    }
+
+    printf("There are %d processes:\n", procAmount);
+
+    for (int i = 0; i < procAmount; i++) {
+        printProcInfo(processes[i]);
+    }
+
+    // Liberar memoria
+    for (int i = 0; i < procAmount; i++) {
+        sysfree(processes[i].name);
+    }
+
+    sysfree(processes);
 }

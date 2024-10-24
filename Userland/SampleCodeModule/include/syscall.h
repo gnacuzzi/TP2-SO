@@ -14,10 +14,9 @@ typedef struct PCB{
     int16_t pid;
     uint64_t stackBase;
     uint64_t stackPos;
-	//falta el foreground
     char *name;
     uint8_t priority;
-    
+    int foreground;    
 } PCB;
 
 #define STDIN 0

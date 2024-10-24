@@ -104,6 +104,7 @@ static void help(int argc, char *argv[]) {
 		"KILL                       Command to kill a process\n"
 		"NICE                       Command to change the priority of a process\n"
 		"BLOCK                      Command to block a process\n"
+		"PS                         Command to list all the processes\n	"
 		"-------------PROCESSES-------------\n"
 		"TESTMM                     Command to test the memory manager\n"
 		"TESTPRIO                   Command to test the priority\n"
@@ -147,6 +148,7 @@ static const command builtInCommands[] = {
 	{"LETTERSIZE", (functionPointer)lettersize},
 	{"MEM", (functionPointer)memState},
 	{"NICE", (functionPointer)changePriority},
+	{"PS", (functionPointer)listProcesses},
 	{"REGISTERS", (functionPointer)registers},
 	{"TIME", (functionPointer)time},
 	{"INVALIDOPERATION", (functionPointer)invalidoperation}
