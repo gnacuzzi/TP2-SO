@@ -15,7 +15,7 @@ static void freeArgv(PCB * pcb, char ** argv, int argc);
 
 int initProcess(PCB *process, int16_t pid,
                  uint64_t rip, char **args, int argc,
-                 uint8_t priority, int16_t fileDescriptors[]) {
+                 uint8_t priority, int16_t fileDescriptors[], int ground) {
     process->pid = pid;
     process->stackBase = (uint64_t) malloc(STACK_SIZE) + STACK_SIZE;
     if(process->stackBase - STACK_SIZE == 0){
@@ -50,6 +50,8 @@ int initProcess(PCB *process, int16_t pid,
         process->fileDescriptors[i] = fileDescriptors[i];
     }
 
+    process->ground = ground;
+    
     return 0;
 }
 

@@ -156,37 +156,54 @@ int ctoi(char s) {
 }
 
 int scanf(char *buffer) {
-	int idx = 0;
-	while (1) {
-		char c = readchar();
-		if (c != -1 && c != 0) {
-			if (c == '\b') {
-				if (idx > 0) {
-					putchar(c);
-					idx--;
-				}
-			}
-			else if (c == '\n') {
-				printf("\n");
-				buffer[idx] = 0;
-				if (buffer[0] != 0) {
-					return 1;
-				}
-				return 0;
-			}
-			else if (c != '\t') {
-				buffer[idx++] = c;
-				putchar(c);
-			}
-		}
-	}
-	return -1;
+    int idx = 0;
+    while (1) {
+        char c = readchar();
+        
+        // Check for valid input
+        if (c != -1 && c != 0) {
+            // Handle backspace
+            if (c == '\b') {
+                if (idx > 0) {
+                    idx--; // Decrement index
+                    putchar(c); // Echo backspace
+                    putchar(' '); // Clear the character
+                    putchar(c); // Echo backspace again
+                    buffer[idx] = '\0'; // Terminate string
+                }
+            }
+            // Handle new line
+            else if (c == '\n') {
+                putchar('\n'); // Echo new line
+                buffer[idx] = '\0'; // Terminate string
+                if (idx > 0) { // Check if something was entered
+                    return 1; // Return success
+                }
+                return 0; // Return failure (no input)
+            }
+            // Ignore tab characters
+            else if (c != '\t') {
+                buffer[idx++] = c; // Store character in buffer
+                putchar(c); // Echo the character
+                buffer[idx] = '\0'; // Terminate string
+            }
+
+            // Optional: Check buffer overflow
+            if (idx >= BUFFER_SIZE) { // Assuming BUFFER_SIZE is defined
+                printf("\nBuffer full\n");
+                buffer[idx] = '\0'; // Ensure null-termination
+                return 1; // Consider it valid but cut-off input
+            }
+        }
+    }
+    return -1; // Should never reach here
 }
 
 int atoi(char *str) {
 	int res = 0;
 	for (int i = 0; str[i] != '\0'; ++i)
-		res = res * 10 + str[i] - '0';
+		if (IS_DIGIT(str[i]))
+			res = res * 10 + str[i] - '0';
 
 	return res;
 }

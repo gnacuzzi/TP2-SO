@@ -9,14 +9,13 @@
 /* Tests */
 
 void testMemory(int argc, char *argv[]){
-    if(argc != 2){
+    if(argc < 2){
         printf("You must insert ONE parameter indicating the memory size you desire to test\n");
         sysexit();
         return;
     }
 
     char *params[] = { argv[1] };
-    printf("%d\n", atoi(argv[1]));
     int out = test_mm(1, params);
 
     printf("Memory test %s\n", out == 0 ? "passed" : "failed");
@@ -25,7 +24,7 @@ void testMemory(int argc, char *argv[]){
 }
 
 void testPrio(int argc, char *argv[]){
-    if(argc != 1){
+    if(argc > 2){
         printf("TestPrio doesn't need parameters\n");
         sysexit();
         return;
@@ -36,7 +35,7 @@ void testPrio(int argc, char *argv[]){
 }
 
 void testProcesses(int argc, char *argv[]){
-    if (argc != 2) {
+    if (argc < 2) {
         printf("You must insert ONE parameter indicating the number of processes you desire to test\n");
         sysexit();
         return;

@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define BUFFER_SIZE 256
+
 void printf(const char *fmt, ...);
 
 int strcmp(const char *s1, const char *s2);

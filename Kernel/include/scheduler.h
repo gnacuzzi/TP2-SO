@@ -11,7 +11,7 @@ void createScheduler();
 
 uint64_t schedule(uint64_t prevRSP);
 
-int16_t createProcess(uint64_t rip, char **args, int argc, uint8_t priority, int16_t fileDescriptors[]);
+int16_t createProcess(uint64_t rip, char **args, int argc, uint8_t priority, int16_t fileDescriptors[], int ground);
 int64_t blockProcess(int16_t pid);
 int64_t readyProcess(int16_t pid);
 PCB *findProcess(int16_t pid);

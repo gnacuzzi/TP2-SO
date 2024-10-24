@@ -21,10 +21,11 @@ typedef struct PCB{
     Status status;
     int16_t fileDescriptors[CANT_FILE_DESCRIPTORS];
     doubleLinkedListADT waitingList;
+    int ground;
 } PCB;
 
 
-int initProcess(PCB *process, int16_t pid, uint64_t rip, char **args, int argc, uint8_t priority, int16_t fileDescriptors[]);
+int initProcess(PCB *process, int16_t pid, uint64_t rip, char **args, int argc, uint8_t priority, int16_t fileDescriptors[], int ground);
 uint64_t setupStackFrame(uint64_t stackBase, uint64_t code,int argc, char * args[]);
 int changePriority(int16_t pid, uint8_t priority);
 void freeProcess(PCB * pcb);

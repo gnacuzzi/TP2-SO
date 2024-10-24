@@ -8,6 +8,7 @@
 #include "include/eliminator.h"
 #include "include/processes.h"
 #include "include/builtins.h"
+#include <stddef.h>
 
 #define BUFFER_LENGTH 256
 #define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
@@ -165,42 +166,63 @@ static int processDim = sizeof(processCommands) / sizeof(processCommands[0]);
 static int builtinsDim = sizeof(builtInCommands) / sizeof(builtInCommands[0]);
 
 int scanCommand(char *command, char *parameters[PARAMETERS_LENGTH], char *buffer) {
-	// buffer = "command arg1 arg2 ..."
-	int i, j, k;
+    // buffer = "command arg1 arg2 ..."
+    int i, j, k;
 
-	for (i = 0, j = 0; buffer[i] != ' ' && buffer[i] != 0; i++, j++) {
-		command[j] = buffer[i];
-	}
-	command[j] = 0;
+    // Inicializa el comando
+    for (i = 0, j = 0; buffer[i] != ' ' && buffer[i] != '\0'; i++, j++) {
+        command[j] = buffer[i];
+    }
+    command[j] = '\0'; // Terminar el comando
 
-	if (buffer[i] == 0) {
-		return 0;
-	}
+    // Si no hay más argumentos, retornar
+    if (buffer[i] == '\0') {
+        return 0;
+    }
 
-	while (buffer[i] == ' ') {
-		i++;
-	}
+    // Saltar espacios en blanco
+    while (buffer[i] == ' ') {
+        i++;
+    }
 
-	int toReturn = 0;
+    int toReturn = 0;
 
-	for (j = 0, k = 0; buffer[i] != 0;) {
-		if (buffer[i] != ' ') {
-			parameters[j][k++] = buffer[i++];
-		} else {
-			parameters[j][k] = 0;
-			k = 0;
-			j++;
-			toReturn++;
-			while (buffer[i] == ' ') {
-				i++;
-			}
-		}
-	}
-	parameters[j][k] = 0;
-	toReturn++;
+    // Inicializar cada parámetro (asumiendo que cada parámetro tiene un tamaño definido por BUFFER_LENGTH)
+    for (j = 0; j < PARAMETERS_LENGTH; j++) {
+        parameters[j] = sysmalloc(BUFFER_LENGTH); // Asignar memoria para cada parámetro
+        if (parameters[j] == NULL) {
+            // Manejo de error: no se pudo asignar memoria
+            return -1;
+        }
+    }
 
-	return toReturn;
+    // Leer parámetros
+    for (k = 0; buffer[i] != '\0';) {
+        if (buffer[i] != ' ') {
+            parameters[toReturn][k++] = buffer[i++]; // Copiar el carácter al parámetro
+        } else {
+            parameters[toReturn][k] = '\0'; // Terminar el parámetro
+            k = 0;
+            toReturn++;
+            while (buffer[i] == ' ') {
+                i++;
+            }
+            // Comprobar si se supera el límite de parámetros
+            if (toReturn >= PARAMETERS_LENGTH) {
+                break;
+            }
+        }
+    }
+
+    // Agregar el último parámetro si hay alguno
+    if (k > 0) {
+        parameters[toReturn][k] = '\0'; // Terminar el último parámetro
+        toReturn++;
+    }
+
+    return toReturn;
 }
+
 
 int commandId(char *command) {
 	char *aux = command;
@@ -241,17 +263,24 @@ int main() {
                		newParams[i + 1] = params[i];
             	}
 				int16_t fileDescriptors[] = {0, 1, 2};	
-				int16_t pid = syscreateProcess(rip, (char **)newParams, cantParams + 1, 1, fileDescriptors);
+				int isBackground = strcmp(params[cantParams-1], "BACK") == 0;
+				int16_t pid = syscreateProcess(rip, (char **)newParams, cantParams + 1, isBackground ? 0 : 1, fileDescriptors, 0);
 				if(pid == -1){
 					printf("Error creating process\n");
 				}
-				syswaitProcess(pid);
+				if (!isBackground) {
+					syswaitProcess(pid);
+				}
 			} else {
 				printf("%s",command);
 				printf(": command not found\n");
 			}
 			for (int i = 0; buffer[i] != 0; i++) { // vaciamos el buffer
 				buffer[i] = '\0';
+				// También vaciamos los parámetros para evitar residuos
+				for (int j = 0; j < PARAMETERS_LENGTH; j++) {
+					params[j] = NULL;
+				}
 			}
 		}
 		printf("~$");

@@ -19,7 +19,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
 	uint32_t total;
 	uint64_t max_memory;
 
-	if (argc != 1)
+	if (argc > 2 || argc < 1)
 		return -1;
 
 	if ((max_memory = satoi(argv[0])) <= 0)
