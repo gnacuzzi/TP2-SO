@@ -32,7 +32,7 @@ static uint64_t syscallTicks();
 static void syscallWait(uint64_t time);
 static int64_t syscallMemInfo(mem_info * memInfo);
 static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc, uint8_t priority, int16_t fileDescriptors[], int ground);
-static PCB * processDump(uint16_t * proccesQty);
+static PSinfo * processDump(uint16_t * proccesQty);
 void syscallExit();
 
 typedef uint64_t (*syscall)(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
@@ -131,7 +131,7 @@ static int16_t syscallCreateProcess(uint64_t rip, char **args, int argc, uint8_t
 
 //16 getPid
 //17 ps
-static PCB * processDump(uint16_t * proccesQty){
+static PSinfo * processDump(uint16_t * proccesQty){
 	return ps(proccesQty);
 }
 //18 killProcess

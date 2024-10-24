@@ -30,7 +30,6 @@ void killProcess(int argc, char *argv[]){
     }
 
     int pid = atoi(argv[0]);
-    printf("Parsed PID: %d\n", pid);
 
     if(pid < 1){ 
         printf("PID must be greater than 0\n");
@@ -63,7 +62,7 @@ void changePriority(int argc, char *argv[]){
 
     int out = syschangePriority(pid, priority);
 
-    printf("Priority of process %d %s\n", pid, out == 0 ? "changed" : "not changed");
+    printf("Priority of process %d %s\n", pid, out >= 0 ? "changed" : "not changed");
 
     return;
 }
@@ -88,24 +87,23 @@ void blockProcess(int argc, char *argv[]){
     return;
 }
 
-static void printProcInfo(PCB proc) {
+static void printProcInfo(PSinfo proc) {
     putchar('\n');
     printf("NAME: %s\n", proc.name == NULL ? "unnamed" : proc.name);
 
     printf("PID: %d\n", proc.pid);
 
-    printf("Priority: %d | Stack base: 0x%d | Stack pointer: 0x%d | Foreground: %s\n", 
+    printf("Priority: %d | Stack base: 0x%d | Stack pointer: 0x%d | Ground: %s\n", 
            proc.priority, 
            proc.stackBase, 
            proc.stackPos, 
-           proc.foreground == 0 ? "foreground" : "background");
+           proc.ground == 0 ? "foreground" : "background");
 }
 
 void listProcesses(int argc, char *argv[]) {
     uint16_t procAmount;
     
-    // Llamada a la syscall `sysps` que nos devuelve un array de PCB y la cantidad de procesos
-    PCB *processes = sysps(&procAmount);
+    PSinfo *processes = sysps(&procAmount);
 
     if (procAmount == 0 || processes == NULL) {
         printf("No processes found\n");
@@ -118,7 +116,6 @@ void listProcesses(int argc, char *argv[]) {
         printProcInfo(processes[i]);
     }
 
-    // Liberar memoria
     for (int i = 0; i < procAmount; i++) {
         sysfree(processes[i].name);
     }

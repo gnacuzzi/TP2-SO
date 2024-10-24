@@ -19,7 +19,19 @@ void yield();
 int64_t killCurrentProcess();
 int64_t killProcess(int16_t pid);
 int16_t getPid();
-PCB * ps(uint16_t * proccesQty);
-int16_t copyProcess(PCB *dest, PCB *src);
+
+
+
+typedef struct PSinfo{
+    int16_t pid;
+    uint64_t stackBase;
+    uint64_t stackPos;
+    char *name;
+    uint8_t priority;
+    int ground;    
+} PSinfo;
+
+PSinfo * ps(uint16_t * proccesQty);
+int16_t copyProcess(PSinfo *dest, PCB *src);
 
 #endif

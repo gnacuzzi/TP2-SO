@@ -46,7 +46,7 @@ void createScheduler(){
     scheduler->currentProcess = NULL;
     char *argsIdle[2] = {"idle"};
     int16_t fileDescriptors[] = {-1, -1, STDERR}; //devnull, devnull, stderror
-    createProcess((uint64_t)idle, argsIdle, 1, 1, fileDescriptors, 0);
+    createProcess((uint64_t)idle, argsIdle, 1, 1, fileDescriptors, 1);
 }
 
 uint64_t schedule(uint64_t prevRSP) {
@@ -231,14 +231,14 @@ int16_t getPid(){
 	return scheduler->currentPid;
 }
 
-PCB * ps(uint16_t * proccesQty){
+PSinfo * ps(uint16_t * proccesQty){
     schedulerADT scheduler = getScheduler();
     if(scheduler->processList == NULL){
         *proccesQty = 0;
         return NULL;
     }
     
-    PCB * processes = malloc(sizeof(PCB) * scheduler->processQty);
+    PSinfo * processes = malloc(sizeof(PCB) * scheduler->processQty);
     if(processes == NULL){
         *proccesQty = 0;
         return NULL;
@@ -259,11 +259,12 @@ PCB * ps(uint16_t * proccesQty){
     return processes;
 }
 
-int16_t copyProcess(PCB *dest, PCB *src){
+int16_t copyProcess(PSinfo *dest, PCB *src){
     dest->pid = src->pid;
     dest->stackBase = src->stackBase;
     dest->stackPos = src->stackPos;
     dest->priority = src->priority;
+    dest->ground = src->ground;
 
     if(src->name != NULL){
         dest->name = malloc(strlen(src->name) + 1);

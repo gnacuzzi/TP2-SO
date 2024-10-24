@@ -79,7 +79,7 @@ void testSynchronization(int argc, char *argv[]){//{n, use_sem, 0}
 
     int out = test_sync(2, params);
 
-    printf("Process test %s\n", out == 0 ? "passed" : "failed");
+    printf("Synchronization test finished %s errors\n", out == 0 ? "without" : "with");
     sysexit();
     return;
 }
