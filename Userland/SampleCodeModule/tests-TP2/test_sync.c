@@ -21,19 +21,26 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   int8_t inc;
   int8_t use_sem;
 
-  if (argc != 4)
+  if (argc != 4){
+    sysexit();
     return -1;
-
-  if ((n = satoi(argv[1])) <= 0)
+  }
+  if ((n = satoi(argv[1])) <= 0){
+    sysexit();
     return -1;
-  if ((inc = satoi(argv[2])) == 0)
+  }
+  if ((inc = satoi(argv[2])) == 0){
+    sysexit();
     return -1;
-  if ((use_sem = satoi(argv[3])) < 0)
+  }
+  if ((use_sem = satoi(argv[3])) < 0){
+    sysexit();
     return -1;
-
+  }
   if (use_sem)
     if (syssemOpen(SEM_ID) == -1) {
       printf("test_sync: ERROR opening semaphore\n");
+      sysexit();
       return -1;
     }
 
@@ -47,8 +54,6 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   }
 
   printf("Process %d finished\n", (int)sysgetpid());
-
-  
 
   sysexit();
   return 0;

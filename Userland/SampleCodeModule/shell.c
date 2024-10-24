@@ -107,7 +107,7 @@ static void help(int argc, char *argv[]) {
 		"TESTMM                     Command to test the memory manager\n"
 		"TESTPRIO                   Command to test the priority\n"
 		"TESTPROC                   Command to test the processes\n"
-		"TESTSYNCRO                 Command to test the synchronization\n"
+		"TESTSYNCRO                 Use: <n> <use_sem>\n"
 		"LOOP                       Command to print its ID with a greeting every specified number of seconds\n"
 		;
 	printf("%s",manual);
