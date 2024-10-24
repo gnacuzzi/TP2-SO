@@ -21,19 +21,26 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
   int8_t inc;
   int8_t use_sem;
 
-  if (argc != 3)
+  if (argc != 4){
+    sysexit();
     return -1;
-
-  if ((n = satoi(argv[1])) <= 0)
+  }
+  if ((n = satoi(argv[1])) <= 0){
+    sysexit();
     return -1;
-  if ((inc = satoi(argv[2])) == 0)
+  }
+  if ((inc = satoi(argv[2])) == 0){
+    sysexit();
     return -1;
-  if ((use_sem = satoi(argv[3])) < 0)
+  }
+  if ((use_sem = satoi(argv[3])) < 0){
+    sysexit();
     return -1;
-
+  }
   if (use_sem)
-    if (!syssemOpen(SEM_ID, 1)) {
+    if (syssemOpen(SEM_ID) == -1) {
       printf("test_sync: ERROR opening semaphore\n");
+      sysexit();
       return -1;
     }
 
@@ -46,9 +53,9 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
       syspost(SEM_ID);
   }
 
-  if (use_sem)
-    syssemClose(SEM_ID);
+  printf("Process %d finished\n", (int)sysgetpid());
 
+  sysexit();
   return 0;
 }
 
@@ -57,6 +64,14 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
 
   if (argc != 2)
     return -1;
+
+  int8_t use_sem = satoi(argv[1]);
+	if (use_sem) {
+		if (syssemInit(SEM_ID, 1) == -1) {
+			printf("test_sync: ERROR creating semaphore\n");
+			return -1;
+		}
+	}
 
   char *argvDec[] = {"my_process_inc", argv[0], "-1", argv[1]};
   char *argvInc[] = {"my_process_inc", argv[0], "1", argv[1]};
@@ -67,7 +82,13 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   uint64_t i;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     pids[i] = syscreateProcess((uint64_t)my_process_inc, argvDec, 4, 1, fileDescriptors, 0);
+
+    printf("Created process %d\n", (int)pids[i]);
+
     pids[i + TOTAL_PAIR_PROCESSES] = syscreateProcess((uint64_t)my_process_inc, argvInc, 4, 1, fileDescriptors, 0);
+
+    printf("Created process %d\n", (int)pids[i + TOTAL_PAIR_PROCESSES]);
+  
   }
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
@@ -77,5 +98,8 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
 
   printf("Final value: %d\n", global);
 
-  return 0;
+  if (use_sem)
+    syssemClose(SEM_ID);
+
+  return global;
 }

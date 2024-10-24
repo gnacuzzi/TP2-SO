@@ -45,7 +45,7 @@ void startSemaphores() {
 }
 
 
-int8_t semOpen(uint16_t id, uint32_t initialValue) {
+int8_t semInit(uint16_t id, uint32_t initialValue) {
     if (id >= MAX_SEMAPHORES) {
         return -1; 
     }
@@ -59,6 +59,15 @@ int8_t semOpen(uint16_t id, uint32_t initialValue) {
     }
 
     return -1;
+}
+
+int8_t semOpen(uint16_t id) {
+    if (id >= MAX_SEMAPHORES) {
+        return -1; 
+    }
+
+    SemaphoreADT sem = getSemaphore();
+    return -1 * (sem->semaphores[id].used == 0);
 }
 
 int8_t semClose(uint16_t id) {

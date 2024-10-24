@@ -47,8 +47,8 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
 								 (syscall) syscallCreateProcess, (syscall) getPid,		  (syscall) processDump,
 								 (syscall) killProcess, 	  (syscall) changePriority,	  (syscall) blockProcess,
 								 (syscall) readyProcess,	  (syscall) yield,			  (syscall) waitProcess,
-								 (syscall) syscallExit, 	  (syscall) semOpen,			  (syscall) semClose,
-								 (syscall) post, 			  (syscall) wait};
+								 (syscall) syscallExit, 	  (syscall) semOpen,		  (syscall) semClose,
+								 (syscall) post, 			  (syscall) wait, 			  (syscall) semInit};
 	return syscalls[nr](arg0, arg1, arg2, arg3, arg4, arg5);
 }
 //0
@@ -151,3 +151,4 @@ void syscallExit(){
 //26 semClose
 //27 post
 //28 wait
+//29 semInit

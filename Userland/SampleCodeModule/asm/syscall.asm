@@ -26,6 +26,7 @@ GLOBAL syssemOpen
 GLOBAL syssemClose
 GLOBAL syspost
 GLOBAL syswait
+GLOBAL syssemInit
 
 read_char:
     mov rax, 0
@@ -167,5 +168,10 @@ syspost:
 
 syswait:
     mov rax, 28
+    int 80h
+    ret
+
+syssemInit:
+    mov rax, 29
     int 80h
     ret
