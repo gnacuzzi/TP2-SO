@@ -46,14 +46,14 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]) {
 
   uint64_t i;
   for (i = 0; i < n; i++) {
-    if (use_sem)
+    if (use_sem){
       syswait(SEM_ID);
+    }
     slowInc(&global, inc);
-    if (use_sem)
+    if (use_sem){
       syspost(SEM_ID);
+    }
   }
-
-  printf("Process %d finished\n", (int)sysgetpid());
 
   sysexit();
   return 0;
@@ -82,13 +82,7 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   uint64_t i;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     pids[i] = syscreateProcess((uint64_t)my_process_inc, argvDec, 4, 1, fileDescriptors, 0);
-
-    printf("Created process %d\n", (int)pids[i]);
-
     pids[i + TOTAL_PAIR_PROCESSES] = syscreateProcess((uint64_t)my_process_inc, argvInc, 4, 1, fileDescriptors, 0);
-
-    printf("Created process %d\n", (int)pids[i + TOTAL_PAIR_PROCESSES]);
-  
   }
 
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
@@ -101,5 +95,5 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
   if (use_sem)
     syssemClose(SEM_ID);
 
-  return global;
+  return 0;
 }
