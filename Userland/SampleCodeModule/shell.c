@@ -111,7 +111,7 @@ static void help(int argc, char *argv[]) {
 		"TESTMM                     Test the memory manager\n"
 		"TESTPRIO                   Test priorities in processes\n"
 		"TESTPROC                   Test processes - Use: TESTPROC <amount of processes>\n"
-		"TESTSYNCRO                 Test synchronization - Use: TESTSYNCRO <iterations> <use_sem>\n"
+		"TESTSYNC                   Test synchronization - Use: TESTSYNCRO <iterations> <use_sem>\n"
 		"LOOP                       Command to print its ID with a greeting every specified number of seconds\n"
 		;
 	printf("%s",manual);
@@ -161,7 +161,7 @@ static const command processCommands[] = {
 	{"TESTMM", (functionPointer)testMemory},
 	{"TESTPRIO", (functionPointer)testPrio},
 	{"TESTPROC", (functionPointer)testProcesses},
-	{"TESTSYNCRO", (functionPointer)testSynchronization}
+	{"TESTSYNC", (functionPointer)testSynchronization}
 };
 
 static int processDim = sizeof(processCommands) / sizeof(processCommands[0]);

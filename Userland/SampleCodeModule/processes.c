@@ -6,6 +6,8 @@
 #include "include/syscall.h"
 #include "include/libc.h"
 
+#define TICKS 0.055
+
 /* Tests */
 
 void testMemory(int argc, char *argv[]){
@@ -100,10 +102,11 @@ void loop(int argc, char *argv[]){
         sysexit();
         return;
     }
+    int realTime = secs / TICKS;
 
     while (1) {
         printf("Hello World! PID: %d\n", sysgetpid());
-        wait_delta(secs);
+        wait_delta(realTime);
     }
     
     sysexit();
