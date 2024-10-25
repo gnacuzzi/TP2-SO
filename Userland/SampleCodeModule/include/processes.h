@@ -16,4 +16,9 @@ void testNoSynchronization(int argc, char *argv[]);
 /* Others */
 void loop(int argc, char *argv[]);
 
+/* Inter Process Communication */
+void cat(int argc, char *argv[]);
+void wc(int argc, char *argv[]);
+void filter(int argc, char *argv[]);
+
 #endif

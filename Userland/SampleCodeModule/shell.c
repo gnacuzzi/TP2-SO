@@ -113,6 +113,9 @@ static void help(int argc, char *argv[]) {
 		"TESTPROC                   Test processes - Use: TESTPROC <amount of processes>\n"
 		"TESTSYNC                   Test synchronization - Use: TESTSYNCRO <iterations> <use_sem>\n"
 		"LOOP                       Command to print its ID with a greeting every specified number of seconds\n"
+		"CAT                        Command to print stdin\n"
+		"WC                         Prints the amount of lines on input\n"
+		"FILTER                     Prints only the vowels from the input\n"
 		;
 	printf("%s",manual);
 }
@@ -157,11 +160,14 @@ static const command builtInCommands[] = {
 };
 
 static const command processCommands[] = {
+	{"CAT", (functionPointer)cat},
+	{"FILTER", (functionPointer)filter},
 	{"LOOP", (functionPointer)loop},
 	{"TESTMM", (functionPointer)testMemory},
 	{"TESTPRIO", (functionPointer)testPrio},
 	{"TESTPROC", (functionPointer)testProcesses},
-	{"TESTSYNC", (functionPointer)testSynchronization}
+	{"TESTSYNC", (functionPointer)testSynchronization},
+	{"WC", (functionPointer)wc}
 };
 
 static int processDim = sizeof(processCommands) / sizeof(processCommands[0]);

@@ -112,3 +112,85 @@ void loop(int argc, char *argv[]){
     sysexit();
     return;
 }
+
+/* Inter Process Communication */
+
+void cat(int argc, char *argv[]){
+    if(argc != 1){
+        printf("Cat doesn't need parameters\n");
+        sysexit();
+        return;
+    }
+
+    char *buffer = '\0';
+    printf("To stop double enter\n"); //en teoria esto deberia cortar cuando hago ctrl d pero no lo tenemos implementado todavia
+
+    while (scanf(buffer) != -1) { 
+        if(*buffer == '\0'){
+            break;
+        } 
+    }
+
+    sysexit();
+    return;
+}
+
+void wc(int argc, char *argv[]){
+    if(argc != 1){
+        printf("Wc doesn't need parameters\n");
+        sysexit();
+        return;
+    }
+
+    printf("To stop click shift\n"); //en teoria esto deberia cortar cuando hago ctrl d pero no lo tenemos implementado todavia
+    char c;
+    int counter = 0;
+
+    while (1) {
+        c = readchar();
+
+        if (c == '\n') { 
+            counter++;
+        }
+        if (c == '\0') { 
+            break; 
+        } 
+    }
+
+    printf("Number of lines: %d\n", counter);
+
+    sysexit();
+    return;
+}
+
+static int isVowel(char c){
+    if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U') {
+        return 1;
+    }
+    return 0;
+}
+
+void filter(int argc, char *argv[]){
+    if(argc != 1){
+        printf("Filter doesn't need parameters\n");
+        sysexit();
+        return;
+    }
+    printf("To stop click shift\n"); //en teoria esto deberia cortar cuando hago ctrl d pero no lo tenemos implementado todavia
+
+    char c;
+
+    while(1){
+        c = readchar();
+        if(isVowel(c)){
+            printf("%c\t", c);
+        }
+        if (c == '\0') { 
+            printf("\n");
+            break; 
+        } 
+    }
+
+    sysexit();
+    return;
+}
