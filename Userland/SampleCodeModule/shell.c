@@ -91,6 +91,8 @@ static void help(int argc, char *argv[]) {
 	}
 
 	const char *manual =
+		"-------------COMMENTS-------------\n"
+		"If you wish to send a process to background write BACK at the end of the command\n\n"
 		"-------------BUILT-INS-------------\n"
 		"DIVIDEBYZERO               Command to verify the exception routine \"Divide by zero\"\n"
 		"ELIMINATOR                 Challenge yourself or you and a friend to an elimination game\n"
@@ -106,10 +108,10 @@ static void help(int argc, char *argv[]) {
 		"BLOCK                      Command to block a process\n"
 		"PS                         Command to list all the processes\n	"
 		"-------------PROCESSES-------------\n"
-		"TESTMM                     Command to test the memory manager\n"
-		"TESTPRIO                   Command to test the priority\n"
-		"TESTPROC                   Command to test the processes\n"
-		"TESTSYNCRO                 Use: <n> <use_sem>\n"
+		"TESTMM                     Test the memory manager\n"
+		"TESTPRIO                   Test priorities in processes\n"
+		"TESTPROC                   Test processes - Use: TESTPROC <amount of processes>\n"
+		"TESTSYNCRO                 Test synchronization - Use: TESTSYNCRO <iterations> <use_sem>\n"
 		"LOOP                       Command to print its ID with a greeting every specified number of seconds\n"
 		;
 	printf("%s",manual);

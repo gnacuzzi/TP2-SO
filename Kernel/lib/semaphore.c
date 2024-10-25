@@ -100,13 +100,16 @@ int8_t post(uint16_t id) {
     }
 
     acquire(&sem->semaphores[id].lock);
-    sem->semaphores[id].value++;
+    
     if (!isEmpty(sem->semaphores[id].waiting)) {
         int16_t *pidPtr = (int16_t *) getFirstData(sem->semaphores[id].waiting);
         int16_t pid = *pidPtr;
-        free(pidPtr);  
+        free(pidPtr);
         readyProcess(pid);
+    } else {
+        sem->semaphores[id].value++;
     }
+    
     release(&sem->semaphores[id].lock);
 
     return 0; 
@@ -139,6 +142,7 @@ int8_t wait(uint16_t id) {
     blockProcess(*pidPtr);
     return 0;
 }
+
 
 
 static SemaphoreADT getSemaphore() {

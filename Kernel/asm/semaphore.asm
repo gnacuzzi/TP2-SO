@@ -12,7 +12,7 @@ acquire:
     ret
 
 release:
-    mov al, 1
+    mov al, 0
     mov [rdi], al
     ret
 
