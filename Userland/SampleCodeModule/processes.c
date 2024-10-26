@@ -59,7 +59,7 @@ void testProcesses(int argc, char *argv[]){
 }
 
 void testSynchronization(int argc, char *argv[]){//{n, use_sem, 0}
-    if (argc != 3) {
+    if (argc < 3) {
         printf("You must insert TWO parameters, one indicating the number of iterations and an other one indicating if you wish to use or not semaphores\n");
         sysexit();
         return;
