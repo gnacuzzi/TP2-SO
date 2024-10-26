@@ -1,131 +1,197 @@
-#ifdef BUDDY
 #include <memoryManager.h>
 #include <videoDriver.h>
 
-#define LEVELS 28
 #define MIN_EXPONENT 6
+#define MIN_ALLOC 64
+#define MAX_EXPONENT 28   
+#define MAX_ALLOC 268435456
+#define NODES 8388607
+
 #define TRUE 1
 #define FALSE !TRUE
 
-typedef struct MemoryBlock {
-    uint64_t exponent;
-    uint8_t free;
-    struct MemoryBlock *next;
-} MemoryBlock;
+
+typedef struct {
+    unsigned int used;
+    unsigned int usedChildren;
+} Node;
 
 typedef struct MemoryManagerCDT {
-    uint8_t maxExponent;
-    MemoryBlock * list[LEVELS];
+    void *firstAddress;
+    Node *nodes;
     uint64_t totalMemory;
-    uint64_t freeMemory;
+    uint64_t usedMemory;
 } MemoryManagerCDT;
 
+static uint64_t getExponent(uint64_t size);
+static int64_t freeNode(uint64_t exponent);
+static void treeUpdate(int64_t node, int64_t used);
+static void setFlag(int64_t node, int64_t used);
+static void * adress(int64_t node, uint64_t exponent);
+static int64_t getMaxExponent(void *ptr);
+static int64_t searchNode(int64_t startIdx, uint64_t *level, void *ptr);
+static int64_t getStartNode(void *ptr, int64_t maxLevel);
 
-static void *firstAddress;
-static MemoryManagerADT getMemoryManager();
+
+MemoryManagerADT memoryManager = NULL;
+static MemoryManagerADT getMemoryManagerCDT(){
+    return (MemoryManagerADT) memoryManager;
+}
+
 
 void mminit(void *start, uint64_t size){
-    firstAddress = start;
+    memoryManager = start;
 
-	MemoryManagerADT memoryManager = (MemoryManagerADT) firstAddress;
-
-    memoryManager->maxExponent = log(size, 2);
-
-    if (memoryManager->maxExponent < MIN_EXPONENT) return NULL;
-
-    for(int i = 0; i < LEVELS; i++){
-        memoryManager->list[i] = NULL;
+    if(size < MIN_ALLOC){
+        return;
     }
+
+    memoryManager->nodes = (Node *)(start + sizeof(MemoryManagerCDT));
+    memoryManager->firstAddress = memoryManager->nodes + sizeof(Node) * NODES;
 
     memoryManager->totalMemory = size;
-    memoryManager->freeMemory = size;
+    memoryManager->usedMemory = 0;
 
-    memoryManager->list[memoryManager->maxExponent - 1] = createBlock(firstAddress + sizeof(MemoryManagerCDT), memoryManager->maxExponent, NULL);
+    for(int i = 0; i < NODES; i++){
+        memoryManager->nodes[i].used = FALSE;
+        memoryManager->nodes[i].usedChildren = 0;
+    }
+
 }
 
-void *malloc(uint64_t size){
-    MemoryManagerADT memoryManager = getMemoryManager();
-
-    if(size == 0 || size > memoryManager->freeMemory) return NULL;
-
-    uint8_t exponent = log(size + sizeof(MemoryBlock), 2);
-
-    if(exponent < MIN_EXPONENT) exponent = MIN_EXPONENT;
-
-    if(exponent >= memoryManager->maxExponent) return NULL;
-
-    uint8_t i = exponent - MIN_EXPONENT;
-
-    while(i < LEVELS && memoryManager->list[i] == NULL){
-        i++;
+void * malloc(uint64_t size) {
+    MemoryManagerADT memoryManager = getMemoryManagerCDT();
+    uint64_t exponent = 0;
+    if(size > MAX_ALLOC || size == 0 || (exponent = getExponent(size)) > MAX_EXPONENT){
+        return NULL;
+    }
+    if(exponent < MIN_EXPONENT){
+        exponent = MIN_EXPONENT;
     }
 
-    if(i == LEVELS) return NULL;
-
-    MemoryBlock *block = memoryManager->list[i];
-    memoryManager->list[i] = block->next;
-    block->free = FALSE;
-
-    while(i > exponent - MIN_EXPONENT){
-        i--;
-        MemoryBlock *buddy = createBlock((void *) (firstAddress + memoryManager->totalMemory / (1 << (i + MIN_EXPONENT))), i + MIN_EXPONENT, memoryManager->list[i]);
-        if(buddy == NULL) return NULL;
-        memoryManager->list[i] = buddy;
+    int64_t node = freeNode(exponent);
+    if(node == -1){
+        return NULL;
     }
 
-    memoryManager->freeMemory -= 1 << (exponent - MIN_EXPONENT);
+    treeUpdate(node, 1);
+    setFlag(node, TRUE);
 
-    return (void *) block;
+    memoryManager->usedMemory += (1 << exponent);
+
+    return adress(node, exponent);   
 }
 
-void free(void *p){
-    MemoryManagerADT memoryManager = getMemoryManager();
-
-    MemoryBlock *block = (MemoryBlock *) p;
-    uint8_t exponent = block->exponent;
-
-    uint8_t i = exponent - MIN_EXPONENT;
-
-    while(i < LEVELS && memoryManager->list[i] != NULL){
-        i++;
+void free(void *ptr) {
+    MemoryManagerADT memoryManager = getMemoryManagerCDT();
+    if (ptr == NULL){
+        return;
     }
 
-    if(i == LEVELS) return;
+    uint64_t exponent = getMaxExponent(ptr);
+    int64_t node = searchNode(getStartNode(ptr, exponent), &exponent, ptr);
 
-    block->free = TRUE;
+    if (node < 0) return;
 
-    while(i > exponent - MIN_EXPONENT){
-        i--;
-        MemoryBlock *buddy = (MemoryBlock *) (firstAddress + memoryManager->totalMemory / (1 << (i + MIN_EXPONENT)) * ((uint64_t) block - (uint64_t) firstAddress) / (1 << (exponent - MIN_EXPONENT)));
-        if(buddy->free == FALSE) return;
-        if(buddy->exponent != exponent) return;
-        if(buddy < block) block = buddy;
-        memoryManager->list[i] = buddy->next;
-    }
+    treeUpdate(node, -1);
+    setFlag(node, FALSE);
 
-    memoryManager->freeMemory += 1 << (exponent - MIN_EXPONENT);
+    memoryManager->usedMemory -= (1 << exponent);
 }
 
-void meminfo(mem_info *mem_info){
-    MemoryManagerADT memoryManager = getMemoryManager();
 
+void meminfo(mem_info *mem_info) {
+    MemoryManagerADT memoryManager = getMemoryManagerCDT();
     mem_info->total = memoryManager->totalMemory;
-    mem_info->free = memoryManager->freeMemory;
-    mem_info->used = memoryManager->totalMemory - memoryManager->freeMemory;
-}
-
-MemoryManagerADT getMemoryManager() {
-	return (MemoryManagerADT) firstAddress;
+    mem_info->used = memoryManager->usedMemory;
+    mem_info->free = memoryManager->totalMemory - memoryManager->usedMemory;
 }
 
 
-static MemoryBlock *createBlock(void *ptr, uint8_t exponent, MemoryBlock *next) {
-	MemoryBlock *memoryBlock = (MemoryBlock *) ptr;
-	memoryBlock->exponent = exponent;
-	memoryBlock->free = TRUE;
-	memoryBlock->next = next;
-	
-	return memoryBlock;
+
+static uint64_t getExponent(uint64_t size){
+    uint64_t exponent = 0;
+    while(size > MIN_ALLOC){
+        size = size >> 1;
+        exponent++;
+    }
+    return exponent;
 }
 
-#endif
+static int64_t freeNode(uint64_t exponent) {
+    MemoryManagerADT memoryManager = getMemoryManagerCDT();
+
+    int node = (1 << (MAX_EXPONENT - exponent)) - 1;
+    int lastNode = (1 << (MAX_EXPONENT - (exponent - 1))) - 1;
+
+    while (node < lastNode && (memoryManager->nodes[node].used || memoryManager->nodes[node].usedChildren)) {
+        ++node;
+    }
+
+    if (node == lastNode) {
+        return -1;
+    }
+
+    return node;
+}
+
+static void treeUpdate(int64_t node, int64_t used) {
+    MemoryManagerADT memoryManager = getMemoryManagerCDT();
+
+    while (node) {
+        memoryManager->nodes[node].usedChildren += used;
+        node = ((node + 1) >> 1) - 1;
+    }
+}
+
+static void setFlag(int64_t node, int64_t used) {
+    if(node < 0 || node >= NODES){
+        return;
+    }
+    MemoryManagerADT memoryManager = getMemoryManagerCDT();
+
+    memoryManager->nodes[node].used = used;
+    setFlag((node << 1) + 1, used);
+    setFlag((node << 1) + 2, used);
+}
+
+static void * adress(int64_t node, uint64_t exponent) {
+    MemoryManagerADT memoryManager = getMemoryManagerCDT();
+
+    return memoryManager->firstAddress + (node - ((1 << (MAX_EXPONENT - exponent)) - 1)) * (1 << exponent);
+}
+
+static int64_t getMaxExponent(void *ptr) {
+    uintptr_t relativeAddress = (uintptr_t)ptr - (uintptr_t)memoryManager->firstAddress; 
+    int64_t level = MAX_EXPONENT; 
+    uint64_t powOfTwo = 1 << MAX_EXPONENT; 
+
+    while ((relativeAddress % powOfTwo) != 0) {
+        level--; 
+        powOfTwo >>= 1; 
+    }
+    return level; 
+}
+
+static int64_t searchNode(int64_t startIdx, uint64_t *level, void *ptr) {
+    if (*level < MIN_EXPONENT) {
+        return -1;
+    }
+
+    if (!memoryManager->nodes[startIdx].used) {
+        (*level)--; 
+        int64_t leftChildIdx = (startIdx << 1) + 1; 
+        int64_t rightChildIdx = (startIdx << 1) + 2; 
+
+        void *address = adress(rightChildIdx, *level); 
+        return searchNode(ptr < address ? leftChildIdx : rightChildIdx, level, ptr);
+    }
+
+    return ptr == adress(startIdx, *level) ? startIdx : -1;
+}
+
+static int64_t getStartNode(void *ptr, int64_t maxLevel) {
+    uintptr_t relativeAddress = (uintptr_t)ptr - (uintptr_t)memoryManager->firstAddress; 
+    int64_t firstIndexOfMaxExponent = (1 << (MAX_EXPONENT - maxLevel)) - 1; 
+    return firstIndexOfMaxExponent + (relativeAddress / (1 << maxLevel));
+}

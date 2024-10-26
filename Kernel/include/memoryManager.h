@@ -13,12 +13,11 @@ typedef struct mem_info {
 typedef struct MemoryManagerCDT *MemoryManagerADT;
 
 #define HEAP_SIZE 0x10000000 // 256 MiB
-
 #define BLOCK_SIZE 64
 #define STRUCT_SIZE (HEAP_SIZE / BLOCK_SIZE)
 
 #ifdef BUDDY
-#undef  HEAP_STRUCTURE_SIZE
+#undef HEAP_STRUCTURE_SIZE
 #define HEAP_STRUCTURE_SIZE MemoryManagerCDT
 #endif // BUDDY
 
@@ -27,4 +26,4 @@ void *malloc(uint64_t size);
 void free(void *p);
 void meminfo(mem_info *mem_info);
 
-#endif
+#endif // __MEMORY_MANAGER_H

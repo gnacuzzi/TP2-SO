@@ -10,6 +10,9 @@ LOADERSRC=loader.asm
 LOADEROBJECT=$(LOADERSRC:.asm=.o)
 STATICLIBS=
 
+# Excluir lib/buddy.c
+OBJECTS := $(filter-out lib/buddy.o, $(OBJECTS))
+
 all: $(KERNEL)
 
 $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM)
@@ -25,8 +28,11 @@ $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM)
 $(LOADEROBJECT):
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
+buddy:
+	$(KERNEL)
+	$(GCC) $(GCCFLAGS) -I./include -c lib/buddy.c -o lib/buddy.o
+
 clean:
 	rm -rf asm/*.o *.o *.bin */*.o *.elf
 
 .PHONY: all clean
-
