@@ -1,3 +1,4 @@
+#ifdef BUDDY
 #include <memoryManager.h>
 #include <videoDriver.h>
 
@@ -195,3 +196,5 @@ static int64_t getStartNode(void *ptr, int64_t maxLevel) {
     int64_t firstIndexOfMaxExponent = (1 << (MAX_EXPONENT - maxLevel)) - 1; 
     return firstIndexOfMaxExponent + (relativeAddress / (1 << maxLevel));
 }
+
+#endif // BUDDY

@@ -14,7 +14,6 @@ typedef struct MM_rq {
 } mm_rq;
 
 uint64_t test_mm(uint64_t argc, char *argv[]) {
-	int l = 0;
 	mm_rq mm_rqs[MAX_BLOCKS];
 	uint8_t rq;
 	uint32_t total;
@@ -59,7 +58,5 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
 			if (mm_rqs[i].address)
 				sysfree(mm_rqs[i].address);
 
-		printf("test_mm: %d\n", l);
-		l++;
 	}
 }
