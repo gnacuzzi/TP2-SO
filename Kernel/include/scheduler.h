@@ -18,6 +18,7 @@ PCB *findProcess(int16_t pid);
 void yield();
 int64_t killCurrentProcess();
 int64_t killProcess(int16_t pid);
+int64_t killForegroundProcess();
 int16_t getPid();
 
 

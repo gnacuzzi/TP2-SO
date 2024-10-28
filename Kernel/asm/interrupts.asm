@@ -23,6 +23,7 @@ EXTERN keyboard_handler
 EXTERN syscallDispatcher
 EXTERN load_main
 EXTERN schedule
+EXTERN killForegroundProcess
 
 
 GLOBAL exceptregs
@@ -172,56 +173,42 @@ _irq00Handler:
 	popState
 	iretq
 
-;Keyboard
+;keyboard
 _irq01Handler:
-	pushState
-	mov rax, 0
-	in al, 0x60
-	cmp al, 0x1D ; ctrl 
-	jne no_control
-	
-	; saving an array of registers: RAX, RBX, RCX, RDX, RSI, RDI, RBP, R8, R9, R10, R11, R12, R13
-	; R14, R15, RSP, RIP, RFLAGS
-   	mov [registers+8*1],	rbx
-	mov [registers+8*2],	rcx
-	mov [registers+8*3],	rdx
-	mov [registers+8*4],	rsi
-	mov [registers+8*5],	rdi
-	mov [registers+8*6],	rbp
-	mov [registers+8*7], r8
-	mov [registers+8*8], r9
-	mov [registers+8*9], r10
-	mov [registers+8*10], r11
-	mov [registers+8*11], r12
-	mov [registers+8*12], r13
-	mov [registers+8*13], r14
-	mov [registers+8*14], r15
+    pushState
+    mov rax, 0
+    in al, 0x60         ; Lee la tecla presionada
 
-	mov rax, rsp
-	add rax, 160			  ;volvemos a antes de pushear los registros
-	mov [registers + 8*15], rax  ;RSP
+    ; Detectar si Ctrl está presionado o soltado
+    cmp al, 0x1D        ; Ctrl presionado (scan code 0x1D)
+    je control_pressed
+    cmp al, 0x9D        ; Ctrl soltado (scan code 0x9D)
+    je control_released
 
-	mov rax, [rsp+15*8]
-	mov [registers + 8*16], rax ;RIP
+    ; Si Ctrl está presionado, verificar si la tecla 'C' fue presionada
+    cmp byte [ctrl_pressed], 1  ; Verificar si Ctrl está activo
+    jne no_control_c
+    cmp al, 0x2E        ; Tecla 'C' (scan code 0x2E)
+    je ctrl_c_detected
 
-	mov rax, [rsp + 14*8]	;RAX
-	mov [registers], rax
+    ; Si no se presiona Ctrl+C, proceder normalmente
+no_control_c:
+    call keyboard_handler
+    jmp exit
 
-	mov rax, [rsp+15*9]
-	mov [registers + 8*17], rax ;RFLAGS
+control_pressed:
+    mov byte [ctrl_pressed], 1  ; Marcar que Ctrl está presionado
+    jmp exit
 
-	mov byte [capturedReg], 1
-	jmp exit
+control_released:
+    mov byte [ctrl_pressed], 0  ; Marcar que Ctrl fue soltado
+    jmp exit
 
-no_control:
-	cmp al, 0x9D	
-	je exit
+ctrl_c_detected:
+    call killForegroundProcess   ; Llamar a killForegroundProcess
+    jmp exit
 
-	call keyboard_handler
-	jmp exit
-		
 exit:
-	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
 	popState
@@ -289,3 +276,4 @@ SECTION .bss
 	exceptregs resq 18	;registros para la excepcion
 	registers resq 18		;registros para el teclado
 	capturedReg resb 1		;flag para saber si se capturo un teclado
+	ctrl_pressed resb 1		;flag para saber si se presiono ctrl
