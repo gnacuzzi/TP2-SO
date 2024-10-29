@@ -124,7 +124,7 @@ void cat(int argc, char *argv[]){
         return;
     }
 
-    char buffer[MAX_BUFF] = NULL;
+    char buffer[MAX_BUFF] = {0};
     printf("To stop double enter\n"); //en teoria esto deberia cortar cuando hago ctrl d pero no lo tenemos implementado todavia
 
     while (scanf(buffer) != -1) { 
