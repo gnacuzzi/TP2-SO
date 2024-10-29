@@ -10,6 +10,7 @@
 #include <vars.h>
 #include <scheduler.h>
 #include <semaphore.h>
+#include <pipes.h>
 
 #define STDIN 0
 #define STDOUT 1
@@ -18,8 +19,8 @@
 extern const uint64_t registers[18];
 extern const uint64_t capturedReg;
 
-static void syscallRead(uint64_t buffer);
-static void syscallWrite(uint32_t fd, char c);
+static void syscallRead(int64_t fd, char * buffer, uint64_t size);
+static void syscallWrite(uint32_t fd, char * buffer, uint64_t size);
 static void syscallClear();
 static void syscallSeconds(uint64_t arg0);
 static void syscallMinutes(uint64_t arg0);
@@ -48,20 +49,29 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
 								 (syscall) killProcess, 	  (syscall) changePriority,	  (syscall) blockProcess,
 								 (syscall) readyProcess,	  (syscall) yield,			  (syscall) waitProcess,
 								 (syscall) syscallExit, 	  (syscall) semOpen,		  (syscall) semClose,
-								 (syscall) post, 			  (syscall) wait, 			  (syscall) semInit};
+								 (syscall) post, 			  (syscall) wait, 			  (syscall) semInit,
+								 (syscall) openPipe, 		  (syscall) closePipe};
 	return syscalls[nr](arg0, arg1, arg2, arg3, arg4, arg5);
 }
 //0
-static void syscallRead(uint64_t buffer) {
-	((char *) buffer)[0] = next();
+static void syscallRead(int64_t fd, char * buffer, uint64_t size) {
+	if(fd == STDIN){
+		buffer[0] = next();
+	}else if(fd >= 3){
+		readPipe(fd, buffer, size);
+	}
 }
 //1
-static void syscallWrite(uint32_t fd, char c) {
+static void syscallWrite(uint32_t fd, char * buffer, uint64_t size) {
 	if (fd == STDERR)
 		return;
-	else if (fd != STDOUT)
-		return;
-	draw_char(c);
+	if(fd == STDOUT){
+		for (int i = 0; i < size; i++) {
+			draw_char(buffer[i]);
+		}
+	}else if(fd >= 3){
+		writePipe(fd, buffer, size);
+	}
 }
 //2
 static void syscallClear() {
@@ -152,3 +162,5 @@ void syscallExit(){
 //27 post
 //28 wait
 //29 semInit
+//30 openPipe
+//31 closePipe

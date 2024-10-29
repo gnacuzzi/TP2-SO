@@ -28,7 +28,7 @@ static int isnumber(int n) {
 
 char readchar() {
 	char localBuff[1];
-	read_char(localBuff);
+    sysRead(0, localBuff, 1);
 	return localBuff[0];
 }
 
@@ -84,7 +84,7 @@ static void va_printf(const char *fmt, va_list args) {
 }
 
 void putchar(char c) {
-	write(1, c);
+	sysWrite(1, &c, 1);
 }
 
 void puts(const char *s) {

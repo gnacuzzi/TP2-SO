@@ -1,5 +1,5 @@
-GLOBAL write
-GLOBAL read_char
+GLOBAL sysWrite
+GLOBAL sysRead
 GLOBAL clear_screen
 GLOBAL get_seconds
 GLOBAL get_minutes
@@ -28,13 +28,15 @@ GLOBAL syspost
 GLOBAL syswait
 GLOBAL sysps
 GLOBAL syssemInit
+GLOBAL sysopenPipe
+GLOBAL sysclosePipe
 
-read_char:
+sysRead:
     mov rax, 0
     int 80h
     ret
 
-write:
+sysWrite:
     mov rax, 1
     int 80h
     ret
@@ -178,5 +180,15 @@ syswait:
 
 syssemInit:
     mov rax, 29
+    int 80h
+    ret
+
+sysopenPipe:
+    mov rax, 30
+    int 80h
+    ret
+
+sysclosePipe:
+    mov rax, 31
     int 80h
     ret
