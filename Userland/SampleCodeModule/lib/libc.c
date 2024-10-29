@@ -35,50 +35,52 @@ char readchar() {
 // https://www.equestionanswers.com/c/c-printf-scanf-working-principle.php
 // usamos esta biblioteca para el manejo de argumentos variables
 
+
 void printf(const char *fmt, ...) {
-	va_list vl; // donde se guardan los argumentos variables
-	va_start(vl, fmt);
-	va_printf(fmt, vl);
-	va_end(vl);
+    va_list vl; // Donde se guardan los argumentos variables
+    va_start(vl, fmt);
+    va_printf(fmt, vl);
+    va_end(vl);
 }
 
 static void va_printf(const char *fmt, va_list args) {
-	char buffer[MAX_CHARS] = {0};
-	const char *aux = fmt; // puntero
-	while (*aux) {
-		if (*aux == '%') {
-			aux++;
-			int dx = strtoi(aux, &aux); // si es numero lo devuelve en formato decimal sino develve 0
-			int len;
+    char buffer[MAX_CHARS] = {0};
+    const char *aux = fmt; // Puntero
 
-			switch (*aux) {
-				case 'c': // es un char
-					putchar(va_arg(args, int));
-					break;
+    while (*aux) {
+        if (*aux == '%') {
+            aux++;
+            int dx = strtoi(aux, &aux); // Si es número lo devuelve en formato decimal, sino devuelve 0
+            int len;
 
-				case 'd':									   // es un entero
-					len = itoa(va_arg(args, int), buffer, 10); // esta en base 10
-					printchars('0', dx - len);
-					puts(buffer);
-					break;
+            switch (*aux) {
+                case 'c': // Es un char
+                    putchar(va_arg(args, int)); // `char` se pasa como `int`
+                    break;
 
-				case 'x':									   // hexadcimal
-					len = itoa(va_arg(args, int), buffer, 16); // esta en base 16
-					printchars('0', dx - len);
-					puts(buffer);
-					break;
+                case 'd': // Es un entero
+                    len = itoa(va_arg(args, int), buffer, 10); // Está en base 10
+                    printchars('0', dx - len);
+                    puts(buffer);
+                    break;
 
-				case 's': // es un string
-					printchars(' ', dx);
-					puts(va_arg(args, char *));
-					break;
-			}
-		}
-		else {
-			putchar(*aux);
-		}
-		aux++;
-	}
+                case 'x': // Hexadecimal
+                    // Cambiar a uint64_t para manejar 64 bits
+                    len = itoa(va_arg(args, uint64_t), buffer, 16); // Está en base 16
+                    printchars('0', dx - len);
+                    puts(buffer);
+                    break;
+
+                case 's': // Es un string
+                    printchars(' ', dx);
+                    puts(va_arg(args, char *));
+                    break;
+            }
+        } else {
+            putchar(*aux);
+        }
+        aux++;
+    }
 }
 
 void putchar(char c) {

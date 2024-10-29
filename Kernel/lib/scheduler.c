@@ -44,7 +44,7 @@ void createScheduler(){
     scheduler->nextPid = 0;
     scheduler->currentPid = -1;
     scheduler->currentProcess = NULL;
-    char *argsIdle[2] = {"idle"};
+    char *argsIdle[1] = {"idle"};
     int16_t fileDescriptors[] = {-1, -1, STDERR}; //devnull, devnull, stderror
     createProcess((uint64_t)idle, argsIdle, 1, 1, fileDescriptors, 1);
 }

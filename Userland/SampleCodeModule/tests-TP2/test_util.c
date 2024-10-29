@@ -74,7 +74,7 @@ void endless_loop_print(uint64_t wait) {
 	int64_t pid = sysgetpid();
 
 	while (1) {
-		printf("%d ", pid);
+		printf("%d ", (int) pid);
 		bussy_wait(MINOR_WAIT); // valor para que no se sature la pantalla
 	}
 }

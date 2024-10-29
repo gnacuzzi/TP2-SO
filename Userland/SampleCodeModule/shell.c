@@ -135,7 +135,7 @@ static void registers(int argc, char *argv[]) {
 	getRegs(snapShot, &flag);
 	if (flag == 1) {
 		for (int i = 0; i < len; i++) {
-			printf("%s: 0x%x\n", regs[i], snapShot[i]);
+			printf("%s: 0x%x\n", regs[i], (uint32_t)snapShot[i]);
 		}
 	}
 	else {

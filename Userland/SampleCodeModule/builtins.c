@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <builtins.h>
 #include <syscall.h>
 #include "include/libc.h"
@@ -15,9 +18,10 @@ void memState(int argc, char *argv[]) {
         return;
     }
 
-    printf("Used memory: %d bytes\n", memInfo.used);
-    printf("Free memory: %d bytes\n", memInfo.free);
-    printf("Total memory: %d bytes\n", memInfo.total);
+    printf("Used memory: %d bytes\n", (int)memInfo.used);
+    printf("Free memory: %d bytes\n", (int)memInfo.free);
+    printf("Total memory: %d bytes\n", (int)memInfo.total);
+
     return;
 }
 
@@ -91,12 +95,12 @@ static void printProcInfo(PSinfo proc) {
     putchar('\n');
     printf("NAME: %s\n", proc.name == NULL ? "unnamed" : proc.name);
 
-    printf("PID: %d\n", proc.pid);
+    printf("PID: %d\n", (int) proc.pid);
 
     printf("Priority: %d | Stack base: 0x%d | Stack pointer: 0x%d | Ground: %s\n", 
-           proc.priority, 
-           proc.stackBase, 
-           proc.stackPos, 
+           (int) proc.priority, 
+           (int) proc.stackBase, 
+           (int) proc.stackPos, 
            proc.ground == 0 ? "foreground" : "background");
 }
 
