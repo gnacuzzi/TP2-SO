@@ -5,8 +5,10 @@
 #include "include/tests.h"
 #include "include/syscall.h"
 #include "include/libc.h"
+#include <stddef.h>
 
 #define TICKS 0.055
+#define MAX_BUFF 256
 
 /* Tests */
 
@@ -122,7 +124,7 @@ void cat(int argc, char *argv[]){
         return;
     }
 
-    char *buffer = '\0';
+    char buffer[MAX_BUFF] = NULL;
     printf("To stop double enter\n"); //en teoria esto deberia cortar cuando hago ctrl d pero no lo tenemos implementado todavia
 
     while (scanf(buffer) != -1) { 
