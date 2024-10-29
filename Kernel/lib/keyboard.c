@@ -4,6 +4,7 @@
 #include <videoDriver.h>
 #include <keyboard.h>
 #include <lib.h>
+#include <scheduler.h>
 
 #define BUFFER_SIZE 256
 

@@ -12,6 +12,7 @@
 #define MAX_PROCESS 60
 #define KERNEL_PID -1
 #define IDLE_PID 0
+#define SHELL_PID 1
 
 
 typedef struct schedulerCDT{
@@ -203,6 +204,30 @@ int64_t killProcess(int16_t pid) {
 
     free(process);
 
+    return 0;
+}
+
+int64_t killForegroundProcess() {
+    schedulerADT scheduler = getScheduler();
+    if (scheduler->currentProcess == NULL) {
+        return -1;
+    }
+    if (scheduler->currentProcess->ground == 0 && scheduler->currentProcess->pid != SHELL_PID) {
+        printf("^C\n");
+        return killCurrentProcess();
+    }
+    else {
+        PCB *aux;
+        toBegin(scheduler->processList);
+        while (hasNext(scheduler->processList)) {
+            aux = nextInList(scheduler->processList);
+            if (aux->ground == 0 && aux->status != BLOCKED && aux->pid != SHELL_PID) {
+                printf("^C\n");
+                return killProcess(aux->pid);
+            }
+        }
+    }
+    printf("No foreground process\n");
     return 0;
 }
 
