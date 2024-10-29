@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <pipes.h>
 #include <scheduler.h> 
+#include <memoryManager.h>
 
 #define PIPE_SIZE 512
 #define MAX_PIPES 30
@@ -126,7 +127,7 @@ int64_t writePipe(int64_t fd, const char *buffer, int64_t size) {
 
         if (p->readBlocked) {
             p->readBlocked = 0;
-            unblockProcess(p->inputPid);  
+            readyProcess(p->inputPid);  
         }
     }
 
@@ -157,7 +158,7 @@ int64_t readPipe(int64_t fd, char *buffer, int64_t size) {
 
         if (p->writeBlocked) {
             p->writeBlocked = 0;
-            unblockProcess(p->outputPid);  
+            readyProcess(p->outputPid);  
         }
     }
 
