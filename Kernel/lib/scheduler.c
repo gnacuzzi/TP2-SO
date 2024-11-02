@@ -227,7 +227,6 @@ int64_t killForegroundProcess() {
             }
         }
     }
-    printf("No foreground process\n");
     return 0;
 }
 

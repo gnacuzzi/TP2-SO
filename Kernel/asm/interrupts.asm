@@ -206,8 +206,7 @@ control_released:
 
 ctrl_c_detected:
     call killForegroundProcess   ; Llamar a killForegroundProcess
-    jmp exit
-
+	
 exit:
 	mov al, 20h
 	out 20h, al
