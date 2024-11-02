@@ -214,23 +214,14 @@ int scanLine(char *buffer, int maxLen) {
     int idx = 0;
     char c;
 
-    while (1) {
-        c = readchar();  // Leer un carácter
-
-        // Verificar si se recibió EOF (-1)
-        if (c == -1) {
-            return -1;  // Retornar -1 indicando EOF
-        }
-
-        // Si se encuentra un '\n', imprimir la línea y terminar
+    while ((c = readchar()) != -1) {
         if (c == '\n') {
             buffer[idx] = '\0';  // Terminar la cadena
             return 0;  // Retornar éxito
         }
-
-        // Almacenar el carácter en el buffer si no se excede el límite
-        if (idx < maxLen - 1) {
+        if(c != 0){
             buffer[idx++] = c;
         }
     }
+    return -1;
 }
