@@ -3,5 +3,6 @@
 
 void keyboard_handler();
 char next();
+void setEofFlag();
 
 #endif

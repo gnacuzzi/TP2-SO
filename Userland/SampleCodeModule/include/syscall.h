@@ -79,4 +79,6 @@ int8_t syssemInit(uint16_t id, uint32_t initialValue);
 int64_t sysopenPipe(int16_t pid, uint8_t mode);
 int64_t sysclosePipe(int64_t fd);
 
+int scanLine(char *buffer, int maxLen);
+
 #endif
