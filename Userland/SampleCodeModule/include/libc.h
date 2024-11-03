@@ -34,4 +34,6 @@ int scanf(char *buffer);
 
 int atoi(char *str);
 
+char *strchr(const char *p, int ch);
+
 #endif
