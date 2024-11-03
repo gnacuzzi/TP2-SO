@@ -143,19 +143,14 @@ void wc(int argc, char *argv[]){
         return;
     }
 
-    printf("To stop click shift\n"); //en teoria esto deberia cortar cuando hago ctrl d pero no lo tenemos implementado todavia
+    printf("To stop, press Ctrl+D\n"); 
     char c;
-    int counter = 0;
+    int counter = 1;
 
-    while (1) {
-        c = readchar();
-
+    while ((c = readchar()) != -1) {
         if (c == '\n') { 
             counter++;
         }
-        if (c == '\0') { 
-            break; 
-        } 
     }
 
     printf("Number of lines: %d\n", counter);
@@ -177,20 +172,16 @@ void filter(int argc, char *argv[]){
         sysexit();
         return;
     }
-    printf("To stop click shift\n"); //en teoria esto deberia cortar cuando hago ctrl d pero no lo tenemos implementado todavia
+    printf("To stop, press Ctrl+D\n"); 
 
     char c;
 
-    while(1){
-        c = readchar();
+    while((c = readchar()) != -1){
         if(isVowel(c)){
             printf("%c\t", c);
         }
-        if (c == '\0') { 
-            printf("\n");
-            break; 
-        } 
     }
+    printf("\n");
 
     sysexit();
     return;
