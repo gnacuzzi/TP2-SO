@@ -7,6 +7,9 @@
 #include <scheduler.h>
 
 #define BUFFER_SIZE 256
+#define KEY_D 0x20
+#define CTRL_PRESSED 0x1D
+#define CTRL_RELEASED 0x9D
 
 static const char keyboard_matrix[256] = {0,   27,	'1', '2', '3', '4', '5', '6', '7', '8', '9',  '0', '-', '=',  8,
 										  ' ', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',  '[', ']', '\n', 0,
@@ -20,9 +23,15 @@ static int first = 0;
 static int last = 0;
 static int cant_elems = 0;
 
+static int eof_flag = 0;
+
 char next() {
-	if (cant_elems <= 0) {
+	if(eof_flag){
+		eof_flag = 0;
 		return -1;
+	}
+	if (cant_elems <= 0) {
+		return 0;
 	}
 	char out = buff[first];
 	first++;
@@ -43,4 +52,8 @@ void keyboard_handler() {
 		buff[last++] = keyboard_matrix[key];
 		cant_elems++;
 	}
+}
+
+void setEofFlag(){
+	eof_flag = 1;
 }

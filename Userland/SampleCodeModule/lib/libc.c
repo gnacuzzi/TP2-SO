@@ -220,3 +220,19 @@ char *strchr(const char *p, int ch) {
 			return (void*)0;
 	}
 }
+
+int scanLine(char *buffer, int maxLen) {
+    int idx = 0;
+    char c;
+
+    while ((c = readchar()) != -1) {
+        if (c == '\n') {
+            buffer[idx] = '\0';  // Terminar la cadena
+            return 0;  // Retornar éxito
+        }
+        if(c != 0){
+            buffer[idx++] = c;
+        }
+    }
+    return -1;
+}

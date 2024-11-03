@@ -117,20 +117,19 @@ void loop(int argc, char *argv[]){
 
 /* Inter Process Communication */
 
-void cat(int argc, char *argv[]){
-    if(argc != 1){
+void cat(int argc, char *argv[]) {
+    if (argc != 1) {
         printf("Cat doesn't need parameters\n");
         sysexit();
         return;
     }
 
     char buffer[MAX_BUFF] = {0};
-    printf("To stop double enter\n"); //en teoria esto deberia cortar cuando hago ctrl d pero no lo tenemos implementado todavia
+    printf("To stop, press Ctrl+D\n"); // Instrucción sobre cómo detener con Ctrl+D
 
-    while (scanf(buffer) != -1) { 
-        if(*buffer == '\0'){
-            break;
-        } 
+    // Leer e imprimir cada línea hasta que se encuentre EOF
+    while (scanLine(buffer, MAX_BUFF) != -1) {
+        printf("%s\n", buffer);  // Imprimir el contenido de la línea leída
     }
 
     sysexit();

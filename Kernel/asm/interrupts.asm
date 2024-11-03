@@ -24,11 +24,13 @@ EXTERN syscallDispatcher
 EXTERN load_main
 EXTERN schedule
 EXTERN killForegroundProcess
+EXTERN setEofFlag
 
 
 GLOBAL exceptregs
 GLOBAL registers
 GLOBAL capturedReg
+GLOBAL ctrl_pressed
 
 
 SECTION .text
@@ -185,14 +187,16 @@ _irq01Handler:
     cmp al, 0x9D        ; Ctrl soltado (scan code 0x9D)
     je control_released
 
-    ; Si Ctrl está presionado, verificar si la tecla 'C' fue presionada
+    ; Si Ctrl está presionado, verificar si la tecla 'C' o 'D' fue presionada
     cmp byte [ctrl_pressed], 1  ; Verificar si Ctrl está activo
-    jne no_control_c
+    jne no_control_key
+
     cmp al, 0x2E        ; Tecla 'C' (scan code 0x2E)
     je ctrl_c_detected
+    cmp al, 0x20        ; Tecla 'D' (scan code 0x20)
+    je ctrl_d_detected
 
-    ; Si no se presiona Ctrl+C, proceder normalmente
-no_control_c:
+no_control_key:
     call keyboard_handler
     jmp exit
 
@@ -202,17 +206,52 @@ control_pressed:
 
 control_released:
     mov byte [ctrl_pressed], 0  ; Marcar que Ctrl fue soltado
+    ; saving an array of registers: RAX, RBX, RCX, RDX, RSI, RDI, RBP, R8, R9, R10, R11, R12, R13
+    ; R14, R15, RSP, RIP, RFLAGS
+    mov [registers+8*1], rbx
+    mov [registers+8*2], rcx
+    mov [registers+8*3], rdx
+    mov [registers+8*4], rsi
+    mov [registers+8*5], rdi
+    mov [registers+8*6], rbp
+    mov [registers+8*7], r8
+    mov [registers+8*8], r9
+    mov [registers+8*9], r10
+    mov [registers+8*10], r11
+    mov [registers+8*11], r12
+    mov [registers+8*12], r13
+    mov [registers+8*13], r14
+    mov [registers+8*14], r15
+
+    mov rax, rsp
+    add rax, 160              ; volvemos a antes de pushear los registros
+    mov [registers + 8*15], rax  ; RSP
+
+    mov rax, [rsp+15*8]
+    mov [registers + 8*16], rax ; RIP
+
+    mov rax, [rsp + 14*8]     ; RAX
+    mov [registers], rax
+
+    mov rax, [rsp+15*9]
+    mov [registers + 8*17], rax ; RFLAGS
+
+    mov byte [capturedReg], 1
     jmp exit
 
 ctrl_c_detected:
     call killForegroundProcess   ; Llamar a killForegroundProcess
     jmp exit
 
+ctrl_d_detected:
+	call setEofFlag
+    jmp exit
+
 exit:
-	mov al, 20h
-	out 20h, al
-	popState
-	iretq
+    mov al, 20h
+    out 20h, al
+    popState
+    iretq
 
 ;Cascade pic never called
 _irq02Handler:
