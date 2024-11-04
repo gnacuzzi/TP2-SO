@@ -141,16 +141,17 @@ void wc(int argc, char *argv[]){
     }
 
     printf("To stop, press Ctrl+D\n"); 
-    char c;
-    int counter = 1;
+    char buffer[MAX_BUFF] = {0};
+    int counter = 0;
 
-    while ((c = readchar()) != -1) {
-        if (c == '\n') { 
+    int resp;
+
+    while ((resp = scanLine(buffer, MAX_BUFF)) != -1) {
+        if(resp == 0){
             counter++;
         }
     }
-
-    printf("Number of lines: %d\n", counter);
+    printf("    Number of lines: %d\n", counter);
 
     sysexit();
     return;
