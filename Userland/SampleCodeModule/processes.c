@@ -13,7 +13,7 @@
 /* Tests */
 
 void testMemory(int argc, char *argv[]){
-    if(argc < 2){
+    if(argc != 2){
         printf("You must insert ONE parameter indicating the memory size you desire to test\n");
         sysexit();
         return;
@@ -28,7 +28,7 @@ void testMemory(int argc, char *argv[]){
 }
 
 void testPrio(int argc, char *argv[]){
-    if(argc > 1){
+    if(argc != 1){
         printf("TestPrio doesn't need parameters\n");
         sysexit();
         return;
@@ -39,7 +39,7 @@ void testPrio(int argc, char *argv[]){
 }
 
 void testProcesses(int argc, char *argv[]){
-    if (argc < 2) {
+    if (argc != 2) {
         printf("You must insert ONE parameter indicating the number of processes you desire to test\n");
         sysexit();
         return;
@@ -61,7 +61,7 @@ void testProcesses(int argc, char *argv[]){
 }
 
 void testSynchronization(int argc, char *argv[]){//{n, use_sem, 0}
-    if (argc < 3) {
+    if (argc != 3) {
         printf("You must insert TWO parameters, one indicating the number of iterations and an other one indicating if you wish to use or not semaphores\n");
         sysexit();
         return;
