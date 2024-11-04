@@ -37,7 +37,7 @@ char readchar() {
 
 
 void printf(const char *fmt, ...) {
-    va_list vl; // Donde se guardan los argumentos variables
+    va_list vl;
     va_start(vl, fmt);
     va_printf(fmt, vl);
     va_end(vl);
@@ -50,29 +50,28 @@ static void va_printf(const char *fmt, va_list args) {
     while (*aux) {
         if (*aux == '%') {
             aux++;
-            int dx = strtoi(aux, &aux); // Si es número lo devuelve en formato decimal, sino devuelve 0
+            int dx = strtoi(aux, &aux);
             int len;
 
             switch (*aux) {
-                case 'c': // Es un char
-                    putchar(va_arg(args, int)); // `char` se pasa como `int`
+                case 'c':
+                    putchar(va_arg(args, int));
                     break;
 
-                case 'd': // Es un entero
-                    len = itoa(va_arg(args, int), buffer, 10); // Está en base 10
+                case 'd':
+                    len = itoa(va_arg(args, int), buffer, 10);
                     printchars('0', dx - len);
                     puts(buffer);
                     break;
 
-                case 'x': // Hexadecimal
-                    // Cambiar a uint64_t para manejar 64 bits
-                    len = itoa(va_arg(args, uint64_t), buffer, 16); // Está en base 16
+                case 'x':
+                    len = itoa(va_arg(args, uint64_t), buffer, 16);
                     printchars('0', dx - len);
                     puts(buffer);
                     break;
 
-                case 's': // Es un string
-                    printchars(' ', dx);
+                case 's':
+                    printchars(' ', dx-1);
                     puts(va_arg(args, char *));
                     break;
             }
@@ -162,43 +161,38 @@ int scanf(char *buffer) {
     while (1) {
         char c = readchar();
         
-        // Check for valid input
         if (c != -1 && c != 0) {
-            // Handle backspace
             if (c == '\b') {
                 if (idx > 0) {
-                    idx--; // Decrement index
-                    putchar(c); // Echo backspace
-                    putchar(' '); // Clear the character
-                    putchar(c); // Echo backspace again
-                    buffer[idx] = '\0'; // Terminate string
+                    idx--; 
+                    putchar(c);
+                    putchar(' ');
+                    putchar(c);
+                    buffer[idx] = '\0';
                 }
             }
-            // Handle new line
             else if (c == '\n') {
-                putchar('\n'); // Echo new line
-                buffer[idx] = '\0'; // Terminate string
-                if (idx > 0) { // Check if something was entered
-                    return 1; // Return success
+                putchar('\n');
+                buffer[idx] = '\0';
+                if (idx > 0) {
+                    return 1;
                 }
-                return 0; // Return failure (no input)
+                return 0;
             }
-            // Ignore tab characters
             else if (c != '\t') {
-                buffer[idx++] = c; // Store character in buffer
-                putchar(c); // Echo the character
-                buffer[idx] = '\0'; // Terminate string
+                buffer[idx++] = c;
+                putchar(c); 
+                buffer[idx] = '\0';
             }
 
-            // Optional: Check buffer overflow
-            if (idx >= BUFFER_SIZE) { // Assuming BUFFER_SIZE is defined
+            if (idx >= BUFFER_SIZE) {
                 printf("\nBuffer full\n");
-                buffer[idx] = '\0'; // Ensure null-termination
-                return 1; // Consider it valid but cut-off input
+                buffer[idx] = '\0';
+                return 1;
             }
         }
     }
-    return -1; // Should never reach here
+    return -1;
 }
 
 int atoi(char *str) {
@@ -226,12 +220,22 @@ int scanLine(char *buffer, int maxLen) {
     char c;
 
     while ((c = readchar()) != -1) {
-        if (c == '\n') {
-            buffer[idx] = '\0';  // Terminar la cadena
-            return 0;  // Retornar éxito
-        }
         if(c != 0){
-            buffer[idx++] = c;
+            if (c == '\b' && idx > 0) {
+                idx--;
+                putchar(c);
+                putchar(' ');
+                buffer[idx] = '\0';
+            }
+            if (c == '\n') {
+                buffer[idx] = '\0';
+                putchar(c);
+                return 0;
+            }
+            else if (c != '\b' && c != '\t') {
+                buffer[idx++] = c;
+            }
+            putchar(c);
         }
     }
     return -1;
