@@ -115,8 +115,6 @@ void loop(int argc, char *argv[]){
     return;
 }
 
-/* Inter Process Communication */
-
 void cat(int argc, char *argv[]) {
     if (argc != 1) {
         printf("Cat doesn't need parameters\n");
@@ -126,7 +124,6 @@ void cat(int argc, char *argv[]) {
 
     char buffer[MAX_BUFF] = {0};
     printf("To stop, press Ctrl+D\n"); // Instrucción sobre cómo detener con Ctrl+D
-
     // Leer e imprimir cada línea hasta que se encuentre EOF
     while (scanLine(buffer, MAX_BUFF) != -1) {
         printf("%s\n", buffer);  // Imprimir el contenido de la línea leída
