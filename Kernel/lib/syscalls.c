@@ -55,22 +55,24 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
 }
 //0
 static void syscallRead(int64_t fd, char * buffer, uint64_t size) {
-	if(fd == STDIN){
+	int64_t fdProcess = getFileDescriptor(fd);
+	if (fdProcess >= 3) {
+		readPipe(fdProcess, buffer, size);
+	}else if(fd == STDIN){
 		buffer[0] = next();
-	}else if(fd >= 3){
-		readPipe(fd, buffer, size);
 	}
 }
 //1
 static void syscallWrite(uint32_t fd, char * buffer, uint64_t size) {
 	if (fd == STDERR)
 		return;
-	if(fd == STDOUT){
+	int64_t fdProcess = getFileDescriptor(fd);
+	if(fdProcess == STDOUT){
 		for (int i = 0; i < size; i++) {
 			draw_char(buffer[i]);
 		}
-	}else if(fd >= 3){
-		writePipe(fd, buffer, size);
+	}else if(fdProcess >= 3){
+		writePipe(fdProcess, buffer, size);
 	}
 }
 //2

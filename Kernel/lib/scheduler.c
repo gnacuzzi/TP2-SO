@@ -304,6 +304,12 @@ int16_t copyProcess(PSinfo *dest, PCB *src){
     return 0;
 }
 
+int64_t getFileDescriptor(int64_t fd) {
+	schedulerADT scheduler = getScheduler();
+    PCB *process = scheduler->currentProcess;
+	return process->fileDescriptors[fd];
+}
+
 schedulerADT getScheduler(){
     return scheduler;
 }

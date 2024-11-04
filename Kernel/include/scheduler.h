@@ -20,7 +20,7 @@ int64_t killCurrentProcess();
 int64_t killProcess(int16_t pid);
 int64_t killForegroundProcess();
 int16_t getPid();
-
+int64_t getFileDescriptor(int64_t fd);
 
 
 typedef struct PSinfo{
