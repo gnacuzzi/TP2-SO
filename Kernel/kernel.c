@@ -11,6 +11,7 @@
 #include <scheduler.h>
 #include <interrupts.h>
 #include <semaphore.h>
+#include <pipes.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -47,6 +48,7 @@ void *initializeKernelBinary() {
 
 	mminit(heapAddress, HEAP_SIZE + STRUCT_SIZE);
 	startSemaphores();
+	startPipes();
 
 	return getStackBase();
 }
