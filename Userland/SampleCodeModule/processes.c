@@ -175,8 +175,8 @@ void filter(int argc, char *argv[]){
     char c;
 
     while((c = readchar()) != -1){
-        if(isVowel(c)){
-            printf("%c\t", c);
+        if(!isVowel(c) && c != 0){
+            putchar(c);
         }
     }
     printf("\n");
