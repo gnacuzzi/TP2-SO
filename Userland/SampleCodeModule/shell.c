@@ -11,7 +11,7 @@
 #include <stddef.h>
 
 #define BUFFER_LENGTH 256
-#define MAX_PARAMETERS 2 // todavia no sabemos cuantos parametros se van a enviar como maximo
+#define MAX_PARAMETERS 3 // todavia no sabemos cuantos parametros se van a enviar como maximo
 #define PARAMETERS_LENGTH 256
 
 #define READ 0
@@ -206,11 +206,11 @@ int main() {
 		if (rta == 1) {
 			char leftCommand[BUFFER_LENGTH] = {0};
 			char **leftParams = sysmalloc(PARAMETERS_LENGTH * sizeof(char *)); 
-			char **rightParams = sysmalloc(PARAMETERS_LENGTH * sizeof(char *)); 
 			int leftCantParams;
 			char *pipe;
 			
 			if((pipe = strchr(buffer, '|')) != NULL){
+				char **rightParams = sysmalloc(PARAMETERS_LENGTH * sizeof(char *)); 
 				char rightCommand[BUFFER_LENGTH] = {0};
 				*pipe = '\0';
     			leftCantParams = scanCommand(leftCommand, leftParams, buffer);
@@ -239,6 +239,14 @@ int main() {
 					int isBackground2 = strcmp(rightParams[rightCantParams-1], "BACK") == 0;
 
 					executePipedCommands(leftCommand, newParams1, leftCantParams,leftId, isBackground1, rightCommand, newParams2, rightCantParams,rightId, isBackground2);
+					
+					for (int i = 0; i < leftCantParams; i++) {
+						sysfree(leftParams[i]);
+					}
+					for (int i = 0; i < rightCantParams; i++) {
+						sysfree(rightParams[i]);
+					}
+					sysfree(rightParams);
 				} else {
 					printf("Pipes only support processes\n");
 				}
@@ -275,14 +283,13 @@ int main() {
 				}
 			}
 			
-			for (int i = 0; buffer[i] != 0; i++) { // vaciamos el buffer
+			for (int i = 0; buffer[i] != 0; i++) { 
 				buffer[i] = '\0';
-				// También vaciamos los parámetros para evitar residuos
-				for (int j = 0; j < PARAMETERS_LENGTH; j++) {
-					leftParams[j] = NULL;
-					rightParams[j] = NULL;
-				}
 			}
+			for (int i = 0; i < leftCantParams; i++) {
+					sysfree(leftParams[i]);
+			}
+			sysfree(leftParams);
 		}
 		printf("~$");
 	}
