@@ -30,6 +30,7 @@ GLOBAL sysps
 GLOBAL syssemInit
 GLOBAL sysopenPipe
 GLOBAL sysclosePipe
+GLOBAL syschangeFds
 
 sysRead:
     mov rax, 0
@@ -190,5 +191,10 @@ sysopenPipe:
 
 sysclosePipe:
     mov rax, 31
+    int 80h
+    ret
+
+syschangeFds:
+    mov rax, 32
     int 80h
     ret

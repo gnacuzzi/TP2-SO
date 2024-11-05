@@ -110,15 +110,16 @@ int16_t createProcess(uint64_t rip, char **args, int argc, uint8_t priority, int
         free(newProcess);
         return -1;
     }
-
     
     addNode(scheduler->processList, newProcess);  
-    if(scheduler->nextPid != IDLE_PID){
+    if(newProcess->pid > 1){
+        addNode(scheduler->blockedProcess, newProcess);
+    } else {
         addNode(scheduler->readyProcess, newProcess);
+        scheduler->nextPid++;
     }
-      
+    
     scheduler->processQty++;
-    scheduler->nextPid++;
     return newProcess->pid;  
 }
 

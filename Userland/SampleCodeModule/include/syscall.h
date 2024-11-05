@@ -70,6 +70,8 @@ int syswaitProcess(int16_t pid);
 
 void sysexit();
 
+int syschangeFds(int16_t pid, int16_t fileDescriptors[]);
+
 int8_t syssemOpen(uint16_t id);
 int8_t syssemClose(uint16_t id);
 int8_t syspost(uint16_t id);
@@ -80,5 +82,6 @@ int64_t sysopenPipe(int16_t pid, uint8_t mode);
 int64_t sysclosePipe(int64_t fd);
 
 int scanLine(char *buffer, int maxLen);
+
 
 #endif

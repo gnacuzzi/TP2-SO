@@ -50,7 +50,7 @@ uint64_t syscallDispatcher(uint64_t nr, uint64_t arg0, uint64_t arg1, uint64_t a
 								 (syscall) readyProcess,	  (syscall) yield,			  (syscall) waitProcess,
 								 (syscall) syscallExit, 	  (syscall) semOpen,		  (syscall) semClose,
 								 (syscall) post, 			  (syscall) wait, 			  (syscall) semInit,
-								 (syscall) openPipe, 		  (syscall) closePipe};
+								 (syscall) openPipe, 		  (syscall) closePipe, (syscall)changeFds};
 	return syscalls[nr](arg0, arg1, arg2, arg3, arg4, arg5);
 }
 //0
@@ -166,3 +166,4 @@ void syscallExit(){
 //29 semInit
 //30 openPipe
 //31 closePipe
+//32 changeFds

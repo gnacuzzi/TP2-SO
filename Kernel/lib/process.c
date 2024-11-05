@@ -37,7 +37,11 @@ int initProcess(PCB *process, int16_t pid,
     process->priority = priority;
     process->rip = rip;
     process->stackPos = setupStackFrame(process->stackBase, process->rip, argc, process->argv);
-    process->status = READY;
+    if(process->pid > 1){
+        process->status = BLOCKED;
+    } else {
+        process->status = READY;
+    }
     process->waitingList = createDoubleLinkedListADT();
     if(process->waitingList == NULL){
         free((void *) (process->stackBase - STACK_SIZE));
@@ -122,5 +126,16 @@ int waitProcess(int16_t pid) {
     PCB * currentProcess = findProcess(currentPid);
     addNode(process->waitingList, currentProcess);
     blockProcess(currentPid);
+    return 0;
+}
+
+int changeFds(int16_t pid, int16_t fileDescriptors[]){
+    PCB * process = findProcess(pid);
+    if(process == NULL) {
+        return -1;
+    }
+    for (int i = 0; i < CANT_FILE_DESCRIPTORS; i++) {
+        process->fileDescriptors[i] = fileDescriptors[i];
+    }
     return 0;
 }

@@ -153,44 +153,72 @@ int commandId(char *command) {
 }
 
 void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantParams, int leftId, int isBackground1, char *rightCommand, char *rightParams[], int rightCantParams, int rightId, int isBackground2) {
-	int readFd, writeFd;
-    if ((writeFd = sysopenPipe(sysgetpid(), WRITE)) == -1) {//el pid no esta bien
-	//tenemos una situacion huevo gallina
-        printf("Error creating pipe read\n");
-        return;
-    }
-    int16_t pid1 = syscreateProcess((uint64_t)processCommands[leftId].exec, (char **)leftParams, leftCantParams, 1, (int16_t[]){STDIN, writeFd, STDERR}, isBackground1);
-    if (pid1 == -1) {
+	int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR}; 
+    int16_t leftPid = syscreateProcess((uint64_t)processCommands[leftId].exec, (char **)leftParams, leftCantParams, 1, fileDescriptors, isBackground1);
+    if (leftPid == -1) {
         printf("Error creating process for command: %s\n", leftCommand);
         return;
     }
-
-	if ((readFd = sysopenPipe(sysgetpid(), READ)) == -1) {
+	int readFd, writeFd;
+	if ((writeFd = sysopenPipe(leftPid, WRITE)) == -1) {
         printf("Error creating pipe write\n");
+		syskillProcess(leftPid);
         return;
     }
-    int16_t pid2 = syscreateProcess((uint64_t)processCommands[rightId].exec, (char **)rightParams, rightCantParams, 1, (int16_t[]){readFd, STDOUT, STDERR}, isBackground2);
-    if (pid2 == -1) {
+	if(syschangeFds(leftPid, (int16_t[]){STDIN, writeFd, STDERR}) == -1){
+		printf("Couldn't change file descriptors for pipe write\n");
+		sysclosePipe(writeFd);
+		syskillProcess(leftPid);
+		return;
+	}
+	if(sysunblockProcess(leftPid) == -1){
+		printf("Couldn't unblock left process\n");
+		sysclosePipe(writeFd);
+		syskillProcess(leftPid);
+		return;
+	}
+	
+    int16_t rightPid = syscreateProcess((uint64_t)processCommands[rightId].exec, (char **)rightParams, rightCantParams, 1, fileDescriptors, isBackground2);
+    if (rightPid == -1) {
         printf("Error creating process for command: %s\n", rightCommand);
-		syskillProcess(pid1);
+		syskillProcess(leftPid);
         return;
     }
+	if ((readFd = sysopenPipe(rightPid, READ)) == -1) {
+        printf("Error creating pipe write\n");
+		syskillProcess(rightPid);
+		sysclosePipe(writeFd);
+		syskillProcess(leftPid);
+        return;
+    }
+	if(syschangeFds(rightPid, (int16_t[]){readFd, STDOUT, STDERR}) == -1){
+		printf("Couldn't change file descriptors for pipe read\n");
+		sysclosePipe(writeFd);
+		syskillProcess(leftPid);
+		syskillProcess(rightPid);
+		return;
+	}
+	if(sysunblockProcess(leftPid) == -1){
+		printf("Couldn't unblock left process\n");
+		sysclosePipe(writeFd);
+		syskillProcess(leftPid);
+		syskillProcess(rightPid);
+		return;
+	}
 
 	if (!isBackground1) {
-        syswaitProcess(pid1);
+        syswaitProcess(leftPid);
     }
     if (!isBackground2) {
-        syswaitProcess(pid2);
+        syswaitProcess(rightPid);
     }
-	//como ahora comparten fd no tenemos que cerrar 2 veces
-	//el tema de esta cerrada es que haces si no le haces wait, cerrar el pipe antes de terminar
+	
     if (sysclosePipe(readFd) == -1) {
         printf("Error closing pipe read\n");
-        syskillProcess(pid1);
-        syskillProcess(pid2);
+        syskillProcess(leftPid);
+        syskillProcess(rightPid);
         return;
     }
-    
 }
 
 int main() {
@@ -265,11 +293,15 @@ int main() {
 							newParams[i + 1] = leftParams[i];
 						}
             		}
-					int16_t fileDescriptors[] = {0, 1, 2};	
+					int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR};	
 					int isBackground = strcmp(leftParams[leftCantParams-1], "BACK") == 0;
 					int16_t pid = syscreateProcess(rip, newParams, leftCantParams + 1, 1, fileDescriptors, isBackground);
 					if(pid == -1){
 						printf("Error creating process\n");
+					}
+					if(sysunblockProcess(pid) == -1){
+						printf("Couldn't unblock process\n");
+						break;
 					}
 					if (!isBackground) {
 						syswaitProcess(pid);
@@ -291,4 +323,5 @@ int main() {
 		printf("~$");
 	}
 	sysexit();
+	return 0;
 }
