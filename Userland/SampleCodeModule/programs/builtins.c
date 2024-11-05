@@ -3,7 +3,7 @@
 
 #include <builtins.h>
 #include <syscall.h>
-#include "include/libc.h"
+#include <libc.h>
 
 void memState(int argc, char *argv[]) {
     if(argc != 0){

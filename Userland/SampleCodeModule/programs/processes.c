@@ -1,10 +1,10 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
-#include "include/processes.h"
-#include "include/tests.h"
-#include "include/syscall.h"
-#include "include/libc.h"
+#include <processes.h>
+#include <tests.h>
+#include <syscall.h>
+#include <libc.h>
 #include <stddef.h>
 
 #define TICKS 0.055
@@ -123,10 +123,8 @@ void cat(int argc, char *argv[]) {
     }
 
     char buffer[MAX_BUFF] = {0};
-    printf("To stop, press Ctrl+D\n"); // Instrucción sobre cómo detener con Ctrl+D
-    // Leer e imprimir cada línea hasta que se encuentre EOF
     while (scanLine(buffer, MAX_BUFF) != -1) {
-        printf("%s\n", buffer);  // Imprimir el contenido de la línea leída
+        printf("%s\n", buffer); 
     }
 
     sysexit();
@@ -140,7 +138,6 @@ void wc(int argc, char *argv[]){
         return;
     }
 
-    printf("To stop, press Ctrl+D\n"); 
     char buffer[MAX_BUFF] = {0};
     int counter = 0;
 
@@ -170,7 +167,6 @@ void filter(int argc, char *argv[]){
         sysexit();
         return;
     }
-    printf("To stop, press Ctrl+D\n"); 
 
     char c;
 

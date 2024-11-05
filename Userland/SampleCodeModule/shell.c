@@ -58,6 +58,7 @@ static void help(int argc, char *argv[]) {
 		"CAT                        Command to print stdin\n"
 		"WC                         Prints the amount of lines on input\n"
 		"FILTER                     Prints only the vowels from the input\n"
+		"PHYLO                      Solves the problem of the dining philosophers\n"
 		;
 	printf("%s",manual);
 }
@@ -76,6 +77,7 @@ static const command processCommands[] = {
 	{"CAT", (functionPointer)cat},
 	{"FILTER", (functionPointer)filter},
 	{"LOOP", (functionPointer)loop},
+	{"PHYLO", (functionPointer)phylo},
 	{"TESTMM", (functionPointer)testMemory},
 	{"TESTPRIO", (functionPointer)testPrio},
 	{"TESTPROC", (functionPointer)testProcesses},
@@ -192,7 +194,7 @@ void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantPar
 		syskillProcess(rightPid);
 		return;
 	}
-
+	
 	if(sysunblockProcess(rightPid) == -1){
 		printf("Couldn't unblock left process\n");
 		sysclosePipe(writeFd);
@@ -210,6 +212,9 @@ void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantPar
 
 	if (!isBackground1) {
         syswaitProcess(leftPid);
+    }
+    if (!isBackground2) {
+        syswaitProcess(rightPid);
     }
 	
     if (sysclosePipe(readFd) == -1) {
