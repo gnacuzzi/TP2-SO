@@ -56,6 +56,19 @@ int64_t openPipe(int16_t pid, uint8_t mode) {
         return -1;
     }
 
+    for (int i = 0; i < MAX_PIPES; i++) {
+        if (pipes->pipes[i].fd != -1) {
+            if (mode == READ && pipes->pipes[i].outputPid != -1) {
+                pipes->pipes[i].inputPid = pid;
+                return pipes->pipes[i].fd;
+            }
+            if (mode == WRITE && pipes->pipes[i].inputPid != -1) {
+                pipes->pipes[i].outputPid = pid;
+                return pipes->pipes[i].fd;
+            }
+        }
+    }
+
     int availablePipeIdx = -1;
     for (int i = 0; i < MAX_PIPES; i++) {
         if (pipes->pipes[i].fd == -1) {
@@ -73,14 +86,13 @@ int64_t openPipe(int16_t pid, uint8_t mode) {
         newPipe.inputPid = pid;
     } else if (mode == WRITE) {
         newPipe.outputPid = pid;
-    } else {
-        return -1;
     }
 
     pipes->pipes[availablePipeIdx] = newPipe;
     pipes->cantPipes++;
     return newPipe.fd;
 }
+
 
 int64_t closePipe(int64_t fd) {
     PipesADT pipes = getPipes();
@@ -111,14 +123,12 @@ int64_t writePipe(int64_t fd, const char *buffer, int64_t size) {
     }
 
     pipe *p = &pipes->pipes[fd - 3];
-    if (p->outputPid != getPid()) {
-        return -1;
-    }
+    
     int i;
     for (i = 0; i < size; i++) {
         while (p->size == PIPE_SIZE) {
             p->writeBlocked = 1;
-            blockProcess(p->outputPid);  
+            blockProcess(p->inputPid);  
         }
 
         p->buffer[p->writeIndex] = buffer[i];
@@ -127,7 +137,7 @@ int64_t writePipe(int64_t fd, const char *buffer, int64_t size) {
 
         if (p->readBlocked) {
             p->readBlocked = 0;
-            readyProcess(p->inputPid);  
+            readyProcess(p->outputPid);  
         }
     }
 
@@ -141,15 +151,13 @@ int64_t readPipe(int64_t fd, char *buffer, int64_t size) {
     }
 
     pipe *p = &pipes->pipes[fd - 3];
-    if (p->inputPid != getPid()) {
-        return -1;
-    }
+    
 
     int i;
     for (i = 0; i < size; i++) {
         while (p->size == 0) {
             p->readBlocked = 1;
-            blockProcess(p->inputPid);  
+            blockProcess(p->outputPid);  
         }
 
         buffer[i] = p->buffer[p->readIndex];
@@ -158,7 +166,7 @@ int64_t readPipe(int64_t fd, char *buffer, int64_t size) {
 
         if (p->writeBlocked) {
             p->writeBlocked = 0;
-            readyProcess(p->outputPid);  
+            readyProcess(p->inputPid);  
         }
     }
 

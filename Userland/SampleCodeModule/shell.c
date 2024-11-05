@@ -154,46 +154,43 @@ int commandId(char *command) {
 
 void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantParams, int leftId, int isBackground1, char *rightCommand, char *rightParams[], int rightCantParams, int rightId, int isBackground2) {
 	int readFd, writeFd;
-    if ((readFd = sysopenPipe(sysgetpid(), READ)) == -1) {
+    if ((writeFd = sysopenPipe(sysgetpid(), WRITE)) == -1) {//el pid no esta bien
+	//tenemos una situacion huevo gallina
         printf("Error creating pipe read\n");
         return;
     }
-    int16_t pid1 = syscreateProcess((uint64_t)processCommands[leftId].exec, (char **)leftParams, leftCantParams, 1, (int16_t[]){readFd, STDOUT, STDERR}, isBackground1);
+    int16_t pid1 = syscreateProcess((uint64_t)processCommands[leftId].exec, (char **)leftParams, leftCantParams, 1, (int16_t[]){STDIN, writeFd, STDERR}, isBackground1);
     if (pid1 == -1) {
         printf("Error creating process for command: %s\n", leftCommand);
         return;
     }
 
-	if ((writeFd = sysopenPipe(sysgetpid(), WRITE)) == -1) {
+	if ((readFd = sysopenPipe(sysgetpid(), READ)) == -1) {
         printf("Error creating pipe write\n");
         return;
     }
-    int16_t pid2 = syscreateProcess((uint64_t)processCommands[rightId].exec, (char **)rightParams, rightCantParams, 1, (int16_t[]){STDIN, writeFd, STDERR}, isBackground2);
+    int16_t pid2 = syscreateProcess((uint64_t)processCommands[rightId].exec, (char **)rightParams, rightCantParams, 1, (int16_t[]){readFd, STDOUT, STDERR}, isBackground2);
     if (pid2 == -1) {
         printf("Error creating process for command: %s\n", rightCommand);
 		syskillProcess(pid1);
         return;
     }
 
+	if (!isBackground1) {
+        syswaitProcess(pid1);
+    }
+    if (!isBackground2) {
+        syswaitProcess(pid2);
+    }
+	//como ahora comparten fd no tenemos que cerrar 2 veces
+	//el tema de esta cerrada es que haces si no le haces wait, cerrar el pipe antes de terminar
     if (sysclosePipe(readFd) == -1) {
         printf("Error closing pipe read\n");
         syskillProcess(pid1);
         syskillProcess(pid2);
         return;
     }
-    if (sysclosePipe(writeFd) == -1) {
-        printf("Error closing pipe write\n");
-        syskillProcess(pid1);
-        syskillProcess(pid2);
-        return;
-    }
-
-    if (!isBackground1) {
-        syswaitProcess(pid1);
-    }
-    if (!isBackground2) {
-        syswaitProcess(pid2);
-    }
+    
 }
 
 int main() {
