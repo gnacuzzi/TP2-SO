@@ -116,9 +116,10 @@ int16_t createProcess(uint64_t rip, char **args, int argc, uint8_t priority, int
         addNode(scheduler->blockedProcess, newProcess);
     } else {
         addNode(scheduler->readyProcess, newProcess);
-        scheduler->nextPid++;
+        
     }
     
+    scheduler->nextPid++;
     scheduler->processQty++;
     return newProcess->pid;  
 }

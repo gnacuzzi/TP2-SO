@@ -171,12 +171,6 @@ void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantPar
 		syskillProcess(leftPid);
 		return;
 	}
-	if(sysunblockProcess(leftPid) == -1){
-		printf("Couldn't unblock left process\n");
-		sysclosePipe(writeFd);
-		syskillProcess(leftPid);
-		return;
-	}
 	
     int16_t rightPid = syscreateProcess((uint64_t)processCommands[rightId].exec, (char **)rightParams, rightCantParams, 1, fileDescriptors, isBackground2);
     if (rightPid == -1) {
@@ -193,6 +187,14 @@ void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantPar
     }
 	if(syschangeFds(rightPid, (int16_t[]){readFd, STDOUT, STDERR}) == -1){
 		printf("Couldn't change file descriptors for pipe read\n");
+		sysclosePipe(writeFd);
+		syskillProcess(leftPid);
+		syskillProcess(rightPid);
+		return;
+	}
+	
+	if(sysunblockProcess(rightPid) == -1){
+		printf("Couldn't unblock left process\n");
 		sysclosePipe(writeFd);
 		syskillProcess(leftPid);
 		syskillProcess(rightPid);

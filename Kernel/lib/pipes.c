@@ -128,7 +128,7 @@ int64_t writePipe(int64_t fd, const char *buffer, int64_t size) {
     for (i = 0; i < size; i++) {
         while (p->size == PIPE_SIZE) {
             p->writeBlocked = 1;
-            blockProcess(p->inputPid);  
+            blockProcess(p->outputPid);  
         }
 
         p->buffer[p->writeIndex] = buffer[i];
@@ -137,7 +137,7 @@ int64_t writePipe(int64_t fd, const char *buffer, int64_t size) {
 
         if (p->readBlocked) {
             p->readBlocked = 0;
-            readyProcess(p->outputPid);  
+            readyProcess(p->inputPid);  
         }
     }
 
@@ -157,7 +157,7 @@ int64_t readPipe(int64_t fd, char *buffer, int64_t size) {
     for (i = 0; i < size; i++) {
         while (p->size == 0) {
             p->readBlocked = 1;
-            blockProcess(p->outputPid);  
+            blockProcess(p->inputPid);  
         }
 
         buffer[i] = p->buffer[p->readIndex];
@@ -166,7 +166,7 @@ int64_t readPipe(int64_t fd, char *buffer, int64_t size) {
 
         if (p->writeBlocked) {
             p->writeBlocked = 0;
-            readyProcess(p->inputPid);  
+            readyProcess(p->outputPid);  
         }
     }
 
