@@ -192,7 +192,7 @@ void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantPar
 		syskillProcess(rightPid);
 		return;
 	}
-	
+
 	if(sysunblockProcess(rightPid) == -1){
 		printf("Couldn't unblock left process\n");
 		sysclosePipe(writeFd);
@@ -210,9 +210,6 @@ void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantPar
 
 	if (!isBackground1) {
         syswaitProcess(leftPid);
-    }
-    if (!isBackground2) {
-        syswaitProcess(rightPid);
     }
 	
     if (sysclosePipe(readFd) == -1) {
