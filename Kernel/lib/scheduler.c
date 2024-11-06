@@ -29,6 +29,9 @@ typedef struct schedulerCDT{
 static int created = 0;
 static schedulerADT getScheduler();
 static void idle();
+static PCB * pipedTo(int16_t fd);
+static int16_t pipedFd(int16_t * fileDescriptors);
+static int64_t kill(schedulerADT scheduler, PCB *process);
 schedulerADT scheduler = NULL;
 
 void createScheduler(){
@@ -171,13 +174,24 @@ int64_t killCurrentProcess(){
     return killProcess(scheduler->currentProcess->pid);
 }
 
-int64_t killProcess(int16_t pid) {
+int64_t killProcess(int16_t pid){
     schedulerADT scheduler = getScheduler();
     PCB *process = findProcess(pid);  
     if (process == NULL) {
         return -1;  
     }
 
+    int16_t fd = pipedFd(process->fileDescriptors);
+    kill(scheduler, process);
+    if(fd != -1){
+        PCB* aux = pipedTo(fd);
+        if(aux != NULL){
+            kill(scheduler, aux);
+        }
+    }
+}
+
+int64_t kill(schedulerADT scheduler, PCB *process) {
     if (process->status == READY) {
         if(removeNode(scheduler->readyProcess, process) == NULL){
             return -1;
@@ -232,6 +246,28 @@ int64_t killForegroundProcess() {
     return 0;
 }
 
+PCB * pipedTo(int16_t fd) {
+    schedulerADT scheduler = getScheduler();
+    PCB *aux;
+    toBegin(scheduler->processList);
+    while (hasNext(scheduler->processList)) {
+        aux = nextInList(scheduler->processList);
+        if (aux->fileDescriptors[STDIN] == fd || aux->fileDescriptors[STDOUT] == fd) {
+            return aux;
+        }
+    }
+    return NULL;
+}
+
+int16_t pipedFd(int16_t * fileDescriptors) {
+    if(fileDescriptors[STDIN] != STDIN) {
+        return fileDescriptors[STDIN];
+    }
+    else if (fileDescriptors[STDOUT] != STDOUT) {
+        return fileDescriptors[STDOUT];
+    }   
+    return -1; 
+}
 
 PCB *findProcess(int16_t pid) {
     schedulerADT scheduler = getScheduler();
