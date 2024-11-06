@@ -26,8 +26,7 @@ int philosopherPids[MAX_PHYLOS] = {0};
 void takeForks(int phyloId);
 void putForks(int phyloId);
 void test(int phyloId);
-void think();
-void eat();
+void wait();
 void render();
 
 int philosopher(int argc, char *argv[]);
@@ -36,21 +35,13 @@ void removePhilosopher();
 
 void startDining() {
     char c;
-
-    printf("Welcome to the Dining Philosophers\n");
-    printf("Commands: (A)dd, (R)emove, (Q)uit\n");
-
     while ((c = readchar()) != 'Q') {
         if(c == 'A'){
             if (phylosCount < MAX_PHYLOS) {
-                syswait(PRINT_ID);
                 printf("Adding philosopher\n");
-                syspost(PRINT_ID);
                 addPhilosopher();
             } else {
-                syswait(PRINT_ID);
                 printf("Maximum philosophers reached\n");
-                syspost(PRINT_ID);
             }
         }
         if(c == 'R'){
@@ -118,9 +109,8 @@ void removePhilosopher() {
         printf("Minimum philosophers reached\n");
         return;
     }
-    syswait(PRINT_ID);
     printf("Removing philosopher\n");
-    syspost(PRINT_ID);
+    phylosCount--;
 
     syswait(MUTEX_ID);
     while(state[LEFT(phylosCount)] == EATING  && state[RIGHT(phylosCount)] == EATING){
@@ -128,18 +118,26 @@ void removePhilosopher() {
         syswait(phylosCount);
         syswait(MUTEX_ID);
     }
-    syskillProcess(philosopherPids[phylosCount]);
-    syssemClose(phylosCount);
-    phylosCount--;
+    if(syskillProcess(philosopherPids[phylosCount]) == -1){
+        printf("Error killing philosopher %d\n", phylosCount);
+        sysexit();
+        return;
+    }
+    if(syssemClose(phylosCount) == -1){
+        printf("Error closing semaphore %d\n", phylosCount);
+        sysexit();
+        return;
+    }
+    
     syspost(MUTEX_ID);
 }
 
 int philosopher(int argc, char *argv[]) {
     int i = atoi(argv[1]);
     while (1) {
-        think();
+        wait();
         takeForks(i);
-        eat();
+        wait();
         putForks(i);
     }
     return 0;
@@ -178,11 +176,7 @@ void render() {
     syspost(PRINT_ID);
 }
 
-void think() {
-    for(int i = 0; i < 500000; i++);
-}
-
-void eat() {
+void wait() {
     for(int i = 0; i < 500000; i++);
 }
 
@@ -209,6 +203,9 @@ void phylo(int argc, char *argv[]) {
         return;
     }
 
+    printf("Welcome to the Dining Philosophers\n");
+    printf("Commands: (A)dd, (R)emove, (Q)uit\n");
+    printf("Starting...\n");
     for (int i = 0; i < aux; i++) {
         addPhilosopher();
     }
