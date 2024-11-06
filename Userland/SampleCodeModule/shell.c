@@ -194,7 +194,7 @@ void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantPar
 		syskillProcess(rightPid);
 		return;
 	}
-	
+
 	if(sysunblockProcess(rightPid) == -1){
 		printf("Couldn't unblock left process\n");
 		sysclosePipe(writeFd);
@@ -212,9 +212,6 @@ void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantPar
 
 	if (!isBackground1) {
         syswaitProcess(leftPid);
-    }
-    if (!isBackground2) {
-        syswaitProcess(rightPid);
     }
 	
     if (sysclosePipe(readFd) == -1) {
@@ -235,11 +232,19 @@ int main() {
 		if (rta == 1) {
 			char leftCommand[BUFFER_LENGTH] = {0};
 			char **leftParams = sysmalloc(PARAMETERS_LENGTH * sizeof(char *)); 
+			if(leftParams == NULL){
+				printf("Error allocating memory for left argv[]\n");
+				break;
+			}
 			int leftCantParams;
 			char *pipe;
 			
 			if((pipe = strchr(buffer, '|')) != NULL){
 				char **rightParams = sysmalloc(PARAMETERS_LENGTH * sizeof(char *)); 
+				if(rightParams == NULL){
+					printf("Error allocating memory for right argv[]\n");
+					break;
+				}
 				char rightCommand[BUFFER_LENGTH] = {0};
 				*pipe = '\0';
     			leftCantParams = scanCommand(leftCommand, leftParams, buffer);
@@ -299,9 +304,10 @@ int main() {
             		}
 					int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR};	
 					int isBackground = strcmp(leftParams[leftCantParams-1], "BACK") == 0;
-					int16_t pid = syscreateProcess(rip, newParams, leftCantParams + 1, 1, fileDescriptors, isBackground);
+					int16_t pid = syscreateProcess(rip, newParams, leftCantParams, 1, fileDescriptors, isBackground);
 					if(pid == -1){
 						printf("Error creating process\n");
+						break;
 					}
 					if(sysunblockProcess(pid) == -1){
 						printf("Couldn't unblock process\n");
