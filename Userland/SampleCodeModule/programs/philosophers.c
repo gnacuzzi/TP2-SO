@@ -7,10 +7,10 @@
 #define PHYLO_BUFFER_SIZE 3
 
 #define MUTEX_ID 16
-#define SEM_ID 17
+#define PRINT_ID 17
 
-#define LEFT(i) ((phyloId + phylosCount - 1) % phylosCount)
-#define RIGHT(i) ((phyloId + 1) % phylosCount)
+#define LEFT(phyloId) ((phyloId + phylosCount - 1) % phylosCount)
+#define RIGHT(phyloId) ((phyloId + 1) % phylosCount)
 
 typedef enum{
     THINKING,
@@ -20,9 +20,7 @@ typedef enum{
 
 int phylosCount = 0;
 
-state_t state[MAX_PHYLOS] = {THINKING};
-int mutex;                   
-int s[MAX_PHYLOS];           
+state_t state[MAX_PHYLOS] = {THINKING};       
 int philosopherPids[MAX_PHYLOS] = {0};
 
 void takeForks(int phyloId);
@@ -44,20 +42,41 @@ void startDining() {
 
     while ((c = readchar()) != 'Q') {
         if(c == 'A'){
+            syswait(PRINT_ID);
             printf("Adding philosopher\n");
+            syspost(PRINT_ID);
             addPhilosopher();
         }
         if(c == 'R'){
+            syswait(PRINT_ID);
             printf("Removing philosopher\n");
+            syspost(PRINT_ID);
             removePhilosopher();
         }
-        
     }
 
-    for (int i = phylosCount - 1; i >= 0; i--) {
-        syskillProcess(philosopherPids[i]);
+    for (int i = 0; i < phylosCount; i++) {
+        if(syskillProcess(philosopherPids[i]) == -1){
+            printf("Error killing philosopher %d\n", i);
+            sysexit();
+            return;
+        }
+        if(syssemClose(i) == -1){
+            printf("Error closing semaphore %d\n", i);
+            sysexit();
+            return;
+        }    
     }
-    syssemClose(mutex);
+    if(syssemClose(MUTEX_ID) == -1){
+        printf("Error closing semaphpore mutex\n");
+        sysexit();
+        return;
+    }
+    if(syssemClose(PRINT_ID) == -1){
+        printf("Error closing semaphpore print\n");
+        sysexit();
+        return;
+    }
     return;
 }
 
@@ -67,11 +86,15 @@ void addPhilosopher() {
         return;
     }
 
-    syswait(mutex);
+    syswait(MUTEX_ID);
     state[phylosCount] = THINKING;
     char phyloBuff[PHYLO_BUFFER_SIZE] = {0};
 
-    s[phylosCount] = syssemInit(phylosCount, 0);  
+    if(syssemInit(phylosCount, 0) == -1){
+        printf("Error creating semaphore %d\n", phylosCount);
+        sysexit();
+        return;
+    }
 
     itoa(phylosCount, phyloBuff, 10); 
     char *params[] = {"philosopher", phyloBuff};
@@ -79,7 +102,7 @@ void addPhilosopher() {
 
     philosopherPids[phylosCount] = syscreateProcess((uint64_t)philosopher, params, 2, 1, fileDescriptors, 1);
     if(philosopherPids[phylosCount] < 0){
-        printf("Error creating philosopher\n");
+        printf("Error creating philosopher %d\n", phylosCount);
         sysexit();
         return;
     }
@@ -89,8 +112,7 @@ void addPhilosopher() {
     }
 
     phylosCount++;
-    //render();
-    syspost(mutex);
+    syspost(MUTEX_ID);
 }
 
 void removePhilosopher() {
@@ -99,13 +121,11 @@ void removePhilosopher() {
         return;
     }
 
-    syswait(mutex);
-    phylosCount--;
+    syswait(MUTEX_ID);
     syskillProcess(philosopherPids[phylosCount]);
-    syssemClose(s[phylosCount]);
-
-    render();
-    syspost(mutex);
+    syssemClose(phylosCount);
+    phylosCount--;
+    syspost(MUTEX_ID);
 }
 
 int philosopher(int argc, char *argv[]) {
@@ -120,34 +140,36 @@ int philosopher(int argc, char *argv[]) {
 }
 
 void takeForks(int phyloId) {
-    syswait(mutex);
+    syswait(MUTEX_ID);
     state[phyloId] = HUNGRY;
     test(phyloId);
-    syspost(mutex);
-    syswait(s[phyloId]);  
+    syspost(MUTEX_ID);
+    syswait(phyloId);  
 }
 
 void putForks(int phyloId) {
-    syswait(mutex);
+    syswait(MUTEX_ID);
     state[phyloId] = THINKING;
     test(LEFT(phyloId));
     test(RIGHT(phyloId));
-    syspost(mutex);
+    syspost(MUTEX_ID);
 }
 
 void test(int phyloId) {
     if (state[phyloId] == HUNGRY && state[LEFT(phyloId)] != EATING && state[RIGHT(phyloId)] != EATING) {
         state[phyloId] = EATING;
-        syspost(s[phyloId]);
+        syspost(phyloId);
     }
     render();
 }
 
 void render() {
+    syswait(PRINT_ID);
     for (int i = 0; i < phylosCount; i++) {
         printf(state[i] == EATING ? "E " : ". ");
     }
     putchar('\n');
+    syspost(PRINT_ID);
 }
 
 void think() {
@@ -170,8 +192,13 @@ void phylo(int argc, char *argv[]) {
         sysexit();
         return;
     }
-    if((mutex = syssemInit(MUTEX_ID, 1)) == -1){
-        printf("Couldn't create semaphore mutex\n");
+    if(syssemInit(MUTEX_ID, 1) == -1){
+        printf("Error creating semaphore mutex\n");
+        sysexit();
+        return;
+    }
+    if(syssemInit(PRINT_ID, 1) == -1){
+        printf("Error creating semaphore print\n");
         sysexit();
         return;
     }
@@ -181,6 +208,7 @@ void phylo(int argc, char *argv[]) {
     }
 
     startDining();
+    phylosCount = 0;
     sysexit();
     return;
 }
