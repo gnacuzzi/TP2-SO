@@ -42,15 +42,18 @@ void startDining() {
 
     while ((c = readchar()) != 'Q') {
         if(c == 'A'){
-            syswait(PRINT_ID);
-            printf("Adding philosopher\n");
-            syspost(PRINT_ID);
-            addPhilosopher();
+            if (phylosCount < MAX_PHYLOS) {
+                syswait(PRINT_ID);
+                printf("Adding philosopher\n");
+                syspost(PRINT_ID);
+                addPhilosopher();
+            } else {
+                syswait(PRINT_ID);
+                printf("Maximum philosophers reached\n");
+                syspost(PRINT_ID);
+            }
         }
         if(c == 'R'){
-            syswait(PRINT_ID);
-            printf("Removing philosopher\n");
-            syspost(PRINT_ID);
             removePhilosopher();
         }
     }
@@ -81,11 +84,6 @@ void startDining() {
 }
 
 void addPhilosopher() {
-    if (phylosCount >= MAX_PHYLOS) {
-        printf("Maximum philosophers reached\n");
-        return;
-    }
-
     syswait(MUTEX_ID);
     state[phylosCount] = THINKING;
     char phyloBuff[PHYLO_BUFFER_SIZE] = {0};
@@ -120,8 +118,16 @@ void removePhilosopher() {
         printf("Minimum philosophers reached\n");
         return;
     }
+    syswait(PRINT_ID);
+    printf("Removing philosopher\n");
+    syspost(PRINT_ID);
 
     syswait(MUTEX_ID);
+    while(state[LEFT(phylosCount)] == EATING  && state[RIGHT(phylosCount)] == EATING){
+        syspost(MUTEX_ID);
+        syswait(phylosCount);
+        syswait(MUTEX_ID);
+    }
     syskillProcess(philosopherPids[phylosCount]);
     syssemClose(phylosCount);
     phylosCount--;
@@ -173,11 +179,11 @@ void render() {
 }
 
 void think() {
-    for(int i = 0; i < 5000; i++);
+    for(int i = 0; i < 500000; i++);
 }
 
 void eat() {
-    for(int i = 0; i < 5000; i++);
+    for(int i = 0; i < 500000; i++);
 }
 
 void phylo(int argc, char *argv[]) {
