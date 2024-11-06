@@ -212,6 +212,7 @@ void executePipedCommands(char *leftCommand, char *leftParams[], int leftCantPar
 
 	if (!isBackground1) {
         syswaitProcess(leftPid);
+		syswaitProcess(rightPid);
     }
 	
     if (sysclosePipe(readFd) == -1) {
