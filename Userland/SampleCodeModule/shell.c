@@ -304,7 +304,8 @@ int main() {
             		}
 					int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR};	
 					int isBackground = strcmp(leftParams[leftCantParams-1], "BACK") == 0;
-					int16_t pid = syscreateProcess(rip, newParams, leftCantParams, 1, fileDescriptors, isBackground);
+					leftCantParams += isBackground ? -1 : 0;
+					int16_t pid = syscreateProcess(rip, newParams, leftCantParams + 1, 1, fileDescriptors, isBackground);
 					if(pid == -1){
 						printf("Error creating process\n");
 						break;
