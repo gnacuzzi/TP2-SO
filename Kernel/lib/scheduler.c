@@ -182,13 +182,16 @@ int64_t killProcess(int16_t pid){
     }
 
     int16_t fd = pipedFd(process->fileDescriptors);
-    kill(scheduler, process);
+    if(kill(scheduler, process) == -1){
+        return -1;
+    }
     if(fd != -1){
         PCB* aux = pipedTo(fd);
         if(aux != NULL){
-            kill(scheduler, aux);
+            return kill(scheduler, aux);
         }
     }
+    return 0;
 }
 
 int64_t kill(schedulerADT scheduler, PCB *process) {
