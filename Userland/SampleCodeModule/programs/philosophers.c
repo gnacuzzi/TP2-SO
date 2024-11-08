@@ -2,7 +2,7 @@
 #include <libc.h>
 #include <processes.h>
 
-#define MAX_PHYLOS 15
+#define MAX_PHYLOS 10
 #define MIN_PHYLOS 5
 #define PHYLO_BUFFER_SIZE 3
 

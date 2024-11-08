@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <memoryManager.h>
 #include <scheduler.h>
+#include <process.h>
 
 #define MAX_SEMAPHORES 30
 
@@ -103,20 +104,31 @@ int8_t post(uint16_t id) {
     }
 
     acquire(&sem->semaphores[id].lock);
-    
-    if (!isEmpty(sem->semaphores[id].waiting)) {
+
+    while (!isEmpty(sem->semaphores[id].waiting)) {
         int16_t *pidPtr = (int16_t *) getFirstData(sem->semaphores[id].waiting);
         int16_t pid = *pidPtr;
+        PCB *process = findProcess(pid);
+
+        if (process == NULL || process->status == KILLED) {
+            free(pidPtr);                 
+            continue;                     
+        }
+
         free(pidPtr);
         readyProcess(pid);
-    } else {
+        break;
+    }
+
+    if (isEmpty(sem->semaphores[id].waiting)) {
         sem->semaphores[id].value++;
     }
-    
+
     release(&sem->semaphores[id].lock);
 
     return 0; 
 }
+
 
 int8_t wait(uint16_t id) {
     if (id >= MAX_SEMAPHORES) {
