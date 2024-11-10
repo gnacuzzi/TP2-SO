@@ -227,11 +227,20 @@ int main() {
 	printf("Welcome to our shell! Write which module you want to use. To see our modules write help\n");
 	printf("~$");
 
-	char buffer[BUFFER_LENGTH] = {0};
+	char *buffer = sysmalloc(BUFFER_LENGTH * sizeof(char *));
+	if(buffer == NULL){
+		printf("Error allocating memory for buffer\n");
+		sysexit();
+		return 0;
+	}
 	while (1) {
 		int rta = scanf(buffer);
 		if (rta == 1) {
-			char leftCommand[BUFFER_LENGTH] = {0};
+			char *leftCommand= sysmalloc(BUFFER_LENGTH * sizeof(char *));
+			if(leftCommand == NULL){
+				printf("Error allocating memory for left command\n");
+				break;
+			}
 			char **leftParams = sysmalloc(PARAMETERS_LENGTH * sizeof(char *)); 
 			if(leftParams == NULL){
 				printf("Error allocating memory for left argv[]\n");
@@ -246,7 +255,11 @@ int main() {
 					printf("Error allocating memory for right argv[]\n");
 					break;
 				}
-				char rightCommand[BUFFER_LENGTH] = {0};
+				char *rightCommand = sysmalloc(BUFFER_LENGTH * sizeof(char *));
+				if(rightCommand == NULL){
+					printf("Error allocating memory for right command\n");
+					break;
+				}
 				*pipe = '\0';
     			leftCantParams = scanCommand(leftCommand, leftParams, buffer);
     			int rightCantParams = scanCommand(rightCommand, rightParams, pipe + 2);
@@ -256,24 +269,17 @@ int main() {
 					char *newParams1[MAX_PARAMETERS + 1] = {0};
 					newParams1[0] = processCommands[leftId].name;
             		for (int i = 0; i < leftCantParams; i++) {
-               			if(strcmp(leftParams[i] , "BACK") != 0){
-							newParams1[i + 1] = leftParams[i];
-						}
+						newParams1[i + 1] = leftParams[i];
             		}
-					leftCantParams++;
-					int isBackground1 = strcmp(leftParams[leftCantParams-1], "BACK") == 0;
+					int isBackground1 = 0;
 
 					char *newParams2[MAX_PARAMETERS + 1] = {0};
 					newParams2[0] = processCommands[rightId].name;
             		for (int i = 0; i < rightCantParams; i++) {
-               			if(strcmp(rightParams[i] , "BACK") != 0){
-							newParams2[i + 1] = rightParams[i];
-						}
+						newParams2[i + 1] = rightParams[i];
             		}
-					rightCantParams++;
-					int isBackground2 = strcmp(rightParams[rightCantParams-1], "BACK") == 0;
-
-					executePipedCommands(leftCommand, newParams1, leftCantParams,leftId, isBackground1, rightCommand, newParams2, rightCantParams,rightId, isBackground2);
+					int isBackground2 = 0;
+					executePipedCommands(leftCommand, newParams1, leftCantParams + 1,leftId, isBackground1, rightCommand, newParams2, rightCantParams + 1,rightId, isBackground2);
 					
 					for (int i = 0; i < leftCantParams; i++) {
 						sysfree(leftParams[i]);
@@ -282,6 +288,7 @@ int main() {
 						sysfree(rightParams[i]);
 					}
 					sysfree(rightParams);
+					sysfree(rightCommand);
 				} else {
 					printf("Pipes only support processes\n");
 				}
@@ -303,8 +310,11 @@ int main() {
 							newParams[i + 1] = leftParams[i];
 						}
             		}
-					int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR};	
-					int isBackground = strcmp(leftParams[leftCantParams-1], "BACK") == 0;
+					int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR};
+					int isBackground = 0;
+					if(leftCantParams != 0){
+						isBackground = strcmp(leftParams[leftCantParams-1], "BACK") == 0;
+					}
 					leftCantParams += isBackground ? -1 : 0;
 					int16_t pid = syscreateProcess(rip, newParams, leftCantParams + 1, 1, fileDescriptors, isBackground);
 					if(pid == -1){
@@ -331,9 +341,11 @@ int main() {
 					sysfree(leftParams[i]);
 			}
 			sysfree(leftParams);
+			sysfree(leftCommand);
 		}
 		printf("~$");
 	}
+	sysfree(buffer);
 	sysexit();
 	return 0;
 }
