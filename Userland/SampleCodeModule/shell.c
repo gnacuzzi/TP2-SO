@@ -48,6 +48,7 @@ static void help(int argc, char *argv[]) {
 		"KILL                       Command to kill a process\n"
 		"NICE                       Command to change the priority of a process\n"
 		"BLOCK                      Command to block a process\n"
+		"UNBLOCK                    Command to unblock a process\n"
 		"PS                         Command to list all the processes\n	"
 		"-------------PROCESSES-------------\n"
 		"TESTMM                     Test the memory manager\n"
@@ -65,6 +66,7 @@ static void help(int argc, char *argv[]) {
 
 static const command builtInCommands[] = {
 	{"BLOCK", (functionPointer)blockProcess}, 
+	{"UNBLOCK", (functionPointer)unblockProcess},
 	{"CLEAR", (functionPointer)clear},
 	{"HELP", (functionPointer)help},
 	{"KILL", (functionPointer)killProcess},
@@ -239,12 +241,13 @@ int main() {
 			char *leftCommand= sysmalloc(BUFFER_LENGTH * sizeof(char *));
 			if(leftCommand == NULL){
 				printf("Error allocating memory for left command\n");
-				break;
+				continue;
 			}
 			char **leftParams = sysmalloc(PARAMETERS_LENGTH * sizeof(char *)); 
 			if(leftParams == NULL){
 				printf("Error allocating memory for left argv[]\n");
-				break;
+				sysfree(leftCommand);
+				continue;
 			}
 			int leftCantParams;
 			char *pipe;
@@ -253,12 +256,17 @@ int main() {
 				char **rightParams = sysmalloc(PARAMETERS_LENGTH * sizeof(char *)); 
 				if(rightParams == NULL){
 					printf("Error allocating memory for right argv[]\n");
-					break;
+					sysfree(leftParams);
+					sysfree(leftCommand);
+					continue;
 				}
 				char *rightCommand = sysmalloc(BUFFER_LENGTH * sizeof(char *));
 				if(rightCommand == NULL){
 					printf("Error allocating memory for right command\n");
-					break;
+					sysfree(leftParams);
+					sysfree(leftCommand);
+					sysfree(rightParams);
+					continue;
 				}
 				*pipe = '\0';
     			leftCantParams = scanCommand(leftCommand, leftParams, buffer);
@@ -330,11 +338,20 @@ int main() {
 					int16_t pid = syscreateProcess(rip, newParams, leftCantParams + 1, 1, fileDescriptors, isBackground);
 					if(pid == -1){
 						printf("Error creating process\n");
-						break;
+						sysfree(leftCommand);
+						for (int i = 0; i < leftCantParams; i++) {
+							sysfree(leftParams[i]);
+						}
+						continue;
 					}
 					if(sysunblockProcess(pid) == -1){
 						printf("Couldn't unblock process\n");
-						break;
+						syskillProcess(pid);
+						sysfree(leftCommand);
+						for (int i = 0; i < leftCantParams; i++) {
+							sysfree(leftParams[i]);
+						}
+						continue;
 					}
 					if (!isBackground) {
 						syswaitProcess(pid);

@@ -29,7 +29,8 @@ typedef struct PSinfo{
     uint64_t stackPos;
     char *name;
     uint8_t priority;
-    int ground;    
+    int ground; 
+    uint8_t status;   
 } PSinfo;
 
 PSinfo * ps(uint16_t * proccesQty);

@@ -330,6 +330,7 @@ int16_t copyProcess(PSinfo *dest, PCB *src){
     dest->stackPos = src->stackPos;
     dest->priority = src->priority;
     dest->ground = src->ground;
+    dest->status = src->status;
 
     if(src->name != NULL){
         dest->name = malloc(strlen(src->name) + 1);

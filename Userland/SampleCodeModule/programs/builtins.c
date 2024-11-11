@@ -91,17 +91,45 @@ void blockProcess(int argc, char *argv[]){
     return;
 }
 
+void unblockProcess(int argc, char *argv[]){
+    if(argc != 1){
+        printf("You must insert ONE parameter indicating the PID of the process you desire to unblock\n");
+        return;
+    }
+
+    int pid = atoi(argv[0]);
+
+    if(pid < 0){
+        printf("PID must be greater than 0\n");
+        return;
+    }
+
+    int out = sysunblockProcess(pid);
+
+    printf("Process %d %s\n", pid, out == 0 ? "unblocked" : "not unblocked");
+
+    return;
+}
+
 static void printProcInfo(PSinfo proc) {
     putchar('\n');
     printf("NAME: %s\n", proc.name == NULL ? "unnamed" : proc.name);
 
     printf("PID: %d\n", (int) proc.pid);
 
-    printf("Priority: %d | Stack base: 0x%d | Stack pointer: 0x%d | Ground: %s\n", 
+    char * status = NULL;
+    if(proc.status == 0) status = "BLOCKED";
+    else if(proc.status == 1) status = "READY";
+    else if(proc.status == 2) status = "RUNNING";
+    else if(proc.status == 3) status = "KILLED";
+    else status = "UNKNOWN";
+
+    printf("Priority: %d | Stack base: 0x%d | Stack pointer: 0x%d | Ground: %s\n | Status: %s\n", 
            (int) proc.priority, 
            (int) proc.stackBase, 
            (int) proc.stackPos, 
-           proc.ground == 0 ? "foreground" : "background");
+           proc.ground == 0 ? "foreground" : "background",
+           status);
 }
 
 void listProcesses(int argc, char *argv[]) {
