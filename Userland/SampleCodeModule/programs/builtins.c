@@ -36,7 +36,7 @@ void killProcess(int argc, char *argv[]) {
 	int pid = atoi(argv[0]);
 
 	if (pid <= 1) {
-		printf("PID must be greater than 1\n");
+		printf("PID must be a number greater than 1\n");
 		return;
 	}
 
@@ -51,14 +51,14 @@ void changePriority(int argc, char *argv[]) {
 			   "the new priority\n");
 		return;
 	}
-	
-	if(atoi(argv[0]) == 1  || atoi(argv[0]) == 0){
-		printf("You can't change the priority of the idle process or the shell\n");
-		return;
-	}
 
 	int pid = atoi(argv[0]);
 	int priority = atoi(argv[1]);
+
+	if(pid == 1  || pid == 0){
+		printf("You can't change the priority of the idle process or the shell\n");
+		return;
+	}
 
 	if (pid < 0) {
 		printf("PID must be a number greater than 0\n");
@@ -91,13 +91,13 @@ void blockProcess(int argc, char *argv[]) {
 	int pid = atoi(argv[0]);
 
 	if (pid < 0) {
-		printf("PID must be greater than 0\n");
+		printf("PID must be a number greater than 0\n");
 		return;
 	}
 
 	int out = sysblockProcess(pid);
 
-	printf("Process %d %s\n", pid, out == 0 ? "blocked" : "not blocked");
+	printf("Process %d %s\n", pid, out == 0 ? "blocked" : "couldn't be blocked");
 
 	return;
 }
@@ -110,14 +110,14 @@ void unblockProcess(int argc, char *argv[]) {
 
 	int pid = atoi(argv[0]);
 
-	if (pid < 0) {
-		printf("PID must be greater than 0\n");
+	if (pid <= 1) {
+		printf("PID must be a number greater than 1\n");
 		return;
 	}
 
 	int out = sysunblockProcess(pid);
 
-	printf("Process %d %s\n", pid, out == 0 ? "unblocked" : "not unblocked");
+	printf("Process %d %s\n", pid, out == 0 ? "unblocked" : "couldn't be unblocked");
 
 	return;
 }
@@ -145,6 +145,11 @@ static void printProcInfo(PSinfo proc) {
 }
 
 void listProcesses(int argc, char *argv[]) {
+	if (argc != 0) {
+		printf("Ps doesn't need parameters\n");
+		return;
+	}
+
 	uint16_t procAmount;
 
 	PSinfo *processes = sysps(&procAmount);

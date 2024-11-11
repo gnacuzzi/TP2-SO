@@ -19,6 +19,12 @@ void testMemory(int argc, char *argv[]) {
 		return;
 	}
 
+	if(atoi(argv[1]) < 0) {
+		printf("The parameter must be a numer\n");
+		sysexit();
+		return;
+	}
+
 	char *params[] = {argv[1]};
 	int out = test_mm(1, params);
 
@@ -45,8 +51,8 @@ void testProcesses(int argc, char *argv[]) {
 		return;
 	}
 
-	if (satoi(argv[1]) <= 0 || satoi(argv[1]) > MAX_PROCESSES) {
-		printf("Number of processes must be between 0 and 40\n");
+	if (atoi(argv[1]) <= 0 || atoi(argv[1]) > MAX_PROCESSES) {
+		printf("Number of processes must be a number between 0 and 40\n");
 		sysexit();
 		return;
 	}
@@ -68,13 +74,13 @@ void testSynchronization(int argc, char *argv[]) { //{n, use_sem, 0}
 		return;
 	}
 
-	if (satoi(argv[1]) <= 0) {
+	if (atoi(argv[1]) <= 0) {
 		printf("Number of iterations must be greater than 0\n");
 		sysexit();
 		return;
 	}
 
-	if (satoi(argv[2]) < 0) {
+	if (atoi(argv[2]) < 0) {
 		printf("Write 0 for no-sem, write > 0 for sem\n");
 		sysexit();
 		return;

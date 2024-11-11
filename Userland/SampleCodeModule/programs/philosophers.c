@@ -189,7 +189,7 @@ void phylo(int argc, char *argv[]) {
 	}
 	int aux = atoi(argv[1]);
 	if (aux < MIN_PHYLOS || aux > MAX_PHYLOS) {
-		printf("The amount of philosophers must be between %d and %d\n", MIN_PHYLOS, MAX_PHYLOS);
+		printf("The amount of philosophers must be a number between %d and %d\n", MIN_PHYLOS, MAX_PHYLOS);
 		sysexit();
 		return;
 	}
