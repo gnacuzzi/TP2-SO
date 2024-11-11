@@ -283,7 +283,7 @@ int main() {
             		}
 					int isBackground2 = 0;
 					if(rightCantParams != 0){
-						isBackground2 = strcmp(leftParams[rightCantParams-1], "BACK") == 0;
+						isBackground2 = strcmp(rightParams[rightCantParams-1], "BACK") == 0;
 					}
 					if(isBackground1 || isBackground2){
 						printf("Can't have background processes with pipes\n");
