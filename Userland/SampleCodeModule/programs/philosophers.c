@@ -34,18 +34,24 @@ void removePhilosopher();
 
 void startDining() {
 	char c;
-	while ((c = readchar()) != 'Q') {
-		if (c == 'A') {
-			if (phylosCount < MAX_PHYLOS) {
-				printf("Adding philosopher\n");
-				addPhilosopher();
-			}
-			else {
+	while (1) {
+		c = readchar();
+		if(c == 'A') {
+			if(phylosCount == MAX_PHYLOS) {
+				syswait(PRINT_ID);
 				printf("Maximum philosophers reached\n");
+				syspost(PRINT_ID);
+				continue;
 			}
-		}
-		if (c == 'R') {
+			syswait(PRINT_ID);
+			printf("Adding philosopher\n");
+			syspost(PRINT_ID);
+			addPhilosopher();
+		} else if (c == 'R') {
 			removePhilosopher();
+		} else if (c == 'Q') {
+			break;
+
 		}
 	}
 
@@ -106,10 +112,14 @@ void addPhilosopher() {
 
 void removePhilosopher() {
 	if (phylosCount <= MIN_PHYLOS) {
+		syswait(PRINT_ID);
 		printf("Minimum philosophers reached\n");
+		syspost(PRINT_ID);
 		return;
 	}
+	syswait(PRINT_ID);
 	printf("Removing philosopher\n");
+	syspost(PRINT_ID);
 	phylosCount--;
 
 	syswait(MUTEX_ID);
