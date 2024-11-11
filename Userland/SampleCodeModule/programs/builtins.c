@@ -36,12 +36,12 @@ void killProcess(int argc, char *argv[]) {
 	int pid = atoi(argv[0]);
 
 	if (pid <= 1) {
-		printf("PID must be greater than 0\n");
+		printf("PID must be greater than 1\n");
 		return;
 	}
 
 	int out = syskillProcess(pid);
-	printf("Process %d %s\n", pid, out == 0 ? "killed" : "not killed");
+	printf("Process %d %s\n", pid, out == 0 ? "killed" : "couldn't be killed");
 	return;
 }
 
