@@ -21,11 +21,11 @@ void test_prio() {
 	int64_t pids[TOTAL_PROCESSES];
 	char *argv[] = {"endless_loop_print"};
 	int16_t fileDescriptors[] = {STDIN, STDOUT, STDERR}; // stdin, stdout, stderr
-	
+
 	uint64_t i;
 
-	for (i = 0; i < TOTAL_PROCESSES; i++){
-		pids[i] = syscreateProcess((uint64_t)endless_loop_print, argv, 1, LOWEST, fileDescriptors, 1);
+	for (i = 0; i < TOTAL_PROCESSES; i++) {
+		pids[i] = syscreateProcess((uint64_t) endless_loop_print, argv, 1, LOWEST, fileDescriptors, 1);
 		sysunblockProcess(pids[i]);
 	}
 	bussy_wait(WAIT);

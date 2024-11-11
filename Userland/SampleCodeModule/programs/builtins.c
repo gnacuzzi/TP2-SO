@@ -6,151 +6,153 @@
 #include <libc.h>
 
 void memState(int argc, char *argv[]) {
-    if(argc != 0){
-        printf("Mem doesn't need parameters\n");
-        return;
-    }
+	if (argc != 0) {
+		printf("Mem doesn't need parameters\n");
+		return;
+	}
 
-    mem_info memInfo;
+	mem_info memInfo;
 
-    if(sysgetMemInfo(&memInfo) == -1) {
-        printf("Couldn't retrive memory information\n");
-        return;
-    }
+	if (sysgetMemInfo(&memInfo) == -1) {
+		printf("Couldn't retrive memory information\n");
+		return;
+	}
 
-    printf("Used memory: %d bytes\n", (int)memInfo.used);
-    printf("Free memory: %d bytes\n", (int)memInfo.free);
-    printf("Total memory: %d bytes\n", (int)memInfo.total);
+	printf("Used memory: %d bytes\n", (int) memInfo.used);
+	printf("Free memory: %d bytes\n", (int) memInfo.free);
+	printf("Total memory: %d bytes\n", (int) memInfo.total);
 
-    return;
+	return;
 }
 
 /* Process Managing */
 
-void killProcess(int argc, char *argv[]){
-    if(argc != 1){
-        printf("You must insert ONE parameter indicating the PID of the process you desire to kill\n");
-        return;
-    }
+void killProcess(int argc, char *argv[]) {
+	if (argc != 1) {
+		printf("You must insert ONE parameter indicating the PID of the process you desire to kill\n");
+		return;
+	}
 
-    int pid = atoi(argv[0]);
+	int pid = atoi(argv[0]);
 
-    if(pid < 1){ 
-        printf("PID must be greater than 0\n");
-        return;
-    }
+	if (pid < 1) {
+		printf("PID must be greater than 0\n");
+		return;
+	}
 
-    int out = syskillProcess(pid);
-    printf("Process %d %s\n", pid, out == 0 ? "killed" : "not killed");
-    return;
+	int out = syskillProcess(pid);
+	printf("Process %d %s\n", pid, out == 0 ? "killed" : "not killed");
+	return;
 }
 
-void changePriority(int argc, char *argv[]){
-    if(argc != 2){
-        printf("You must insert TWO parameters indicating the PID of the process you desire to change the priority and the new priority\n");
-        return;
-    }
+void changePriority(int argc, char *argv[]) {
+	if (argc != 2) {
+		printf("You must insert TWO parameters indicating the PID of the process you desire to change the priority and "
+			   "the new priority\n");
+		return;
+	}
 
-    int pid = atoi(argv[0]);
-    int priority = atoi(argv[1]);
+	int pid = atoi(argv[0]);
+	int priority = atoi(argv[1]);
 
-    if(pid < 0){
-        printf("PID must be greater than 0\n");
-        return;
-    }
+	if (pid < 0) {
+		printf("PID must be greater than 0\n");
+		return;
+	}
 
-    if(priority < 1 || priority > 5){
-        printf("Priority must be between 0 and 5\n");
-        return;
-    }
+	if (priority < 1 || priority > 5) {
+		printf("Priority must be between 0 and 5\n");
+		return;
+	}
 
-    int out = syschangePriority(pid, priority);
+	int out = syschangePriority(pid, priority);
 
-    printf("Priority of process %d %s\n", pid, out >= 0 ? "changed" : "not changed");
+	printf("Priority of process %d %s\n", pid, out >= 0 ? "changed" : "not changed");
 
-    return;
+	return;
 }
 
-void blockProcess(int argc, char *argv[]){
-    if(argc != 1){
-        printf("You must insert ONE parameter indicating the PID of the process you desire to block\n");
-        return;
-    }
+void blockProcess(int argc, char *argv[]) {
+	if (argc != 1) {
+		printf("You must insert ONE parameter indicating the PID of the process you desire to block\n");
+		return;
+	}
 
-    int pid = atoi(argv[0]);
+	int pid = atoi(argv[0]);
 
-    if(pid < 0){
-        printf("PID must be greater than 0\n");
-        return;
-    }
+	if (pid < 0) {
+		printf("PID must be greater than 0\n");
+		return;
+	}
 
-    int out = sysblockProcess(pid);
+	int out = sysblockProcess(pid);
 
-    printf("Process %d %s\n", pid, out == 0 ? "blocked" : "not blocked");
+	printf("Process %d %s\n", pid, out == 0 ? "blocked" : "not blocked");
 
-    return;
+	return;
 }
 
-void unblockProcess(int argc, char *argv[]){
-    if(argc != 1){
-        printf("You must insert ONE parameter indicating the PID of the process you desire to unblock\n");
-        return;
-    }
+void unblockProcess(int argc, char *argv[]) {
+	if (argc != 1) {
+		printf("You must insert ONE parameter indicating the PID of the process you desire to unblock\n");
+		return;
+	}
 
-    int pid = atoi(argv[0]);
+	int pid = atoi(argv[0]);
 
-    if(pid < 0){
-        printf("PID must be greater than 0\n");
-        return;
-    }
+	if (pid < 0) {
+		printf("PID must be greater than 0\n");
+		return;
+	}
 
-    int out = sysunblockProcess(pid);
+	int out = sysunblockProcess(pid);
 
-    printf("Process %d %s\n", pid, out == 0 ? "unblocked" : "not unblocked");
+	printf("Process %d %s\n", pid, out == 0 ? "unblocked" : "not unblocked");
 
-    return;
+	return;
 }
 
 static void printProcInfo(PSinfo proc) {
-    putchar('\n');
-    printf("NAME: %s\n", proc.name == NULL ? "unnamed" : proc.name);
+	putchar('\n');
+	printf("NAME: %s\n", proc.name == NULL ? "unnamed" : proc.name);
 
-    printf("PID: %d\n", (int) proc.pid);
+	printf("PID: %d\n", (int) proc.pid);
 
-    char * status = NULL;
-    if(proc.status == 0) status = "BLOCKED";
-    else if(proc.status == 1) status = "READY";
-    else if(proc.status == 2) status = "RUNNING";
-    else if(proc.status == 3) status = "KILLED";
-    else status = "UNKNOWN";
+	char *status = NULL;
+	if (proc.status == 0)
+		status = "BLOCKED";
+	else if (proc.status == 1)
+		status = "READY";
+	else if (proc.status == 2)
+		status = "RUNNING";
+	else if (proc.status == 3)
+		status = "KILLED";
+	else
+		status = "UNKNOWN";
 
-    printf("Priority: %d | Stack base: 0x%d | Stack pointer: 0x%d | Ground: %s\n | Status: %s\n", 
-           (int) proc.priority, 
-           (int) proc.stackBase, 
-           (int) proc.stackPos, 
-           proc.ground == 0 ? "foreground" : "background",
-           status);
+	printf("Priority: %d | Stack base: 0x%d | Stack pointer: 0x%d | Ground: %s\n | Status: %s\n", (int) proc.priority,
+		   (int) proc.stackBase, (int) proc.stackPos, proc.ground == 0 ? "foreground" : "background", status);
 }
 
 void listProcesses(int argc, char *argv[]) {
-    uint16_t procAmount;
-    
-    PSinfo *processes = sysps(&procAmount);
+	uint16_t procAmount;
 
-    if (procAmount == 0 || processes == NULL) {
-        printf("No processes found\n");
-        return;
-    }
+	PSinfo *processes = sysps(&procAmount);
 
-    printf("There are %d processes:\n", procAmount);
+	if (procAmount == 0 || processes == NULL) {
+		printf("No processes found\n");
+		return;
+	}
 
-    for (int i = 0; i < procAmount; i++) {
-        printProcInfo(processes[i]);
-    }
+	printf("There are %d processes:\n", procAmount);
 
-    for (int i = 0; i < procAmount; i++) {
-        sysfree(processes[i].name);
-    }
+	for (int i = 0; i < procAmount; i++) {
+		printProcInfo(processes[i]);
+	}
 
-    sysfree(processes);
+	for (int i = 0; i < procAmount; i++) {
+		sysfree(processes[i].name);
+	}
+
+	sysfree(processes);
 }

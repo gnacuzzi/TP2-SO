@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <process.h>
 
-
 typedef struct schedulerCDT *schedulerADT;
 
 void createScheduler();
@@ -22,18 +21,17 @@ int64_t killForegroundProcess();
 int16_t getPid();
 int64_t getFileDescriptor(int64_t fd);
 
-
-typedef struct PSinfo{
-    int16_t pid;
-    uint64_t stackBase;
-    uint64_t stackPos;
-    char *name;
-    uint8_t priority;
-    int ground; 
-    uint8_t status;   
+typedef struct PSinfo {
+	int16_t pid;
+	uint64_t stackBase;
+	uint64_t stackPos;
+	char *name;
+	uint8_t priority;
+	int ground;
+	uint8_t status;
 } PSinfo;
 
-PSinfo * ps(uint16_t * proccesQty);
+PSinfo *ps(uint16_t *proccesQty);
 int16_t copyProcess(PSinfo *dest, PCB *src);
 
 #endif

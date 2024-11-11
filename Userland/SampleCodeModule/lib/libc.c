@@ -9,8 +9,11 @@
 
 #define IS_ALPHA(c) (((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z'))
 #define IS_DIGIT(c) ((c) <= '9' && (c) >= '0')
-#define TO_UPPER(c) ((c) - (((c) >= 'a' && (c) <= 'z') ? 'a'-'A' : 0))
-#define VALID_NUM_FOR_BASE(c, base) (((base) <= 10 && ((c) >= '0' && (c) < '0' + ((base) <= 10 ? (base) : 10))) || ((base) > 10 && (IS_DIGIT(c) || (((c) >= 'a' && (c) < 'a' + ((base) - 10)) || ((c) >= 'A' && (c) < 'A' + ((base) - 10))))))
+#define TO_UPPER(c) ((c) - (((c) >= 'a' && (c) <= 'z') ? 'a' - 'A' : 0))
+#define VALID_NUM_FOR_BASE(c, base)                                                                                    \
+	(((base) <= 10 && ((c) >= '0' && (c) < '0' + ((base) <= 10 ? (base) : 10))) ||                                     \
+	 ((base) > 10 &&                                                                                                   \
+	  (IS_DIGIT(c) || (((c) >= 'a' && (c) < 'a' + ((base) - 10)) || ((c) >= 'A' && (c) < 'A' + ((base) - 10))))))
 #define VALUE_OF(x) (TO_UPPER(x) - (IS_DIGIT(x) ? '0' : 55))
 
 static void va_printf(const char *fmt, va_list args);
@@ -28,58 +31,58 @@ static int isnumber(int n) {
 
 char readchar() {
 	char localBuff[1];
-    sysRead(0, localBuff, 1);
+	sysRead(0, localBuff, 1);
 	return localBuff[0];
 }
 
 // https://www.equestionanswers.com/c/c-printf-scanf-working-principle.php
 // usamos esta biblioteca para el manejo de argumentos variables
 
-
 void printf(const char *fmt, ...) {
-    va_list vl;
-    va_start(vl, fmt);
-    va_printf(fmt, vl);
-    va_end(vl);
+	va_list vl;
+	va_start(vl, fmt);
+	va_printf(fmt, vl);
+	va_end(vl);
 }
 
 static void va_printf(const char *fmt, va_list args) {
-    char buffer[MAX_CHARS] = {0};
-    const char *aux = fmt; // Puntero
+	char buffer[MAX_CHARS] = {0};
+	const char *aux = fmt; // Puntero
 
-    while (*aux) {
-        if (*aux == '%') {
-            aux++;
-            int dx = strtoi(aux, &aux);
-            int len;
+	while (*aux) {
+		if (*aux == '%') {
+			aux++;
+			int dx = strtoi(aux, &aux);
+			int len;
 
-            switch (*aux) {
-                case 'c':
-                    putchar(va_arg(args, int));
-                    break;
+			switch (*aux) {
+				case 'c':
+					putchar(va_arg(args, int));
+					break;
 
-                case 'd':
-                    len = itoa(va_arg(args, int), buffer, 10);
-                    printchars('0', dx - len);
-                    puts(buffer);
-                    break;
+				case 'd':
+					len = itoa(va_arg(args, int), buffer, 10);
+					printchars('0', dx - len);
+					puts(buffer);
+					break;
 
-                case 'x':
-                    len = itoa(va_arg(args, uint64_t), buffer, 16);
-                    printchars('0', dx - len);
-                    puts(buffer);
-                    break;
+				case 'x':
+					len = itoa(va_arg(args, uint64_t), buffer, 16);
+					printchars('0', dx - len);
+					puts(buffer);
+					break;
 
-                case 's':
-                    printchars(' ', dx-1);
-                    puts(va_arg(args, char *));
-                    break;
-            }
-        } else {
-            putchar(*aux);
-        }
-        aux++;
-    }
+				case 's':
+					printchars(' ', dx - 1);
+					puts(va_arg(args, char *));
+					break;
+			}
+		}
+		else {
+			putchar(*aux);
+		}
+		aux++;
+	}
 }
 
 void putchar(char c) {
@@ -157,42 +160,42 @@ int ctoi(char s) {
 }
 
 int scanf(char *buffer) {
-    int idx = 0;
-    while (1) {
-        char c = readchar();
-        
-        if (c != -1 && c != 0) {
-            if (c == '\b') {
-                if (idx > 0) {
-                    idx--; 
-                    putchar(c);
-                    putchar(' ');
-                    putchar(c);
-                    buffer[idx] = '\0';
-                }
-            }
-            else if (c == '\n') {
-                putchar('\n');
-                buffer[idx] = '\0';
-                if (idx > 0) {
-                    return 1;
-                }
-                return 0;
-            }
-            else if (c != '\t') {
-                buffer[idx++] = c;
-                putchar(c); 
-                buffer[idx] = '\0';
-            }
+	int idx = 0;
+	while (1) {
+		char c = readchar();
 
-            if (idx >= BUFFER_SIZE) {
-                printf("\nBuffer full\n");
-                buffer[idx] = '\0';
-                return 1;
-            }
-        }
-    }
-    return -1;
+		if (c != -1 && c != 0) {
+			if (c == '\b') {
+				if (idx > 0) {
+					idx--;
+					putchar(c);
+					putchar(' ');
+					putchar(c);
+					buffer[idx] = '\0';
+				}
+			}
+			else if (c == '\n') {
+				putchar('\n');
+				buffer[idx] = '\0';
+				if (idx > 0) {
+					return 1;
+				}
+				return 0;
+			}
+			else if (c != '\t') {
+				buffer[idx++] = c;
+				putchar(c);
+				buffer[idx] = '\0';
+			}
+
+			if (idx >= BUFFER_SIZE) {
+				printf("\nBuffer full\n");
+				buffer[idx] = '\0';
+				return 1;
+			}
+		}
+	}
+	return -1;
 }
 
 int atoi(char *str) {
@@ -209,34 +212,34 @@ char *strchr(const char *p, int ch) {
 	c = ch;
 	for (;; ++p) {
 		if (*p == c)
-			return ((char *)p);
+			return ((char *) p);
 		if (*p == '\0')
-			return (void*)0;
+			return (void *) 0;
 	}
 }
 
 int scanLine(char *buffer, int maxLen) {
-    int idx = 0;
-    char c;
+	int idx = 0;
+	char c;
 
-    while ((c = readchar()) != -1) {
-        if(c != 0){
-            if (c == '\b' && idx > 0) {
-                idx--;
-                putchar(c);
-                putchar(' ');
-                buffer[idx] = '\0';
-            }
-            if (c == '\n') {
-                buffer[idx] = '\0';
-                putchar(c);
-                return 0;
-            }
-            else if (c != '\b' && c != '\t') {
-                buffer[idx++] = c;
-            }
-            putchar(c);
-        }
-    }
-    return -1;
+	while ((c = readchar()) != -1) {
+		if (c != 0) {
+			if (c == '\b' && idx > 0) {
+				idx--;
+				putchar(c);
+				putchar(' ');
+				buffer[idx] = '\0';
+			}
+			if (c == '\n') {
+				buffer[idx] = '\0';
+				putchar(c);
+				return 0;
+			}
+			else if (c != '\b' && c != '\t') {
+				buffer[idx++] = c;
+			}
+			putchar(c);
+		}
+	}
+	return -1;
 }

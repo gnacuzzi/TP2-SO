@@ -17,7 +17,7 @@ typedef struct MemoryManagerCDT *MemoryManagerADT;
 #define STRUCT_SIZE (HEAP_SIZE / BLOCK_SIZE)
 
 #ifdef BUDDY
-#undef  STRUCT_SIZE
+#undef STRUCT_SIZE
 #define STRUCT_SIZE 0x800000
 #endif // BUDDY
 

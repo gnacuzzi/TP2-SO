@@ -26,7 +26,6 @@ static void *const sampleCodeModuleAddress = (void *) 0x400000;
 static void *const sampleDataModuleAddress = (void *) 0x500000;
 static void *const heapAddress = (void *) 0x600000;
 
-
 typedef int (*EntryPoint)();
 
 void clearBSS(void *bssAddress, uint64_t bssSize) {
@@ -55,7 +54,7 @@ void *initializeKernelBinary() {
 
 int main() {
 	load_idt();
-	
+
 	_cli();
 	createScheduler();
 	char *argv[] = {"shell"};
@@ -63,7 +62,8 @@ int main() {
 	createProcess((uint64_t) sampleCodeModuleAddress, argv, 1, 10, fileDescriptors, 0);
 	_sti();
 
-	while (1);
+	while (1)
+		;
 
 	return 0;
 }

@@ -2,7 +2,6 @@
 #define _PIPES_H
 #include <stdint.h>
 
-
 typedef struct PipesCDT *PipesADT;
 
 void startPipes();

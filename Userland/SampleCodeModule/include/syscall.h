@@ -10,22 +10,22 @@ typedef struct mem_info {
 	uint64_t used;
 } mem_info;
 
-typedef struct PSinfo{
-    int16_t pid;
-    uint64_t stackBase;
-    uint64_t stackPos;
-    char *name;
-    uint8_t priority;
-    int ground;  
-    uint8_t status;  
+typedef struct PSinfo {
+	int16_t pid;
+	uint64_t stackBase;
+	uint64_t stackPos;
+	char *name;
+	uint8_t priority;
+	int ground;
+	uint8_t status;
 } PSinfo;
 
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
 
-void sysRead(int64_t fd, char * buffer, uint64_t size);
-void sysWrite(uint32_t fd, char * buffer, uint64_t size);
+void sysRead(int64_t fd, char *buffer, uint64_t size);
+void sysWrite(uint32_t fd, char *buffer, uint64_t size);
 
 void clear_screen();
 
@@ -47,7 +47,7 @@ void wait_delta(uint64_t time);
 
 void *sysmalloc(uint64_t size);
 
-void sysfree(void * p);
+void sysfree(void *p);
 
 int64_t sysgetMemInfo(mem_info *memInfo);
 
@@ -55,7 +55,7 @@ int syscreateProcess(uint64_t rip, char **args, int argc, uint8_t priority, int1
 
 int16_t sysgetpid();
 
-PSinfo * sysps(uint16_t * proccesQty);
+PSinfo *sysps(uint16_t *proccesQty);
 
 int64_t syskillProcess(int16_t pid);
 
@@ -83,6 +83,5 @@ int64_t sysopenPipe(int16_t pid, uint8_t mode);
 int64_t sysclosePipe(int64_t fd);
 
 int scanLine(char *buffer, int maxLen);
-
 
 #endif

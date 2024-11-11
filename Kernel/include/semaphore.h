@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef struct SemaphoreCDT * SemaphoreADT;
+typedef struct SemaphoreCDT *SemaphoreADT;
 
 void startSemaphores();
 int8_t semInit(uint16_t id, uint32_t initialValue);

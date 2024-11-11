@@ -17,7 +17,7 @@ extern const uint64_t exceptregs[18];
 
 void print_regs() {
 	for (int i = 0; i < REGS; i++) {
-		printf("%s: 0x%d\n", regs[i], (int)exceptregs[i]);
+		printf("%s: 0x%d\n", regs[i], (int) exceptregs[i]);
 	}
 }
 

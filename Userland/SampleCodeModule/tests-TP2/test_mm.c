@@ -57,6 +57,5 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
 		for (i = 0; i < rq; i++)
 			if (mm_rqs[i].address)
 				sysfree(mm_rqs[i].address);
-
 	}
 }
