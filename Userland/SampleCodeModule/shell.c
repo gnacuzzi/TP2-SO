@@ -272,6 +272,9 @@ int main() {
 						newParams1[i + 1] = leftParams[i];
             		}
 					int isBackground1 = 0;
+					if(leftCantParams != 0){
+						isBackground1 = strcmp(leftParams[leftCantParams-1], "BACK") == 0;
+					}
 
 					char *newParams2[MAX_PARAMETERS + 1] = {0};
 					newParams2[0] = processCommands[rightId].name;
@@ -279,8 +282,16 @@ int main() {
 						newParams2[i + 1] = rightParams[i];
             		}
 					int isBackground2 = 0;
-					executePipedCommands(leftCommand, newParams1, leftCantParams + 1,leftId, isBackground1, rightCommand, newParams2, rightCantParams + 1,rightId, isBackground2);
-					
+					if(rightCantParams != 0){
+						isBackground2 = strcmp(leftParams[rightCantParams-1], "BACK") == 0;
+					}
+					if(isBackground1 || isBackground2){
+						printf("Can't have background processes with pipes\n");
+					}else{
+						executePipedCommands(leftCommand, newParams1, leftCantParams + 1,leftId, isBackground1, rightCommand, newParams2, rightCantParams + 1,rightId, isBackground2);
+
+					}
+		
 					for (int i = 0; i < leftCantParams; i++) {
 						sysfree(leftParams[i]);
 					}
