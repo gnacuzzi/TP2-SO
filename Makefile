@@ -1,4 +1,4 @@
-MM=BUDDY
+MM=BITMAP
 all:  bootloader kernel userland image
 
 bootloader:

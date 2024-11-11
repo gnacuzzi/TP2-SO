@@ -2,9 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include "include/libc.h"
-#include "include/userasm.h"
 #include "include/syscall.h"
-#include "include/eliminator.h"
 #include "include/processes.h"
 #include "include/builtins.h"
 #include <stddef.h>
