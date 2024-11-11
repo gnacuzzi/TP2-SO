@@ -95,7 +95,7 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
 		syswaitProcess(pids[i + TOTAL_PAIR_PROCESSES]);
 	}
 
-	printf("test_sync: Final value: %d\n", global);
+	printf("test_sync: Final value: %d\n", (int) global);
 
 	if (use_sem)
 		syssemClose(SEM_ID);

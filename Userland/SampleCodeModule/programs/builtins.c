@@ -35,7 +35,7 @@ void killProcess(int argc, char *argv[]) {
 
 	int pid = atoi(argv[0]);
 
-	if (pid < 1) {
+	if (pid <= 1) {
 		printf("PID must be greater than 0\n");
 		return;
 	}
@@ -51,21 +51,31 @@ void changePriority(int argc, char *argv[]) {
 			   "the new priority\n");
 		return;
 	}
+	
+	if(atoi(argv[0]) == 1  || atoi(argv[0]) == 0){
+		printf("You can't change the priority of the idle process or the shell\n");
+		return;
+	}
 
 	int pid = atoi(argv[0]);
 	int priority = atoi(argv[1]);
 
 	if (pid < 0) {
-		printf("PID must be greater than 0\n");
+		printf("PID must be a number greater than 0\n");
 		return;
 	}
 
 	if (priority < 1 || priority > 5) {
-		printf("Priority must be between 0 and 5\n");
+		printf("Priority must be a number between 0 and 5\n");
 		return;
 	}
 
 	int out = syschangePriority(pid, priority);
+
+	if (out == -1) {
+		printf("Process %d not found\n", pid);
+		return;
+	}
 
 	printf("Priority of process %d %s\n", pid, out >= 0 ? "changed" : "not changed");
 

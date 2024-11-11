@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <syscall.h>
 #include <libc.h>
 #include <processes.h>
@@ -9,14 +12,14 @@
 #define MUTEX_ID 16
 #define PRINT_ID 17
 
-#define LEFT(phyloId) ((phyloId + phylosCount - 1) % phylosCount)
-#define RIGHT(phyloId) ((phyloId + 1) % phylosCount)
+#define LEFT(phyloId) (((phyloId) + phylosCount - 1) % phylosCount)
+#define RIGHT(phyloId) (((phyloId) + 1) % phylosCount)
 
 typedef enum { THINKING, HUNGRY, EATING } state_t;
 
 int phylosCount = 0;
 
-state_t state[MAX_PHYLOS] = {THINKING};
+state_t state[MAX_PHYLOS] = {0};
 int philosopherPids[MAX_PHYLOS] = {0};
 
 void takeForks(int phyloId);

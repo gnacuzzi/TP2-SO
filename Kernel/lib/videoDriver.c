@@ -137,7 +137,7 @@ void draw_char(char c) {
 		return;
 	}
 	if (c >= FIRST_CHAR && c <= LAST_CHAR) {
-		const char *data = font + 32 * (c - FIRST_CHAR);
+		const unsigned char *data = font + 32 * (c - FIRST_CHAR);
 		for (int h = 0; h < 16; h++) {
 			for (int w = 0; w < 8; w++) {
 				if (*data & (1 << w)) {

@@ -201,8 +201,12 @@ int scanf(char *buffer) {
 int atoi(char *str) {
 	int res = 0;
 	for (int i = 0; str[i] != '\0'; ++i)
-		if (IS_DIGIT(str[i]))
+		if (IS_DIGIT(str[i])) {
 			res = res * 10 + str[i] - '0';
+		} else {
+			return -1;
+		}
+		
 
 	return res;
 }
