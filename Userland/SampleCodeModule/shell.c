@@ -8,7 +8,7 @@
 #include <stddef.h>
 
 #define BUFFER_LENGTH 256
-#define MAX_PARAMETERS 3 // todavia no sabemos cuantos parametros se van a enviar como maximo
+#define MAX_PARAMETERS 3 
 #define PARAMETERS_LENGTH 256
 
 #define READ 0

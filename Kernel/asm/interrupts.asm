@@ -179,21 +179,19 @@ _irq00Handler:
 _irq01Handler:
     pushState
     mov rax, 0
-    in al, 0x60         ; Lee la tecla presionada
+    in al, 0x60         
 
-    ; Detectar si Ctrl está presionado o soltado
-    cmp al, 0x1D        ; Ctrl presionado (scan code 0x1D)
+    cmp al, 0x1D        
     je control_pressed
-    cmp al, 0x9D        ; Ctrl soltado (scan code 0x9D)
+    cmp al, 0x9D        
     je control_released
 
-    ; Si Ctrl está presionado, verificar si la tecla 'C' o 'D' fue presionada
-    cmp byte [ctrl_pressed], 1  ; Verificar si Ctrl está activo
+    cmp byte [ctrl_pressed], 1 
     jne no_control_key
 
-    cmp al, 0x2E        ; Tecla 'C' (scan code 0x2E)
+    cmp al, 0x2E       
     je ctrl_c_detected
-    cmp al, 0x20        ; Tecla 'D' (scan code 0x20)
+    cmp al, 0x20        
     je ctrl_d_detected
 
 no_control_key:
