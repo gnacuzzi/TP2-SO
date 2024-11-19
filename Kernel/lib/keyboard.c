@@ -51,6 +51,7 @@ void keyboard_handler() {
 			first = 0;
 		buff[last++] = keyboard_matrix[key];
 		cant_elems++;
+		readyProcess(1); //shell
 	}
 }
 

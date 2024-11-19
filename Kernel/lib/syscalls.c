@@ -83,7 +83,11 @@ static void syscallRead(int64_t fd, char *buffer, uint64_t size) {
 		readPipe(fdProcess, buffer, size);
 	}
 	else if (fd == STDIN) {
-		buffer[0] = next();
+		char c;
+		while( (c = next()) == 0){
+			blockProcess(getPid());
+		}
+		buffer[0] = c;
 	}
 }
 // 1
